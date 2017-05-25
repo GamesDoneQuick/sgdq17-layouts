@@ -1,12 +1,14 @@
 'use strict';
 
-const TimeObject = require('./classes/time-object');
 const HEARTBEAT_INTERVAL = 2500;
 let SerialPort;
 let activeSerialPort;
 let interval;
 let heartbeatTimeout;
 let heartbeatInterval;
+
+// Ours
+const TimeObject = require('./classes/time-object');
 
 module.exports = function (nodecg) {
 	const currentRun = nodecg.Replicant('currentRun');

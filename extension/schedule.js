@@ -1,14 +1,20 @@
 'use strict';
 
 const POLL_INTERVAL = 60 * 1000;
-const request = require('request-promise');
+let updateInterval;
+
+// Packages
+const assign = require('lodash.assign');
 const clone = require('clone');
 const equals = require('deep-equal');
-const assign = require('lodash.assign');
-const {calcOriginalValues, mergeChangesFromTracker} = require('./lib/diff-run');
-const server = require('../../../lib/server');
 const Promise = require('bluebird');
-let updateInterval;
+const request = require('request-promise');
+
+// NodeCG
+const server = require('../../../lib/server');
+
+// Ours
+const {calcOriginalValues, mergeChangesFromTracker} = require('./lib/diff-run');
 
 module.exports = function (nodecg) {
 	const checklist = require('./checklist')(nodecg);

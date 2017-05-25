@@ -1,5 +1,6 @@
 'use strict';
 
+// Packages
 const app = require('express')();
 const bodyParser = require('body-parser');
 const debounce = require('lodash.debounce');

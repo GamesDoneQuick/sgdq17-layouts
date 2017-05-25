@@ -1,7 +1,10 @@
 'use strict';
 
-const fs = require('fs');
+// Native
 const format = require('util').format;
+const fs = require('fs');
+
+// NodeCG
 const singleInstance = require('../../../lib/graphics/single_instance');
 
 module.exports = function (nodecg) {

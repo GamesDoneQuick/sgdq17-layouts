@@ -1,6 +1,8 @@
 'use strict';
 
 let timer = null;
+
+// Ours
 const TimeObject = require('./classes/time-object');
 
 module.exports = function (nodecg) {

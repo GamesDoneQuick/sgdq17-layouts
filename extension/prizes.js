@@ -4,10 +4,11 @@ const POLL_INTERVAL = 60 * 1000;
 let PRIZES_URL = 'https://gamesdonequick.com/tracker/search/?type=prize&event=19';
 let CURRENT_PRIZES_URL = 'https://gamesdonequick.com/tracker/search/?type=prize&feed=current&event=19';
 
-const Q = require('q');
-const request = require('request');
+// Packages
 const equal = require('deep-equal');
 const numeral = require('numeral');
+const Q = require('q');
+const request = require('request');
 
 module.exports = function (nodecg) {
 	if (nodecg.bundleConfig.useMockData) {

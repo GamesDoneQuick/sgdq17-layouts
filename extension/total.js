@@ -1,7 +1,11 @@
 'use strict';
 
 const DONATION_STATS_URL = 'https://gamesdonequick.com/tracker/19?json';
+
+// Packages
 const request = require('request');
+
+// Ours
 const formatDollars = require('../util/format-dollars');
 
 module.exports = function (nodecg) {

@@ -1,5 +1,6 @@
 'use strict';
 
+// Packages
 const OBSWebSocket = require('obs-websocket-js').OBSWebSocket;
 
 module.exports = function (nodecg) {

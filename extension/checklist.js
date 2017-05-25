@@ -1,7 +1,10 @@
 'use strict';
 
-const equals = require('deep-equal');
+// Packages
 const clone = require('clone');
+const equals = require('deep-equal');
+
+// Ours
 const obsWebsocket = require('./obs-websocket');
 
 module.exports = function (nodecg) {
