@@ -12,6 +12,7 @@ const DEFAULT_CHANNEL_OBJ = {
 	hd: {muted: true, fadedBelowThreshold: true}
 };
 
+// Packages
 const clone = require('clone');
 const osc = require('osc');
 

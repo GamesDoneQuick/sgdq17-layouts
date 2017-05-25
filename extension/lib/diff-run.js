@@ -1,9 +1,10 @@
 'use strict';
 
+// Packages
 const clone = require('clone');
 const diff = require('deep-diff').diff;
-const objectPath = require('object-path');
 const merge = require('lodash.merge');
+const objectPath = require('object-path');
 
 /**
  * Calculates the original values for a modified run.
