@@ -1,16 +1,27 @@
 'use strict';
 
+// Ours
+const nodecgApiContext = require('./util/nodecg-api-context');
+
 module.exports = function (nodecg) {
+	// Store a reference to this nodecg API context in a place where other libs can easily access it.
+	// This must be done before any other files are `require`d.
+	nodecgApiContext.set(nodecg);
+
 	if (nodecg.bundleConfig.useMockData) {
 		nodecg.log.warn('WARNING! useMockData is true, you will not receive real data from the tracker!');
 	}
 
-	// Must be before schedule. Well, I mean I guess it'd be okay if it wasn't, but whatever.
-	try {
-		require('./obs-websocket')(nodecg);
-	} catch (e) {
-		nodecg.log.error('Failed to load "obs-websocket" lib:', e.stack);
-		process.exit(1);
+	if (nodecg.bundleConfig.obsWebsocket.address) {
+		try {
+			require('./obs-websocket')(nodecg);
+		} catch (e) {
+			nodecg.log.error('Failed to load "obs-websocket" lib:', e.stack);
+			process.exit(1);
+		}
+	} else {
+		nodecg.log.error('"obsWebsocket" is not defined in cfg/sgdq17-layouts.json! ' +
+			'OBS Studio integration will be disabled.');
 	}
 
 	try {
@@ -55,25 +66,40 @@ module.exports = function (nodecg) {
 		process.exit(1);
 	}
 
-	try {
-		require('./twitter')(nodecg);
-	} catch (e) {
-		nodecg.log.error('Failed to load "twitter" lib:', e.stack);
-		process.exit(1);
+	if (nodecg.bundleConfig.twitter.userId) {
+		try {
+			require('./twitter')(nodecg);
+		} catch (e) {
+			nodecg.log.error('Failed to load "twitter" lib:', e.stack);
+			process.exit(1);
+		}
+	} else {
+		nodecg.log.error('"twitter" is not defined in cfg/sgdq17-layouts.json! ' +
+			'Twitter integration will be disabled.');
 	}
 
-	try {
-		require('./osc')(nodecg);
-	} catch (e) {
-		nodecg.log.error('Failed to load "osc" lib:', e.stack);
-		process.exit(1);
+	if (nodecg.bundleConfig.osc.address) {
+		try {
+			require('./osc')(nodecg);
+		} catch (e) {
+			nodecg.log.error('Failed to load "osc" lib:', e.stack);
+			process.exit(1);
+		}
+	} else {
+		nodecg.log.error('"osc" is not defined in cfg/sgdq17-layouts.json! ' +
+			'Behringer X32 OSC integration will be disabled.');
 	}
 
-	try {
-		require('./interview')(nodecg);
-	} catch (e) {
-		nodecg.log.error('Failed to load "interview" lib:', e.stack);
-		process.exit(1);
+	if (Object.keys(nodecg.bundleConfig.firebase).length === 0) {
+		nodecg.log.error('"firebase" is not defined in cfg/sgdq17-layouts.json! ' +
+			'The interview question system (Lightning Round) will be disabled.');
+	} else {
+		try {
+			require('./interview')(nodecg);
+		} catch (e) {
+			nodecg.log.error('Failed to load "interview" lib:', e.stack);
+			process.exit(1);
+		}
 	}
 
 	try {
