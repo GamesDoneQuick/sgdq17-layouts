@@ -96,8 +96,16 @@ function mergeChangesFromTracker(run, unmodifiedRun) {
 	// Immediately clone the run, we want to at least try to make this a functional method...
 	run = clone(run);
 
+	if (!run.originalValues) {
+		return unmodifiedRun;
+	}
+
 	const oldOriginalValues = run.originalValues;
 	const newOriginalValues = calcOriginalValues(run, unmodifiedRun);
+	if (!newOriginalValues) {
+		return unmodifiedRun;
+	}
+
 	const differences = diff(oldOriginalValues, newOriginalValues);
 	if (!differences) {
 		return run;
