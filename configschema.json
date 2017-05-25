@@ -1,0 +1,146 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "object",
+
+	"properties": {
+		"useMockData": {
+			"type": "boolean",
+			"description": "Whether or not to use mock data instead of the real tracker API. If true, pulls from Lange's Dropbox.",
+			"default": false
+		},
+		"displayDuration": {
+			"type": "number",
+			"description": "How long (in seconds) most things show on-screen for.",
+			"default": 10
+		},
+		"osc": {
+			"type": "object",
+			"properties": {
+				"address": {
+					"type": "string",
+					"description": "The IP address or hostname of a Behringer X32 digital mixer."
+				},
+				"gameAudioChannels": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"sd": {
+								"type": ["integer", "null"]
+							},
+							"hd": {
+								"type": ["integer", "null"]
+							}
+						}
+					},
+					"minItems": 4,
+					"maxItems": 4
+				}
+			},
+			"required": ["address", "gameAudioChannels"]
+		},
+		"twitter": {
+			"type": "object",
+			"properties": {
+				"userId": {
+					"type": "string",
+					"description": "The numeric userid of the Twitter account that owns these API keys. http://mytwitterid.com/"
+				},
+				"consumerKey": {
+					"type": "string"
+				},
+				"consumerSecret": {
+					"type": "string"
+				},
+				"accessTokenKey": {
+					"type": "string"
+				},
+				"accessTokenSecret": {
+					"type": "string"
+				},
+				"debug": {
+					"type": "boolean",
+					"default": false
+				}
+			},
+			"required": ["userId", "consumerKey", "consumerSecret", "accessTokenKey", "accessTokenSecret"]
+		},
+		"enableTimerSerial": {
+			"type": "boolean",
+			"description": "If true, automatically tries to find and communicate with TestRunner's timer display box.",
+			"default": false
+		},
+		"streamTitle": {
+			"type": "string",
+			"description": "The template used to set the title of the stream whenever the current run changes."
+		},
+		"footpedal": {
+			"type": "object",
+			"properties": {
+				"enabled": {
+					"type": "boolean",
+					"default": true
+				},
+				"buttonId": {
+					"type": "number",
+					"default": 31
+				}
+			}
+		},
+		"obsWebsocket": {
+			"type": "object",
+			"description": "Login information for OBS Websocket, used to communicate with and remotely control OBS Studio.",
+			"properties": {
+				"address": {
+					"type": "string"
+				},
+				"password": {
+					"type": "string"
+				}
+			},
+			"required": ["address"],
+			"additionalProperties": false
+		},
+		"firebase": {
+			"type": "object",
+			"description": "Credentials used to log into Firebase, which is what hosts Lightning Round.",
+			"properties": {
+				"databaseURL": {
+					"type": "string"
+				},
+				"type": {
+					"type": "string"
+				},
+				"project_id": {
+					"type": "string"
+				},
+				"private_key_id": {
+					"type": "string"
+				},
+				"private_key": {
+					"type": "string"
+				},
+				"client_email": {
+					"type": "string"
+				},
+				"client_id": {
+					"type": "string"
+				},
+				"auth_uri": {
+					"type": "string"
+				},
+				"token_uri": {
+					"type": "string"
+				},
+				"auth_provider_x509_cert_url": {
+					"type": "string"
+				},
+				"client_x509_cert_url": {
+					"type": "string"
+				}
+			},
+			"required": ["databaseURL", "project_id", "private_key", "client_email"],
+			"additionalProperties": false
+		}
+	}
+}
