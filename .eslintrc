@@ -14,7 +14,8 @@
 				"ClassDeclaration": true
 			}
 		}],
-		"valid-jsdoc": ["error"]
+		"valid-jsdoc": ["error"],
+		"capitalized-comments": [0]
 	},
 	"plugins": [
 		"html"
