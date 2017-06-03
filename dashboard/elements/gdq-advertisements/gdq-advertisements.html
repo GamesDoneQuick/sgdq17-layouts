@@ -71,7 +71,7 @@
 			}
 
 			.ad.iron-selected .ad-icon {
-				background-color: var(--nodecg-success-color);
+				background-color: #5BA664;
 				opacity: 1;
 				@apply --shadow-elevation-3dp;
 			}
@@ -83,6 +83,20 @@
 
 			#playbackControls paper-button {
 				@apply --layout-flex;
+			}
+
+			#play {
+				--paper-button: {
+					background-color: #5BA664;
+					color: white;
+				}
+			}
+
+			#stop {
+				--paper-button: {
+					background-color: #C9513E;
+					color: white;
+				}
 			}
 
 			#preview {
@@ -172,13 +186,19 @@
 		</div>
 
 		<div id="playbackControls">
-			<paper-button id="play" class="nodecg-success" raised on-tap="play"
-						  disabled="[[calcPlayButtonDisabled(_playTimeout, selectedAd)]]">
+			<paper-button
+				id="play"
+			  	raised
+				on-tap="play"
+			 	disabled="[[calcPlayButtonDisabled(_playTimeout, selectedAd)]]">
 				<iron-icon icon="av:play-arrow"></iron-icon>
 				<span>Play Selected Ad</span>
 			</paper-button>
-			<paper-button class="nodecg-danger" raised on-tap="stop"
-						  disabled="[[!playing]]">
+			<paper-button
+				id="stop"
+				raised
+				on-tap="stop"
+			  	disabled="[[!playing]]">
 				<iron-icon icon="av:stop"></iron-icon>
 				Stop
 			</paper-button>

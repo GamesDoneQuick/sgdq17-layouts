@@ -36,6 +36,10 @@
 				font-size: 14px;
 				height: 24px;
 				padding-right: 0;
+				--paper-button: {
+					background-color: #5BA664;
+					color: white;
+				};
 			}
 
 			#runs {
@@ -52,6 +56,14 @@
 			}
 
 			#previous,
+			#next {
+				--paper-button: {
+					background-color: #645BA6;
+					color: white;
+				};
+			}
+
+			#previous,
 			#editCurrent {
 				margin-left: 0;
 			}
@@ -63,6 +75,10 @@
 
 			#editCurrent,
 			#editNext {
+				--paper-button: {
+					background-color: #A50074;
+					color: white;
+				};
 				@apply --layout-flex-3;
 			}
 
@@ -88,22 +104,26 @@
 		<nodecg-toast id="toast"></nodecg-toast>
 
 		<div id="selection-ctrls">
-			<paper-button id="previous" class="nodecg-info" on-tap="previous" raised>
+			<paper-button id="previous" on-tap="previous" raised>
 				<iron-icon icon="arrow-back"></iron-icon>
 				Prev
 			</paper-button>
 
 			<div id="typeahead-container">
-				<nodecg-typeahead-input id="typeahead" max-suggestions="3" placeholder="Search" raised
-										on-keyup="_typeaheadKeyup"></nodecg-typeahead-input>
+				<nodecg-typeahead-input
+					id="typeahead"
+					max-suggestions="3"
+					placeholder="Search"
+					raised
+					on-keyup="_typeaheadKeyup"></nodecg-typeahead-input>
 
-				<paper-button id="take" class="nodecg-success" on-tap="takeTypeahead" raised>
+				<paper-button id="take" on-tap="takeTypeahead" raised>
 					<span>Take</span>
 					<iron-icon icon="chevron-right"></iron-icon>
 				</paper-button>
 			</div>
 
-			<paper-button id="next" class="nodecg-info" on-tap="next" raised>
+			<paper-button id="next" on-tap="next" raised>
 				Next
 				<iron-icon icon="arrow-forward"></iron-icon>
 			</paper-button>
@@ -116,9 +136,9 @@
 		</div>
 
 		<div id="edit-ctrls">
-			<paper-button id="editCurrent" class="nodecg-configure" raised on-tap="editCurrent">EDIT CURRENT</paper-button>
+			<paper-button id="editCurrent" raised on-tap="editCurrent">EDIT CURRENT</paper-button>
 			<paper-button id="fetchLatestSchedule" raised on-tap="fetchLatestSchedule">FETCH LATEST SCHEDULE</paper-button>
-			<paper-button id="editNext" class="nodecg-configure" raised on-tap="editNext">EDIT NEXT</paper-button>
+			<paper-button id="editNext" raised on-tap="editNext">EDIT NEXT</paper-button>
 		</div>
 	</template>
 

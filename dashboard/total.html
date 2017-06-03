@@ -7,23 +7,29 @@
 	<link rel="import" href="../bower_components/nodecg-toggle/nodecg-toggle.html">
 	<link rel="import" href="../bower_components/nodecg-toast/nodecg-toast.html">
 	<link rel="stylesheet" href="shared-panel-styles.css">
-	<style is="custom-style" include="iron-flex iron-flex-alignment">
-		#total {
-			text-align: center;
-			margin-top: 0;
-			margin-bottom: 8px;
-		}
+	<custom-style>
+		<style include="iron-flex iron-flex-alignment">
+			#total {
+				text-align: center;
+				margin-top: 0;
+				margin-bottom: 8px;
+			}
 
-		#update {
-			margin-left: 0;
-			margin-right: 4px;
-		}
+			#update {
+				margin-left: 0;
+				margin-right: 4px;
+			}
 
-		#edit {
-			margin-left: 4px;
-			margin-right: 0;
-		}
-	</style>
+			#edit {
+				margin-left: 4px;
+				margin-right: 0;
+				--paper-button: {
+					background-color: #A50074;
+					color: white;
+				}
+			}
+		</style>
+	</custom-style>
 </head>
 <body>
 	<nodecg-toast id="toast"></nodecg-toast>
@@ -32,7 +38,7 @@
 
 	<div class="layout horizontal" style="margin-bottom: 16px;">
 		<paper-button id="update" class="flex" raised>Force Update</paper-button>
-		<paper-button id="edit" class="nodecg-configure" nodecg-dialog="edit-total" raised>Edit...</paper-button>
+		<paper-button id="edit" nodecg-dialog="edit-total" raised>Edit...</paper-button>
 	</div>
 
 	<nodecg-toggle replicant-name="autoUpdateTotal">Automatic Updates</nodecg-toggle>

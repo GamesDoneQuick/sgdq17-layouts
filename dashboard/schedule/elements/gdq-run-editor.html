@@ -87,6 +87,20 @@
 				margin-top: 16px;
 			}
 
+			#resetRun {
+				--paper-button: {
+					background-color: #C9513E;
+					color: white;
+				}
+			}
+
+			#applyChanges {
+				--paper-button: {
+					background-color: #5BA664;
+					color: white;
+				}
+			}
+
 			.row {
 				@apply --layout-horizontal;
 			}
@@ -226,9 +240,13 @@
 		</div>
 
 		<div id="buttons">
-			<paper-button class="nodecg-danger" raised on-tap="resetRun" on-mouseover="showOriginal"
-						  on-mouseout="hideOriginal">RESET DATA TO ORIGINAL</paper-button>
-			<paper-button class="nodecg-success" raised on-tap="applyChanges">APPLY CHANGES</paper-button>
+			<paper-button
+				id="resetRun"
+				raised
+				on-tap="resetRun"
+				on-mouseover="showOriginal"
+			  	on-mouseout="hideOriginal">RESET DATA TO ORIGINAL</paper-button>
+			<paper-button id="applyChanges" raised on-tap="applyChanges">APPLY CHANGES</paper-button>
 		</div>
 	</template>
 
