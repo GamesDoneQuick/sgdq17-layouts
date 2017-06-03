@@ -5,26 +5,30 @@
 	const adPageOpen = nodecg.Replicant('adPageOpen');
 	const playingAd = nodecg.Replicant('playingAd');
 
-	Polymer({
-		is: 'gdq-advertisements',
+	class GdqAdvertisements extends Polymer.Element {
+		static get is() {
+			return 'gdq-advertisements';
+		}
 
-		properties: {
-			advertisements: Array,
-			selectedBase: String,
-			selectedAd: {
-				type: Object,
-				computed: 'computeSelectedAd(selectedBase)',
-				value: null
-			},
-			playing: {
-				type: Boolean,
-				value: false
-			},
-			_playTimeout: {
-				type: Number,
-				value: null
-			}
-		},
+		static get properties() {
+			return {
+				advertisements: Array,
+				selectedBase: String,
+				selectedAd: {
+					type: Object,
+					computed: 'computeSelectedAd(selectedBase)',
+					value: null
+				},
+				playing: {
+					type: Boolean,
+					value: false
+				},
+				_playTimeout: {
+					type: Number,
+					value: null
+				}
+			};
+		}
 
 		computeSelectedAd(selectedBase) {
 			if (selectedBase && this.advertisements) {
@@ -47,9 +51,10 @@
 			}
 
 			return null;
-		},
+		}
 
-		attached() {
+		connectedCallback() {
+			super.connectedCallback();
 			adPageOpen.on('change', newVal => {
 				if (newVal) {
 					/* When the dashboard first loads, the layout might already be open and have all ads preloaded.
@@ -97,7 +102,7 @@
 			});
 
 			nodecg.listenFor('adLoaded', this.adLoaded.bind(this));
-		},
+		}
 
 		adLoaded(base) {
 			const adEl = Polymer.dom(this.root).querySelector(`.ad[data-base="${base}"]`);
@@ -107,11 +112,11 @@
 				progressEl.value = 100;
 				progressEl.updateStyles();
 			}
-		},
+		}
 
 		calcPlayButtonDisabled(_playTimeout, selectedAd) {
 			return _playTimeout || !selectedAd;
-		},
+		}
 
 		calcStatus(adState) {
 			switch (adState) {
@@ -124,11 +129,11 @@
 				default:
 					throw new Error(`Unexpected adState: "${adState}"`);
 			}
-		},
+		}
 
 		calcAdIcon(ext) {
 			return isVideo(ext) ? 'av:videocam' : 'image:photo';
-		},
+		}
 
 		calcAdTypeDisplay(ext) {
 			if (!ext) {
@@ -136,7 +141,7 @@
 			}
 
 			return isVideo(ext) ? 'Video' : 'Image';
-		},
+		}
 
 		play() {
 			nodecg.sendMessage('playAd', this.selectedAd);
@@ -145,11 +150,11 @@
 				this._playTimeout = null;
 				this.$.play.querySelector('span').innerText = 'Play Selected Ad';
 			}, 1000);
-		},
+		}
 
 		stop() {
 			nodecg.sendMessage('stopAd');
-		},
+		}
 
 		adSort(a, b) {
 			if (a.base > b.base) {
@@ -162,7 +167,9 @@
 
 			return 0;
 		}
-	});
+	}
+
+	customElements.define(GdqAdvertisements.is, GdqAdvertisements);
 
 	/**
 	 * Determines if a given file ext is a video.

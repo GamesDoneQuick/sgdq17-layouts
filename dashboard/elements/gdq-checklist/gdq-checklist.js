@@ -3,21 +3,23 @@
 
 	const checklist = nodecg.Replicant('checklist');
 
-	Polymer({
-		is: 'gdq-checklist',
-
-		listeners: {
-			change: '_checkboxChanged'
-		},
+	class GdqChecklist extends Polymer.Element {
+		static get is() {
+			return 'gdq-checklist';
+		}
 
 		ready() {
+			super.ready();
 			checklist.on('change', newVal => {
 				newVal = JSON.parse(JSON.stringify(newVal));
 				this.extraContent = newVal.extraContent;
 				this.techStationDuties = newVal.techStationDuties;
 				this.otherDuties = newVal.otherDuties;
 			});
-		},
+
+			this._checkboxChanged = this._checkboxChanged.bind(this);
+			this.addEventListener('change', this._checkboxChanged);
+		}
 
 		_checkboxChanged(e) {
 			const category = e.target.getAttribute('category');
@@ -31,5 +33,7 @@
 				return false;
 			});
 		}
-	});
+	}
+
+	customElements.define(GdqChecklist.is, GdqChecklist);
 })();

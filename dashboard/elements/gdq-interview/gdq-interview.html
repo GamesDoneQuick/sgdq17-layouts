@@ -1,22 +1,21 @@
-<link rel="import" href="../../components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../components/nodecg-typeahead-input/nodecg-typeahead-input.html">
-<link rel="import" href="../../components/paper-button/paper-button.html">
-<link rel="import" href="../../components/paper-input/paper-input.html">
-<link rel="import" href="../../components/paper-toggle-button/paper-toggle-button.html">
-<link rel="import" href="../../components/paper-tooltip/paper-tooltip.html">
-<link rel="import" href="../label-value.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/nodecg-typeahead-input/nodecg-typeahead-input.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
 
 <dom-module id="gdq-interview">
 	<template>
 		<style>
 			:host {
 				display: block;
-				@apply(--layout-vertical)
+				@apply --layout-vertical
 			}
 
 			#toggle {
-				@apply(--layout-horizontal);
-				@apply(--layout-center);
+				@apply --layout-horizontal;
+				@apply --layout-center;
 			}
 
 			#toggle-label {
@@ -33,7 +32,7 @@
 			}
 
 			#buttons {
-				@apply(--layout-horizontal);
+				@apply --layout-horizontal;
 			}
 
 			#show-wrapper,
@@ -53,11 +52,11 @@
 				margin: 0;
 			}
 
-			:host[question-showing] #show-wrapper {
+			:host([question-showing]) #show-wrapper {
 				cursor: help;
 			}
 
-			:host[question-showing] #show-label {
+			:host([question-showing]) #show-label {
 				border-bottom: 1px dashed #999;
 			}
 

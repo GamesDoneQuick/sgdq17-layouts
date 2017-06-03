@@ -1,10 +1,10 @@
-<link rel="import" href="../../components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <dom-module id="gdq-schedule-runinfo">
 	<template>
 		<style>
 			:host {
-				@apply(--layout-vertical);
+				@apply --layout-vertical;
 				color: var(--gdq-schedule-runinfo-color, black);
 			}
 
@@ -20,7 +20,7 @@
 			}
 
 			section {
-				@apply(--layout-vertical);
+				@apply --layout-vertical;
 			}
 
 			.modified {
@@ -52,12 +52,12 @@
 			}
 
 			#runners {
-				@apply(--layout-horizontal);
-				@apply(--layout-wrap);
+				@apply --layout-horizontal;
+				@apply --layout-wrap;
 			}
 
 			.runner {
-				@apply(--layout-vertical);
+				@apply --layout-vertical;
 				width: calc(50% - 4px);
 				padding-right: 8px;
 				box-sizing: border-box;
@@ -72,13 +72,13 @@
 			}
 
 			#misc {
-				@apply(--layout-horizontal);
-				@apply(--layout-justified);
+				@apply --layout-horizontal;
+				@apply --layout-justified;
 				flex-wrap: wrap;
 			}
 
 			#misc > div {
-				@apply(--layout-vertical);
+				@apply --layout-vertical;
 				width: 50%;
 				box-sizing: border-box;
 			}

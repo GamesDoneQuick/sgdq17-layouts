@@ -1,14 +1,10 @@
-(function () {
-	'use strict';
+class TimeInput extends Polymer.mixinBehaviors([Polymer.IronValidatableBehavior], Polymer.Element) {
+	static get is() {
+		return 'time-input';
+	}
 
-	Polymer({
-		is: 'time-input',
-
-		behaviors: [
-			Polymer.IronValidatableBehavior
-		],
-
-		properties: {
+	static get properties() {
+		return {
 			value: {
 				notify: true,
 				type: String
@@ -26,19 +22,23 @@
 				type: String,
 				value: 'time-validator'
 			}
-		},
+		};
+	}
 
-		observers: [
+	static get observers() {
+		return [
 			'_computeValue(_minutes,_seconds)'
-		],
+		];
+	}
 
-		setMS(m, s) {
-			this._minutes = m < 10 ? `0${m}` : m;
-			this._seconds = s < 10 ? `0${s}` : s;
-		},
+	setMS(m, s) {
+		this._minutes = m < 10 ? `0${m}` : m;
+		this._seconds = s < 10 ? `0${s}` : s;
+	}
 
-		_computeValue(minutes, seconds) {
-			this.value = `${minutes}:${seconds}`;
-		}
-	});
-})();
+	_computeValue(minutes, seconds) {
+		this.value = `${minutes}:${seconds}`;
+	}
+}
+
+customElements.define(TimeInput.is, TimeInput);

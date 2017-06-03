@@ -1,30 +1,30 @@
-<link rel="import" href="../../components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../components/iron-icons/iron-icons.html">
-<link rel="import" href="../../components/nodecg-toast/nodecg-toast.html">
-<link rel="import" href="../../components/nodecg-typeahead-input/nodecg-typeahead-input.html">
-<link rel="import" href="../../components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/nodecg-toast/nodecg-toast.html">
+<link rel="import" href="../../../bower_components/nodecg-typeahead-input/nodecg-typeahead-input.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="gdq-schedule-runinfo.html">
 
 <dom-module id="gdq-schedule">
 	<template>
 		<style>
 			:host {
-				@apply(--layout-vertical);
+				@apply --layout-vertical;
 			}
 
 			#selection-ctrls {
-				@apply(--layout-horizontal);
-				@apply(--layout-start);
+				@apply --layout-horizontal;
+				@apply --layout-start;
 				margin-bottom: 16px;
 			}
 
 			#selection-ctrls > paper-button {
-				@apply(--layout-flex);
+				@apply --layout-flex;
 			}
 
 			#typeahead-container {
-				@apply(--layout-vertical);
-				@apply(--layout-end);
+				@apply --layout-vertical;
+				@apply --layout-end;
 			}
 
 			#typeahead {
@@ -39,7 +39,7 @@
 			}
 
 			#runs {
-				@apply(--layout-horizontal);
+				@apply --layout-horizontal;
 			}
 
 			#runs-spacer {
@@ -47,7 +47,7 @@
 			}
 
 			#edit-ctrls {
-				@apply(--layout-horizontal);
+				@apply --layout-horizontal;
 				margin-top: 32px;
 			}
 
@@ -63,16 +63,16 @@
 
 			#editCurrent,
 			#editNext {
-				@apply(--layout-flex-3);
+				@apply --layout-flex-3;
 			}
 
 			#fetchLatestSchedule {
-				@apply(--layout-flex-6);
+				@apply --layout-flex-6;
 			}
 
 			paper-button {
-				@apply(--layout-horizontal);
-				@apply(--layout-center-center);
+				@apply --layout-horizontal;
+				@apply --layout-center-center;
 			}
 
 			gdq-schedule-runinfo {

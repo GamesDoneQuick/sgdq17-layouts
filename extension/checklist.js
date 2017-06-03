@@ -6,7 +6,7 @@ const clone = require('clone');
 
 // Ours
 const nodecg = require('./util/nodecg-api-context').get();
-const obsWebsocket = require('./obs-websocket');
+const obs = require('./obs');
 
 // Create defaults array
 const checklistDefault = {
@@ -81,7 +81,10 @@ checklist.on('change', newVal => {
 
 module.exports = {
 	reset() {
-		obsWebsocket.resetCropping();
+		if (nodecg.bundleConfig.obsWebsocket && nodecg.bundleConfig.obsWebsocket.ip) {
+			obs.resetCropping();
+		}
+
 		for (const category in checklist.value) {
 			if (!{}.hasOwnProperty.call(checklist.value, category)) {
 				continue;

@@ -1,14 +1,14 @@
-<link rel="import" href="../../components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../components/paper-button/paper-button.html">
-<link rel="import" href="../../components/paper-input/paper-input.html">
-<link rel="import" href="../../components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
 
 <dom-module id="gdq-run-editor">
 	<template>
 		<style>
 			:host {
-				@apply(--layout-vertical);
-				@apply(--layout-center);
+				@apply --layout-vertical;
+				@apply --layout-center;
 			}
 
 			#title {
@@ -19,18 +19,18 @@
 
 			#run,
 			#runners {
-				@apply(--layout-vertical);
+				@apply --layout-vertical;
 				padding: 16px;
 			}
 
 			#run {
-				@apply(--layout-flex);
+				@apply --layout-flex;
 				margin-right: 4px;
 				padding-left: 0;
 			}
 
 			#runners {
-				@apply(--layout-flex-2);
+				@apply --layout-flex-2;
 				border: 1px solid #C1C1C1;
 				margin-left: 4px;
 			}
@@ -88,7 +88,7 @@
 			}
 
 			.row {
-				@apply(--layout-horizontal);
+				@apply --layout-horizontal;
 			}
 
 			.row > :not(:last-child) {
@@ -100,7 +100,7 @@
 			}
 
 			paper-input {
-				@apply(--layout-flex);
+				@apply --layout-flex;
 				--paper-input-container-disabled: {
 					opacity: 1;
 					background-color: #ffb0b3;

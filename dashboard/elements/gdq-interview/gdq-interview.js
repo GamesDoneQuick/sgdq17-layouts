@@ -7,26 +7,32 @@
 	const timeRemaining = nodecg.Replicant('interview:lowerthirdTimeRemaining');
 	const runners = nodecg.Replicant('runners');
 
-	Polymer({
-		is: 'gdq-interview',
+	class GdqInterview extends Polymer.Element {
+		static get is() {
+			return 'gdq-interview';
+		}
 
-		properties: {
-			lowerthirdShowing: {
-				type: Boolean
-			},
-			questionShowing: {
-				type: Boolean,
-				reflectToAttribute: true
-			},
-			_typeaheadCandidates: {
-				type: Array,
-				value() {
-					return [];
+		static get properties() {
+			return {
+				lowerthirdShowing: {
+					type: Boolean
+				},
+				questionShowing: {
+					type: Boolean,
+					reflectToAttribute: true
+				},
+				_typeaheadCandidates: {
+					type: Array,
+					value() {
+						return [];
+					}
 				}
-			}
-		},
+			};
+		}
 
 		ready() {
+			super.ready();
+
 			runners.on('change', newVal => {
 				if (newVal && newVal.length > 0) {
 					this._typeaheadCandidates = newVal.filter(runner => runner).map(runner => runner.name);
@@ -93,11 +99,11 @@
 					typeaheads[index + 1].value = name;
 				});
 			});
-		},
+		}
 
 		calcStartDisabled(lowerthirdShowing, questionShowing) {
 			return lowerthirdShowing || questionShowing;
-		},
+		}
 
 		/**
 		 * Takes the names currently entered into the nodecg-typeahead-inputs.
@@ -111,5 +117,7 @@
 
 			interviewNames.value = paperInputs.map(input => input.value);
 		}
-	});
+	}
+
+	customElements.define(GdqInterview.is, GdqInterview);
 })();

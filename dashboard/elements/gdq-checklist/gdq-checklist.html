@@ -1,11 +1,11 @@
-<link rel="import" href="../../components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
 
 <dom-module id="gdq-checklist">
 	<template>
 		<style>
 			:host {
-				@apply(--layout-vertical);
+				@apply --layout-vertical;
 			}
 
 			.header {
@@ -16,20 +16,20 @@
 			}
 
 			.group {
-				@apply(--layout-horizontal);
+				@apply --layout-horizontal;
 				padding: 0 15px;
 			}
 
 			.group.horizontal {
-				@apply(--layout-justified);
+				@apply --layout-justified;
 			}
 
 			.columns {
-				@apply(--layout-horizontal);
+				@apply --layout-horizontal;
 			}
 
 			.columns > * {
-				@apply(--layout-flex);
+				@apply --layout-flex;
 				margin: 0 7px;
 			}
 
@@ -50,7 +50,7 @@
 			}
 
 			.columns .group {
-				@apply(--layout-vertical);
+				@apply --layout-vertical;
 				padding: 0 8px;
 			}
 

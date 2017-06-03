@@ -1,9 +1,9 @@
-<link rel="import" href="../../components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../components/iron-icons/iron-icons.html">
-<link rel="import" href="../../components/paper-button/paper-button.html">
-<link rel="import" href="../../components/paper-dialog/paper-dialog.html">
-<link rel="import" href="../../components/paper-material/paper-material.html">
-<link rel="import" href="../../components/paper-toast/paper-toast.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../sortable-list/sortable-list.html">
 <link rel="import" href="../gdq-tweet/gdq-tweet.html">
 
@@ -30,22 +30,22 @@
 				padding-top: 5px;
 				padding-bottom: 7px;
 
-				@apply(--layout-horizontal);
-				@apply(--layout-center);
-				@apply(--layout-flex);
+				@apply --layout-horizontal;
+				@apply --layout-center;
+				@apply --layout-flex;
 			}
 
 			#onScreen-tweet {
 				align-self: flex-start;
 				font-size: larger;
-				@apply(--layout-flex);
+				@apply --layout-flex;
 			}
 
 			#buttons {
 				margin-top: 20px;
 				margin-bottom: 24px;
-				@apply(--layout-horizontal);
-				@apply(--layout-justified);
+				@apply --layout-horizontal;
+				@apply --layout-justified;
 			}
 
 			#buttons paper-button {
@@ -67,7 +67,7 @@
 			}
 
 			#list {
-				@apply(--layout-vertical);
+				@apply --layout-vertical;
 			}
 
 			.header {
@@ -95,17 +95,17 @@
 				padding-bottom: 7px;
 				background-color: #9966cc;
 				box-sizing: border-box;
-				@apply(--layout-horizontal);
+				@apply --layout-horizontal;
 			}
 
 			.tweet-content {
-				@apply(--layout-flex);
+				@apply --layout-flex;
 			}
 
 			.tweet-buttons {
 				width: 52px;
-				@apply(--layout-horizontal);
-				@apply(--layout-center-center);
+				@apply --layout-horizontal;
+				@apply --layout-center-center;
 			}
 
 			.tweet-buttons paper-button {
@@ -117,8 +117,8 @@
 					background-color: #137400;
 				};
 
-				@apply(--layout-horizontal);
-				@apply(--layout-center-center);
+				@apply --layout-horizontal;
+				@apply --layout-center-center;
 			}
 
 			.tweet-buttons-reject {

@@ -1,16 +1,16 @@
-<link rel="import" href="../../components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../components/iron-icons/iron-icons.html">
-<link rel="import" href="../../components/iron-icons/editor-icons.html">
-<link rel="import" href="../../components/iron-icons/av-icons.html">
-<link rel="import" href="../../components/paper-button/paper-button.html">
-<link rel="import" href="../../components/paper-dialog/paper-dialog.html">
-<link rel="import" href="../../components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-icons/editor-icons.html">
+<link rel="import" href="../../../bower_components/iron-icons/av-icons.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
 
 <dom-module id="gdq-timekeeper">
 	<template>
 		<style>
 			:host {
-				@apply(--layout-vertical);
+				@apply --layout-vertical;
 				width: 914px;
 				font-family: 'roboto';
 				white-space: nowrap;
@@ -34,15 +34,15 @@
 				--bg-color: #555555;
 			}
 
-			:host[checklist-incomplete] #timer {
+			:host([checklist-incomplete]) #timer {
 				background-color: #ff6d6b;
 				color: white;
 			}
 
 			#timer {
-				@apply(--layout-horizontal);
-				@apply(--layout-center);
-				@apply(--layout-around-justified);
+				@apply --layout-horizontal;
+				@apply --layout-center;
+				@apply --layout-around-justified;
 				font-weight: 700;
 			}
 
@@ -56,22 +56,22 @@
 			}
 
 			#timerButtons {
-				@apply(--layout-horizontal);
-				@apply(--layout-center);
+				@apply --layout-horizontal;
+				@apply --layout-center;
 				height: 95px;
 				border-bottom: 2px solid black;
 				padding: 0 16px;
 			}
 
 			#timerButtons paper-button {
-				@apply(--layout-flex);
+				@apply --layout-flex;
 				height: 55px;
 			}
 
 			.runner {
-				@apply(--layout-horizontal);
-				@apply(--layout-center);
-				@apply(--layout-justified);
+				@apply --layout-horizontal;
+				@apply --layout-center;
+				@apply --layout-justified;
 				flex-basis: 130px;
 				padding-left: 26px;
 				padding-right: 8px;
@@ -84,7 +84,7 @@
 			}
 
 			.runner-info {
-				@apply(--layout-vertical);
+				@apply --layout-vertical;
 				line-height: 1;
 			}
 
@@ -104,7 +104,7 @@
 			}
 
 			.runner-buttons {
-				@apply(--layout-horizontal);
+				@apply --layout-horizontal;
 			}
 
 			.runner-buttons paper-button {
@@ -124,8 +124,8 @@
 
 			#timerButtons paper-button,
 			.runner paper-button {
-				@apply(--layout-horizontal);
-				@apply(--layout-center-center);
+				@apply --layout-horizontal;
+				@apply --layout-center-center;
 				--paper-button: {
 					color: white;
 					padding: 0;

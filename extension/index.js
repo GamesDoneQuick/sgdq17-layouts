@@ -12,55 +12,50 @@ module.exports = function (nodecg) {
 		nodecg.log.warn('WARNING! useMockData is true, you will not receive real data from the tracker!');
 	}
 
-	if (nodecg.bundleConfig.obsWebsocket.address) {
-		try {
-			require('./obs-websocket')(nodecg);
-		} catch (e) {
-			nodecg.log.error('Failed to load "obs-websocket" lib:', e.stack);
-			process.exit(1);
-		}
-	} else {
-		nodecg.log.error('"obsWebsocket" is not defined in cfg/sgdq17-layouts.json! ' +
-			'OBS Studio integration will be disabled.');
+	try {
+		require('./obs');
+	} catch (e) {
+		nodecg.log.error('Failed to load "obs" lib:', e.stack);
+		process.exit(1);
 	}
 
 	try {
-		require('./schedule')(nodecg);
+		require('./schedule');
 	} catch (e) {
 		nodecg.log.error('Failed to load "schedule" lib:', e.stack);
 		process.exit(1);
 	}
 
 	try {
-		require('./prizes')(nodecg);
+		require('./prizes');
 	} catch (e) {
 		nodecg.log.error('Failed to load "prizes" lib:', e.stack);
 		process.exit(1);
 	}
 
 	try {
-		require('./bids')(nodecg);
+		require('./bids');
 	} catch (e) {
 		nodecg.log.error('Failed to load "bids" lib:', e.stack);
 		process.exit(1);
 	}
 
 	try {
-		require('./total')(nodecg);
+		require('./total');
 	} catch (e) {
 		nodecg.log.error('Failed to load "total" lib:', e.stack);
 		process.exit(1);
 	}
 
 	try {
-		require('./timekeeping')(nodecg);
+		require('./timekeeping');
 	} catch (e) {
 		nodecg.log.error('Failed to load "timekeeping" lib:', e.stack);
 		process.exit(1);
 	}
 
 	try {
-		require('./advertisements')(nodecg);
+		require('./advertisements');
 	} catch (e) {
 		nodecg.log.error('Failed to load "advertisements" lib:', e.stack);
 		process.exit(1);
@@ -68,7 +63,7 @@ module.exports = function (nodecg) {
 
 	if (nodecg.bundleConfig.twitter.userId) {
 		try {
-			require('./twitter')(nodecg);
+			require('./twitter');
 		} catch (e) {
 			nodecg.log.error('Failed to load "twitter" lib:', e.stack);
 			process.exit(1);
@@ -80,7 +75,7 @@ module.exports = function (nodecg) {
 
 	if (nodecg.bundleConfig.osc.address) {
 		try {
-			require('./osc')(nodecg);
+			require('./osc');
 		} catch (e) {
 			nodecg.log.error('Failed to load "osc" lib:', e.stack);
 			process.exit(1);
@@ -95,7 +90,7 @@ module.exports = function (nodecg) {
 			'The interview question system (Lightning Round) will be disabled.');
 	} else {
 		try {
-			require('./interview')(nodecg);
+			require('./interview');
 		} catch (e) {
 			nodecg.log.error('Failed to load "interview" lib:', e.stack);
 			process.exit(1);
@@ -103,14 +98,14 @@ module.exports = function (nodecg) {
 	}
 
 	try {
-		require('./nowplaying')(nodecg);
+		require('./nowplaying');
 	} catch (e) {
 		nodecg.log.error('Failed to load "nowplaying" lib:', e.stack);
 		process.exit(1);
 	}
 
 	try {
-		require('./countdown')(nodecg);
+		require('./countdown');
 	} catch (e) {
 		nodecg.log.error('Failed to load "countdown" lib:', e.stack);
 		process.exit(1);

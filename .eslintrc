@@ -7,7 +7,7 @@
 				"nodecg.Replicant"
 			]
 		}],
-		"require-jsdoc": ["error", {
+		"require-jsdoc": ["warn", {
 			"require": {
 				"FunctionDeclaration": true,
 				"MethodDefinition": true,

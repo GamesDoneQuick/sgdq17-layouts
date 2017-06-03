@@ -1,4 +1,4 @@
-<link rel="import" href="../../components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
 
 <dom-module id="gdq-timer">
 	<template>
@@ -19,12 +19,12 @@
 				font-feature-settings: "tnum";
 			}
 
-			:host[paused] {
+			:host([paused]) {
 				background: url("img/bg.png") center repeat-y,
 							linear-gradient(to right, #212121 0%,#353535 13.5%,#9d9d9d 50%,#353535 86.5%,#212121 100%);
 			}
 
-			:host[finished] {
+			:host([finished]) {
 				background: url("img/bg.png") center repeat-y,
 							linear-gradient(to right, #012006 0%,#013705 13.5%,#2ab641 50%,#013705 86.5%,#012006 100%);
 			}
