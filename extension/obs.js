@@ -18,7 +18,7 @@ obs.replicants.programScene.on('change', newVal => {
 
 	newVal.sources.some(source => {
 		if (!source.name) {
-			return;
+			return false;
 		}
 
 		const lowercaseSourceName = source.name.toLowerCase();
