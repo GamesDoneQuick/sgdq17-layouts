@@ -70,9 +70,25 @@
 			"description": "If true, automatically tries to find and communicate with TestRunner's timer display box.",
 			"default": false
 		},
-		"streamTitle": {
-			"type": "string",
-			"description": "The template used to set the title of the stream whenever the current run changes."
+		"twitch": {
+			"additionalProperties": false,
+			"properties": {
+				"channelId": {
+					"type": "string",
+					"description": "The ID (not name!) of the Twitch channel to operate on.",
+					"required": true
+				},
+				"oauthToken": {
+					"type": "string",
+					"description": "The OAuth token to use to make API requests.",
+					"required": true
+				},
+				"titleTemplate": {
+					"type": "string",
+					"description": "The template used to set the title of the stream whenever the current run changes.",
+					"required": true
+				}
+			}
 		},
 		"footpedal": {
 			"type": "object",

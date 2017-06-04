@@ -7,9 +7,6 @@ const equals = require('deep-equal');
 const Promise = require('bluebird');
 const request = require('request-promise');
 
-// NodeCG
-const server = require('../../../lib/server');
-
 // Ours
 const nodecg = require('./util/nodecg-api-context').get();
 const {calcOriginalValues, mergeChangesFromTracker} = require('./lib/diff-run');
@@ -26,34 +23,36 @@ const nextRun = nodecg.Replicant('nextRun', {defaultValue: {}});
 
 // If a "streamTitle" template has been defined in the bundle config, and if lfg-twitch api is present,
 // automatically update the Twitch game and title when currentRun changes.
-if (nodecg.bundleConfig.streamTitle) {
-	server.on('extensionsLoaded', () => {
-		const twitchApi = nodecg.extensions['lfg-twitchapi'];
-		if (!twitchApi) {
-			return nodecg.log.warn('Automatic stream title updating is disabled because lfg-twitchapi is not installed.');
+if (nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.titleTemplate) {
+	nodecg.log.info('Automatic stream title updating is enabled.');
+	let lastLongName;
+	currentRun.on('change', newVal => {
+		if (newVal.longName === lastLongName) {
+			return;
 		}
 
-		nodecg.log.info('Automatic stream title updating is enabled.');
-		let lastLongName;
-		currentRun.on('change', newVal => {
-			if (newVal.longName !== lastLongName) {
-				nodecg.log.info('Updating Twitch title and game to', newVal.longName);
-				lastLongName = newVal.longName;
-				twitchApi.put('/channels/{{username}}', {
-					channel: {
-						// eslint-disable-next-line no-template-curly-in-string
-						status: nodecg.bundleConfig.streamTitle.replace('${gameName}', newVal.longName),
-						game: newVal.longName
-					}
-				}).then(response => {
-					nodecg.log.info('Successfully updated Twitch title and game to', newVal.longName);
-					if (response.statusCode !== 200) {
-						return nodecg.log.error(response.body.error, response.body.message);
-					}
-				}).catch(err => {
-					nodecg.log.error('Failed updating Twitch title and game:\n\t', err);
-				});
-			}
+		nodecg.log.info('Updating Twitch title and game to', newVal.longName);
+		lastLongName = newVal.longName;
+		request({
+			method: 'put',
+			uri: `https://api.twitch.tv/kraken/channels/${nodecg.bundleConfig.twitch.channelId}`,
+			headers: {
+				Accept: 'application/vnd.twitchtv.v5+json',
+				Authorization: `OAuth ${nodecg.bundleConfig.twitch.oauthToken}`,
+				'Content-Type': 'application/json'
+			},
+			body: {
+				channel: {
+					// eslint-disable-next-line no-template-curly-in-string
+					status: nodecg.bundleConfig.twitch.titleTemplate.replace('${gameName}', newVal.longName),
+					game: newVal.longName
+				}
+			},
+			json: true
+		}).then(() => {
+			nodecg.log.info('Successfully updated Twitch title and game to', newVal.longName);
+		}).catch(err => {
+			nodecg.log.error('Failed updating Twitch title and game:\n\t', err);
 		});
 	});
 }
