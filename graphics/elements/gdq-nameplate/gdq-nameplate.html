@@ -1,5 +1,5 @@
-<link rel="import" href="../../components/polymer/polymer.html">
-<link rel="import" href="../../imports/easeljs.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../shared/imports/easeljs.html">
 
 <!--
 Attached left, right, or none
@@ -29,7 +29,7 @@ Audio indicator comes out from side opposide placement indicator
 				width: calc(var(--gdq-nameplate-width));
 				height: 100%;
 				align-items: flex-start;
-				@apply(--layout-horizontal);
+				@apply --layout-horizontal;
 			}
 
 			#leftCapContainer,
@@ -159,85 +159,85 @@ Audio indicator comes out from side opposide placement indicator
 			}
 
 			/* attachment styles */
-			:host[attach-left] #timeClip,
-			:host[attach-right] #timeClip {
+			:host([attach-left]) #timeClip,
+			:host([attach-right]) #timeClip {
 				display: block;
 			}
 
-			:host[attach-left] #timeClip {
+			:host([attach-left]) #timeClip {
 				left: -150px;
 				-webkit-clip-path: polygon(100% 0, 100% 0%, 100% 100%, calc(100% + 15px) 100%);
 			}
 
-			:host[attach-left] #time {
+			:host([attach-left]) #time {
 				position: absolute;
 				right: 0;
 			}
 
-			:host[attach-left] #time span {
+			:host([attach-left]) #time span {
 				padding-right: 0;
 				padding-left: 10px;
 			}
 
-			:host[attach-left] #timeShine {
+			:host([attach-left]) #timeShine {
 				right: 0;
 				left: auto;
 				-webkit-mask: url("img/time-mask-left.png") no-repeat right;
 			}
 
-			:host[attach-left] #timeShine:after {
+			:host([attach-left]) #timeShine:after {
 				transform: skewX(22deg);
 				left: 0;
 				right: auto;
 			}
 
-			:host[attach-right] #timeClip {
+			:host([attach-right]) #timeClip {
 				right: -150px;
 			}
 
-			:host[attach-left] #medal {
+			:host([attach-left]) #medal {
 				left: -8px;
 				right: auto;
 				background-position-y: -26px;
 			}
 
-			:host[attach-left] #audio {
+			:host([attach-left]) #audio {
 				left: auto;
 				right: -39px;
 			}
 
-			:host[attach-left] #audio,
-			:host[attach-right] #audio {
+			:host([attach-left]) #audio,
+			:host([attach-right]) #audio {
 				visibility: visible;
 			}
 
-			:host[attach-left] #audioIcon {
+			:host([attach-left]) #audioIcon {
 				background-position-x: right;
 				transform: translateX(-39px);
 			}
 
 			/* state styles */
-			:host[forfeit] #time {
+			:host([forfeit]) #time {
 				background: url("img/time-center-forfeit.png");
 			}
 
-			:host[forfeit] #time:before {
+			:host([forfeit]) #time:before {
 				background: url("img/time-left-forfeit.png");
 			}
 
-			:host[forfeit] #time:after {
+			:host([forfeit]) #time:after {
 				background: url("img/time-right-forfeit.png");
 			}
 
-			:host[audio][attach-left] #rightCap-img {
+			:host([audio][attach-left]) #rightCap-img {
 				transform: translateX(-6px);
 			}
 
-			:host[audio][attach-right] #leftCap-img {
+			:host([audio][attach-right]) #leftCap-img {
 				transform: translateX(0);
 			}
 
-			:host[coop] #timeClip {
+			:host([coop]) #timeClip {
 				display: none;
 			}
 		</style>

@@ -1,3 +1,4 @@
+
 (function () {
 	'use strict';
 
@@ -5,10 +6,14 @@
 	const currentRun = nodecg.Replicant('currentRun');
 	const nextRun = nodecg.Replicant('nextRun');
 
-	Polymer({
-		is: 'gdq-schedule',
+	class GdqSchedule extends Polymer.Element {
+		static get is() {
+			return 'gdq-schedule';
+		}
 
 		ready() {
+			super.ready();
+
 			schedule.on('change', newVal => {
 				this.$.typeahead.candidates = newVal.map(speedrun => speedrun.name);
 			});
@@ -40,7 +45,7 @@
 					this.$.nextRun.setRun({});
 				}
 			});
-		},
+		}
 
 		/**
 		 * Takes the current value of the typeahead and loads that as the current speedrun.
@@ -71,7 +76,7 @@
 				this.$.toast.text = `Could not find speedrun with name "${nameToFind}".`;
 				this.$.toast.show();
 			}
-		},
+		}
 
 		fetchLatestSchedule() {
 			this.$.fetchLatestSchedule.setAttribute('disabled', 'true');
@@ -95,31 +100,31 @@
 					this.$.toast.show();
 				}
 			});
-		},
+		}
 
 		next() {
 			this.$.next.setAttribute('disabled', 'true');
 			nodecg.sendMessage('nextRun');
-		},
+		}
 
 		previous() {
 			this.$.previous.setAttribute('disabled', 'true');
 			nodecg.sendMessage('previousRun');
-		},
+		}
 
 		editCurrent() {
 			const editor = nodecg.getDialogDocument('edit-run').getElementById('editor');
 			editor.title = `Edit Current Run (#${currentRun.value.order})`;
 			editor.loadRun(currentRun.value);
 			nodecg.getDialog('edit-run').open();
-		},
+		}
 
 		editNext() {
 			const editor = nodecg.getDialogDocument('edit-run').getElementById('editor');
 			editor.title = `Edit Next Run (#${nextRun.value.order})`;
 			editor.loadRun(nextRun.value);
 			nodecg.getDialog('edit-run').open();
-		},
+		}
 
 		_typeaheadKeyup(e) {
 			// Enter key
@@ -127,5 +132,7 @@
 				this.takeTypeahead();
 			}
 		}
-	});
+	}
+
+	customElements.define(GdqSchedule.is, GdqSchedule);
 })();

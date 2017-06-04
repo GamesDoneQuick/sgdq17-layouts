@@ -1,10 +1,10 @@
-<link rel="import" href="../../components/font-roboto/roboto.html">
-<link rel="import" href="../../components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../components/iron-list/iron-list.html">
-<link rel="import" href="../../components/paper-input/paper-input.html">
-<link rel="import" href="../../components/paper-material/paper-material.html">
-<link rel="import" href="../../components/paper-progress/paper-progress.html">
+<link rel="import" href="../../../bower_components/font-roboto/roboto.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="gdq-host-dashboard-bid.html">
 
 <dom-module id="gdq-host-dashboard">
@@ -22,7 +22,7 @@
 				color: #000000;
 				padding: 24px 34px 50px 34px;
 				box-sizing: border-box;
-				@apply(--layout-vertical);
+				@apply --layout-vertical;
 			}
 
 			::-webkit-scrollbar {
@@ -40,14 +40,14 @@
 				line-height: 43px;
 				text-transform: uppercase;
 				margin-bottom: 9px;
-				@apply(--layout-horizontal);
-				@apply(--layout-justified);
+				@apply --layout-horizontal;
+				@apply --layout-justified;
 			}
 
 			#left {
 				width: 555px;
 				margin-right: 8px;
-				@apply(--layout-vertical);
+				@apply --layout-vertical;
 			}
 
 			#total {
@@ -56,14 +56,14 @@
 				line-height: 43px;
 				height: 147px;
 				margin-bottom: 13px;
-				@apply(--layout-vertical);
-				@apply(--layout-center-center);
+				@apply --layout-vertical;
+				@apply --layout-center-center;
 			}
 
 			#prizes {
 				padding-top: 11px;
 				flex-grow: 1;
-				@apply(--layout-flex);
+				@apply --layout-flex;
 			}
 
 			#prizes-header {
@@ -73,8 +73,8 @@
 				font-weight: 700;
 				text-transform: uppercase;
 				margin: 0 14px;
-				@apply(--layout-vertical);
-				@apply(--layout-center-center);
+				@apply --layout-vertical;
+				@apply --layout-center-center;
 			}
 
 			#prizes-list {
@@ -110,7 +110,7 @@
 				padding: 11px;
 				box-sizing: border-box;
 				margin-bottom: 13px;
-				@apply(--layout-horizontal);
+				@apply --layout-horizontal;
 			}
 
 			#metroid-kill {
@@ -124,7 +124,7 @@
 				line-height: 43px;
 				text-transform: uppercase;
 				padding: 4px 16px 0 16px;
-				@apply(--layout-vertical);
+				@apply --layout-vertical;
 			}
 
 			.metroid-category[ahead] {
@@ -195,8 +195,8 @@
 			#right {
 				padding: 11px;
 				margin-left: 8px;
-				@apply(--layout-vertical);
-				@apply(--layout-flex);
+				@apply --layout-vertical;
+				@apply --layout-flex;
 			}
 
 			#checklistStatus {
@@ -205,8 +205,8 @@
 				font-size: 36px;
 				font-weight: 500;
 				text-transform: uppercase;
-				@apply(--layout-vertical);
-				@apply(--layout-center-center);
+				@apply --layout-vertical;
+				@apply --layout-center-center;
 			}
 
 			#stopwatch {
@@ -224,9 +224,9 @@
 
 			#stopwatch-results {
 				height: 93px;
-				@apply(--layout-horizontal);
-				@apply(--layout-center);
-				@apply(--layout-around-justified);
+				@apply --layout-horizontal;
+				@apply --layout-center;
+				@apply --layout-around-justified;
 			}
 
 			.result {

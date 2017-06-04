@@ -1,11 +1,11 @@
-<link rel="import" href="../../components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../components/iron-icons/av-icons.html">
-<link rel="import" href="../../components/iron-icons/image-icons.html">
-<link rel="import" href="../../components/iron-icons/iron-icons.html">
-<link rel="import" href="../../components/paper-button/paper-button.html">
-<link rel="import" href="../../components/paper-menu/paper-menu.html">
-<link rel="import" href="../../components/paper-progress/paper-progress.html">
-<link rel="import" href="../../components/paper-styles/shadow.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-icons/av-icons.html">
+<link rel="import" href="../../../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../../bower_components/paper-styles/shadow.html">
 
 <dom-module id="gdq-advertisements">
 	<template>
@@ -15,11 +15,11 @@
 			}
 
 			#container {
-				@apply(--layout-horizontal);
+				@apply --layout-horizontal;
 			}
 
 			#container > * {
-				@apply(--layout-flex);
+				@apply --layout-flex;
 				margin: 0 5px;
 				background-color: white;
 				width: 1px;
@@ -34,8 +34,8 @@
 			}
 
 			.ad {
-				@apply(--layout-horizontal);
-				@apply(--layout-center);
+				@apply --layout-horizontal;
+				@apply --layout-center;
 				margin-bottom: 9px;
 				padding: 6px;
 				position: relative;
@@ -53,7 +53,7 @@
 				opacity: 0.7;
 				transition: box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 				flex-shrink: 0;
-				@apply(--shadow-none);
+				@apply --shadow-none;
 			}
 
 			.ad-filename {
@@ -71,24 +71,38 @@
 			}
 
 			.ad.iron-selected .ad-icon {
-				background-color: var(--nodecg-success-color);
+				background-color: #5BA664;
 				opacity: 1;
-				@apply(--shadow-elevation-3dp);
+				@apply --shadow-elevation-3dp;
 			}
 
 			#playbackControls {
 				margin-top: 16px;
-				@apply(--layout-horizontal);
+				@apply --layout-horizontal;
 			}
 
 			#playbackControls paper-button {
-				@apply(--layout-flex);
+				@apply --layout-flex;
+			}
+
+			#play {
+				--paper-button: {
+					background-color: #5BA664;
+					color: white;
+				}
+			}
+
+			#stop {
+				--paper-button: {
+					background-color: #C9513E;
+					color: white;
+				}
 			}
 
 			#preview {
 				padding: 18px;
-				@apply(--layout-vertical);
-				@apply(--layout-center);
+				@apply --layout-vertical;
+				@apply --layout-center;
 			}
 
 			#previewImage,
@@ -98,8 +112,8 @@
 			}
 
 			#statusArea {
-				@apply(--layout-horizontal);
-				@apply(--layout-center-center);
+				@apply --layout-horizontal;
+				@apply --layout-center-center;
 				height: 50px;
 			}
 
@@ -118,8 +132,8 @@
 			}
 
 			paper-button {
-				@apply(--layout-horizontal);
-				@apply(--layout-center-center);
+				@apply --layout-horizontal;
+				@apply --layout-center-center;
 			}
 
 			paper-progress:not([value="100"]) {
@@ -172,13 +186,19 @@
 		</div>
 
 		<div id="playbackControls">
-			<paper-button id="play" class="nodecg-success" raised on-tap="play"
-						  disabled="[[calcPlayButtonDisabled(_playTimeout, selectedAd)]]">
+			<paper-button
+				id="play"
+			  	raised
+				on-tap="play"
+			 	disabled="[[calcPlayButtonDisabled(_playTimeout, selectedAd)]]">
 				<iron-icon icon="av:play-arrow"></iron-icon>
 				<span>Play Selected Ad</span>
 			</paper-button>
-			<paper-button class="nodecg-danger" raised on-tap="stop"
-						  disabled="[[!playing]]">
+			<paper-button
+				id="stop"
+				raised
+				on-tap="stop"
+			  	disabled="[[!playing]]">
 				<iron-icon icon="av:stop"></iron-icon>
 				Stop
 			</paper-button>

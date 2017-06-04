@@ -1,5 +1,5 @@
-<link rel="import" href="../../components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../components/paper-material/paper-material.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="monitor-tweet.html">
 
 <dom-module id="gdq-interview-monitor">
@@ -11,13 +11,13 @@
 				height: 1080px;
 				font-family: montserrat, 'sans-serif';
 				overflow: hidden;
-				@apply(--layout-horizontal);
+				@apply --layout-horizontal;
 			}
 
 			#infoColumn {
 				width: 568px;
 				padding: 14px 16px;
-				@apply(--layout-vertical);
+				@apply --layout-vertical;
 			}
 
 			#total {
@@ -28,14 +28,14 @@
 				font-size: 95px;
 				font-weight: 700;
 
-				@apply(--layout-horizontal);
-				@apply(--layout-center-center);
+				@apply --layout-horizontal;
+				@apply --layout-center-center;
 			}
 
 			#upNext {
 				margin-top: 9px;
-				@apply(--layout-horizontal);
-				@apply(--layout-center);
+				@apply --layout-horizontal;
+				@apply --layout-center;
 			}
 
 			#upNext-label {
@@ -48,7 +48,7 @@
 			.upNext-label-wing {
 				height: 3px;
 				background-color: black;
-				@apply(--layout-flex);
+				@apply --layout-flex;
 			}
 
 			#nextRunName {
@@ -68,8 +68,8 @@
 			#tweetsColumn {
 				background-color: #dedede;
 				padding: 12px 14px;
-				@apply(--layout-vertical);
-				@apply(--layout-flex);
+				@apply --layout-vertical;
+				@apply --layout-flex;
 			}
 
 			#noQuestions {
@@ -77,8 +77,8 @@
 				width: 100%;
 				height: 100%;
 				text-align: center;
-				@apply(--layout-vertical);
-				@apply(--layout-center-center);
+				@apply --layout-vertical;
+				@apply --layout-center-center;
 			}
 
 			.bg-color-transition {

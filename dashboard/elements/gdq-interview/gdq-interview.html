@@ -1,22 +1,21 @@
-<link rel="import" href="../../components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../components/nodecg-typeahead-input/nodecg-typeahead-input.html">
-<link rel="import" href="../../components/paper-button/paper-button.html">
-<link rel="import" href="../../components/paper-input/paper-input.html">
-<link rel="import" href="../../components/paper-toggle-button/paper-toggle-button.html">
-<link rel="import" href="../../components/paper-tooltip/paper-tooltip.html">
-<link rel="import" href="../label-value.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/nodecg-typeahead-input/nodecg-typeahead-input.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
 
 <dom-module id="gdq-interview">
 	<template>
 		<style>
 			:host {
 				display: block;
-				@apply(--layout-vertical)
+				@apply --layout-vertical
 			}
 
 			#toggle {
-				@apply(--layout-horizontal);
-				@apply(--layout-center);
+				@apply --layout-horizontal;
+				@apply --layout-center;
 			}
 
 			#toggle-label {
@@ -33,7 +32,7 @@
 			}
 
 			#buttons {
-				@apply(--layout-horizontal);
+				@apply --layout-horizontal;
 			}
 
 			#show-wrapper,
@@ -51,13 +50,17 @@
 			#show {
 				width: 100%;
 				margin: 0;
+				--paper-button: {
+					background-color: #5BA664;
+					color: white;
+				}
 			}
 
-			:host[question-showing] #show-wrapper {
+			:host([question-showing]) #show-wrapper {
 				cursor: help;
 			}
 
-			:host[question-showing] #show-label {
+			:host([question-showing]) #show-label {
 				border-bottom: 1px dashed #999;
 			}
 
@@ -65,11 +68,19 @@
 				margin-left: 4px;
 				margin-right: 4px;
 				z-index: 1;
+				--paper-button: {
+					background-color: #C9513E;
+					color: white;
+				}
 			}
 
 			#auto {
 				margin-left: 4px;
 				margin-right: 0;
+				--paper-button: {
+					background-color: #645BA6;
+					color: white;
+				}
 			}
 
 			paper-button {
@@ -131,15 +142,14 @@
 			<div id="show-wrapper">
 				<paper-button
 					id="show"
-					class="nodecg-success"
 					raised
 					disabled="[[calcStartDisabled(lowerthirdShowing, questionShowing)]]">
 					<span id="show-label">Show</span>
 				</paper-button>
 			</div>
 
-			<paper-button id="hide" class="nodecg-danger" raised>Hide</paper-button>
-			<paper-button id="auto" class="nodecg-info" raised>Auto</paper-button>
+			<paper-button id="hide" raised>Hide</paper-button>
+			<paper-button id="auto" raised>Auto</paper-button>
 
 			<paper-tooltip
 				id="lowerthirdDisabledTooltip"

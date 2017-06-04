@@ -33,8 +33,8 @@
 		});
 	});
 
-	const totalInput = window.top.document.querySelector(`#${nodecg.bundleName}_edit-total iframe`)
-		.contentDocument.getElementById('input');
+	const dialogDocument = nodecg.getDialogDocument('edit-total');
+	const totalInput = dialogDocument.getElementById('input');
 	document.getElementById('edit').addEventListener('click', () => {
 		totalInput.value = total.value.raw;
 	});

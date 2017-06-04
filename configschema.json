@@ -87,20 +87,6 @@
 				}
 			}
 		},
-		"obsWebsocket": {
-			"type": "object",
-			"description": "Login information for OBS Websocket, used to communicate with and remotely control OBS Studio.",
-			"properties": {
-				"address": {
-					"type": "string"
-				},
-				"password": {
-					"type": "string"
-				}
-			},
-			"required": ["address"],
-			"additionalProperties": false
-		},
 		"firebase": {
 			"type": "object",
 			"description": "Credentials used to log into Firebase, which is what hosts Lightning Round.",

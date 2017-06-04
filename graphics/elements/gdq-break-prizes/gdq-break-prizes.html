@@ -1,6 +1,6 @@
-<link rel="import" href="../../components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../components/iron-image/iron-image.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html">
 
 <dom-module id="gdq-break-prizes">
 	<template>
@@ -24,8 +24,8 @@
 				font-weight: 400;
 				text-align: center;
 				margin-bottom: 21px;
-				@apply(--layout-horizontal);
-				@apply(--layout-center-center);
+				@apply --layout-horizontal;
+				@apply --layout-center-center;
 			}
 
 			#provider-wrap {
@@ -38,8 +38,8 @@
 			#prize {
 				padding: 14px 14px;
 				background-color: #1f2828;
-				@apply(--layout-horizontal);
-				@apply(--layout-center);
+				@apply --layout-horizontal;
+				@apply --layout-center;
 			}
 
 			#prize-image {
@@ -50,7 +50,7 @@
 				border: 3px solid white;
 				box-sizing: border-box;
 				margin: 6px;
-				@apply(--layout-flex-none);
+				@apply --layout-flex-none;
 			}
 
 			#prize-image iron-image {
@@ -82,7 +82,7 @@
 				color: #ffffff;
 				font-weight: 400;
 				margin-top: 12px;
-				@apply(--layout-horizontal);
+				@apply --layout-horizontal;
 			}
 
 			#prize-minbid-amount {

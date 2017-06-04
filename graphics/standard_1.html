@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<title>Standard, 1 Player</title>
 	<link rel="stylesheet" href="style/layout.css">
-	<script src="components/gsap/src/minified/TweenMax.min.js"></script>
+	<script src="../bower_components/gsap/src/minified/TweenMax.min.js"></script>
 	<link rel="import" href="elements/gdq-nameplate/gdq-nameplate.html">
 	<link rel="import" href="elements/gdq-runinfo/gdq-runinfo.html">
 	<link rel="import" href="elements/gdq-timer/gdq-timer.html">
@@ -93,35 +93,35 @@
 				}
 
 				/* One runner */
-				:host[num-runners="1"] #runners {
+				:host([num-runners="1"]) #runners {
 					margin-top: 9px;
 				}
 
-				:host[num-runners="1"] gdq-nameplate:not([index="0"]) {
+				:host([num-runners="1"]) gdq-nameplate:not([index="0"]) {
 					display: none;
 				}
 
 				/* Two runners */
-				:host[num-runners="2"] #runners {
+				:host([num-runners="2"]) #runners {
 					margin-top: 11px;
 				}
 
-				:host[num-runners="2"] gdq-nameplate[index="2"],
-				:host[num-runners="2"] gdq-nameplate[index="3"] {
+				:host([num-runners="2"]) gdq-nameplate[index="2"],
+				:host([num-runners="2"]) gdq-nameplate[index="3"] {
 					display: none;
 				}
 
 				/* Four runners */
-				:host[num-runners="4"] #runners {
+				:host([num-runners="4"]) #runners {
 					margin-top: 11px;
 					margin-bottom: 5px;
 				}
 
-				:host[num-runners="4"] #sponsorsAndTwitter {
+				:host([num-runners="4"]) #sponsorsAndTwitter {
 					display: none;
 				}
 
-				:host[num-runners="4"] gdq-timer {
+				:host([num-runners="4"]) gdq-timer {
 					padding-top: 0;
 				}
 			</style>

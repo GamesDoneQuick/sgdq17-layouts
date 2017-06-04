@@ -5,12 +5,12 @@
 	<title>Test Break</title>
 	<link rel="stylesheet" href="style/layout.css">
 	<link rel="stylesheet" href="style/font/SF Pixelate.css">
-	<script src="components/gsap/src/minified/TweenMax.min.js"></script>
-	<link rel="import" href="components/iron-flex-layout/iron-flex-layout-classes.html">
-	<link rel="import" href="components/iron-flex-layout/iron-flex-layout.html">
-	<link rel="import" href="components/iron-icons/iron-icons.html">
-	<link rel="import" href="components/paper-icon-button/paper-icon-button.html">
-	<link rel="import" href="components/vaadin-combo-box/vaadin-combo-box.html">
+	<script src="../bower_components/gsap/src/minified/TweenMax.min.js"></script>
+	<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+	<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+	<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+	<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+	<link rel="import" href="../bower_components/vaadin-combo-box/vaadin-combo-box.html">
 	<link rel="import" href="elements/gdq-break-bids/gdq-break-bids.html">
 	<link rel="import" href="elements/gdq-break-prizes/gdq-break-prizes.html">
 	<style>
@@ -26,26 +26,26 @@
 		<template>
 			<style include="iron-flex iron-flex-alignment">
 				:host {
-					@apply(--layout-horizontal);
+					@apply --layout-horizontal;
 				}
 
 				.section {
 					margin: 8px;
-					@apply(--layout-vertical);
+					@apply --layout-vertical;
 				}
 
 				.section-controls {
-					@apply(--layout-horizontal);
+					@apply --layout-horizontal;
 				}
 
 				.section-controls vaadin-combo-box {
-					@apply(--layout-flex);
+					@apply --layout-flex;
 				}
 
 				.section-controls paper-icon-button {
 					margin: 0 0.5em;
 					align-self: flex-end;
-					@apply(--layout-flex-none);
+					@apply --layout-flex-none;
 				}
 
 				gdq-break-bids,
