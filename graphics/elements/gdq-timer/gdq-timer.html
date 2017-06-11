@@ -1,8 +1,9 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../style/gdq-text-styles.html">
 
 <dom-module id="gdq-timer">
 	<template>
-		<style>
+		<style include="gdq-text-styles">
 			:host {
 				position: absolute;
 				display: flex;
@@ -17,6 +18,7 @@
 				font-weight: 700;
 				font-variant-numeric: tabular-nums;
 				font-feature-settings: "tnum";
+				color: white;
 			}
 
 			:host([paused]) {

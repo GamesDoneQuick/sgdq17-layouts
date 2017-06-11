@@ -1,15 +1,17 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../../shared/imports/textFit.html">
+<link rel="import" href="../../style/gdq-text-styles.html">
 
 <dom-module id="gdq-runinfo">
 	<template>
-		<style>
+		<style include="gdq-text-styles">
 			:host {
 				position: absolute;
 				display: flex;
 				flex-direction: column;
 				justify-content: space-between;
 				white-space: nowrap;
+				color: white;
 			}
 
 			#category,
