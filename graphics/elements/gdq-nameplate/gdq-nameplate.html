@@ -1,4 +1,5 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../../shared/imports/easeljs.html">
 
 <!--
@@ -23,6 +24,7 @@ Audio indicator comes out from side opposide placement indicator
 				font-size: 25px;
 				text-transform: uppercase;
 				z-index: 1;
+				color: white;
 			}
 
 			#main {
@@ -239,6 +241,10 @@ Audio indicator comes out from side opposide placement indicator
 
 			:host([coop]) #timeClip {
 				display: none;
+			}
+
+			[hidden] {
+				display: none !important;
 			}
 		</style>
 
