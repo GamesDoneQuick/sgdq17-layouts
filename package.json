@@ -65,13 +65,6 @@
         "file": "schedule/dialogs/edit-run.html"
       },
       {
-        "name": "advertisements",
-        "title": "Advertisements",
-        "width": 4,
-        "headerColor": "#2d4e8a",
-        "file": "advertisements.html"
-      },
-      {
         "name": "checklist",
         "title": "Checklist",
         "width": 4,
@@ -147,12 +140,6 @@
         "file": "interview_tier2.html",
         "width": 1280,
         "height": 720
-      },
-      {
-        "file": "advertisements.html",
-        "width": 1280,
-        "height": 720,
-        "singleInstance": true
       },
       {
         "file": "countdown.html",
@@ -261,18 +248,6 @@
       }
     ],
     "assetCategories": [
-      {
-        "name": "advertisements",
-        "title": "Advertisements",
-        "allowedTypes": [
-          "jpg",
-          "jpeg",
-          "gif",
-          "png",
-          "webm",
-          "mp4"
-        ]
-      },
       {
         "name": "sponsors-3ds",
         "title": "Sponsors 3DS",

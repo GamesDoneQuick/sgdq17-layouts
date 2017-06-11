@@ -18,7 +18,6 @@ module.exports = function (nodecg) {
 	require('./bids');
 	require('./total');
 	require('./timekeeping');
-	require('./advertisements');
 	require('./nowplaying');
 	require('./countdown');
 
