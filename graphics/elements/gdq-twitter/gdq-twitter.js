@@ -3,32 +3,37 @@
 
 	const BODY_DISPLAY_DURATION = 9;
 
-	Polymer({
-		is: 'gdq-twitter',
+	class GdqTwitter extends Polymer.Element {
+		static get is() {
+			return 'gdq-twitter';
+		}
 
-		properties: {
-			tl: {
-				type: TimelineLite,
-				value() {
-					return new TimelineLite({
-						autoRemoveChilren: true,
-						onComplete() {
-							// Remove will-change every time the timeline is emptied
-							this.$.namebar.style.willChange = '';
-							this.$.body.style.willChange = '';
-							this.style.willChange = '';
-						},
-						onCompleteScope: this
-					});
-				},
-				readOnly: true
-			}
-		},
+		static get properties() {
+			return {
+				tl: {
+					type: TimelineLite,
+					value() {
+						return new TimelineLite({
+							autoRemoveChilren: true,
+							onComplete() {
+								// Remove will-change every time the timeline is emptied
+								this.$.namebar.style.willChange = '';
+								this.$.body.style.willChange = '';
+								this.style.willChange = '';
+							},
+							onCompleteScope: this
+						});
+					},
+					readOnly: true
+				}
+			};
+		}
 
-		attached() {
+		connectedCallback() {
+			super.connectedCallback();
 			this._sponsors = document.querySelector('gdq-sponsors');
 			nodecg.listenFor('showTweet', this.showTweet.bind(this));
-		},
+		}
 
 		showTweet(tweet) {
 			const tl = this.tl;
@@ -109,5 +114,7 @@
 			// Padding
 			tl.to({}, 0.1, {});
 		}
-	});
+	}
+
+	customElements.define(GdqTwitter.is, GdqTwitter);
 })();

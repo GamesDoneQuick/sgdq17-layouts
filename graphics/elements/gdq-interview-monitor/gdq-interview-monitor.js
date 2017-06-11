@@ -8,34 +8,42 @@
 	const questionTweets = nodecg.Replicant('interview:questionTweets');
 	const questionSortMap = nodecg.Replicant('interview:questionSortMap');
 
-	Polymer({
-		is: 'gdq-interview-monitor',
+	class GdqInterviewMonitor extends Polymer.Element {
+		static get is() {
+			return 'gdq-interview-monitor';
+		}
 
-		properties: {
-			questionTweets: {
-				type: Array
-			},
-			noQuestionTweets: {
-				type: Boolean,
-				computed: 'computeNoQuestionTweets(questionTweets)'
-			},
-			onScreenTweet: {
-				type: Object,
-				computed: 'calcOnScreenTweet(questionTweets, _sortMapVal)',
-				observer: 'onScreenTweetChanged',
-				value: null
-			}
-		},
+		static get properties() {
+			return {
+				questionTweets: {
+					type: Array
+				},
+				noQuestionTweets: {
+					type: Boolean,
+					computed: 'computeNoQuestionTweets(questionTweets)'
+				},
+				onScreenTweet: {
+					type: Object,
+					computed: 'calcOnScreenTweet(questionTweets, _sortMapVal)',
+					observer: 'onScreenTweetChanged',
+					value: null
+				}
+			};
+		}
 
 		computeNoQuestionTweets(questionTweets) {
 			return !questionTweets || questionTweets.length <= 0;
-		},
+		}
 
 		calcOnScreenTweet(questionTweets, _sortMapVal) {
+			if (!questionTweets || !_sortMapVal) {
+				return;
+			}
+
 			return questionTweets.find(tweet => {
 				return _sortMapVal.indexOf(tweet.id_str) === 0;
 			});
-		},
+		}
 
 		onScreenTweetChanged(newVal, oldVal) {
 			if (!newVal) {
@@ -47,7 +55,7 @@
 			}
 
 			this.$.repeat.render();
-			Polymer.dom(this).flush();
+			Polymer.flush();
 
 			const firstMonitorTweet = this.$$('monitor-tweet');
 			if (!firstMonitorTweet) {
@@ -59,24 +67,34 @@
 			flushCss(firstMonitorTweet.$.material);
 			firstMonitorTweet.$.material.style.transition = 'background-color 1600ms cubic-bezier(0.455, 0.03, 0.515, 0.955)';
 			firstMonitorTweet.$.material.style.backgroundColor = '#ddffdd';
-		},
+		}
 
 		ready() {
+			super.ready();
+
 			// Fades new question nodes from purple to white when added.
-			Polymer.dom(this.$.tweetsColumn).observeNodes(mutation => {
-				mutation.addedNodes.filter(node => {
-					return node.is === 'monitor-tweet';
-				}).forEach(node => {
-					const isFirstChild = node === node.parentNode.querySelector('monitor-tweet');
-					if (isFirstChild) {
-						// This is handled by onScreenTweetChanged
+			this._listObserver = new MutationObserver(mutations => {
+				mutations.forEach(mutation => {
+					if (!mutation.addedNodes) {
 						return;
 					}
 
-					flushCss(node);
-					node.$.material.style.backgroundColor = 'white';
+					mutation.addedNodes.filter(node => {
+						return node.is === 'monitor-tweet';
+					}).forEach(node => {
+						const isFirstChild = node === node.parentNode.querySelector('monitor-tweet');
+						if (isFirstChild) {
+							// This is handled by onScreenTweetChanged
+							return;
+						}
+
+						flushCss(node);
+						node.$.material.style.backgroundColor = 'white';
+					});
 				});
 			});
+
+			this._listObserver.observe(this.$.tweetsColumn, {childList: true});
 
 			this.tl = new TimelineLite({autoRemoveChildren: true});
 
@@ -105,7 +123,7 @@
 					this._flashBgIfAppropriate(operations);
 				}
 			});
-		},
+		}
 
 		_flashBgIfAppropriate(operations) {
 			if (operations && operations.length === 1) {
@@ -126,7 +144,7 @@
 			flushCss(this.$.tweetsColumn);
 			this.$.tweetsColumn.classList.add('bg-color-transition');
 			this.$.tweetsColumn.style.backgroundColor = '#dedede';
-		},
+		}
 
 		updateUpNextDisplay() {
 			let upNextRun = nextRun.value;
@@ -154,7 +172,7 @@
 				}, upNextRun.runners[0].name);
 			}
 			this.$.nextRunners.innerHTML = concatenatedRunners;
-		},
+		}
 
 		totalChanged(newVal) {
 			const TIME_PER_DOLLAR = 0.03;
@@ -170,7 +188,7 @@
 				},
 				onUpdateScope: this
 			});
-		},
+		}
 
 		mapSort(a, b) {
 			if (!this._sortMapVal) {
@@ -195,7 +213,9 @@
 
 			return aMapIndex - bMapIndex;
 		}
-	});
+	}
+
+	customElements.define(GdqInterviewMonitor.is, GdqInterviewMonitor);
 
 	/**
 	 * By reading the offsetHeight property, we are forcing

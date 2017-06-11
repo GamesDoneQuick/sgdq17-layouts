@@ -8,59 +8,63 @@
 	const stopwatch = nodecg.Replicant('stopwatch');
 	const gameAudioChannels = nodecg.Replicant('gameAudioChannels');
 
-	Polymer({
-		is: 'gdq-nameplate',
+	class GdqNameplate extends Polymer.Element {
+		static get is() {
+			return 'gdq-nameplate';
+		}
 
-		properties: {
-			index: Number,
-			audio: {
-				reflectToAttribute: true,
-				observer: 'audioChanged'
-			},
-			attachLeft: {
-				type: Boolean,
-				reflectToAttribute: true,
-				observer: 'attachLeftChanged'
-			},
-			attachRight: {
-				type: Boolean,
-				reflectToAttribute: true,
-				observer: 'attachRightChanged'
-			},
-			coop: {
-				type: Boolean,
-				reflectToAttribute: true
-			},
-			forfeit: {
-				type: Boolean,
-				reflectToAttribute: true,
-				value: false
-			},
-			time: String,
-			place: Number,
-			name: {
-				type: String,
-				value: ''
-			},
-			twitch: {
-				type: String,
-				value: ''
-			},
-			timeTL: {
-				type: TimelineLite,
-				value() {
-					return new TimelineLite({autoRemoveChildren: true});
+		static get properties() {
+			return {
+				index: Number,
+				audio: {
+					reflectToAttribute: true,
+					observer: 'audioChanged'
 				},
-				readOnly: true
-			},
-			audioTL: {
-				type: TimelineLite,
-				value() {
-					return new TimelineLite({autoRemoveChildren: true});
+				attachLeft: {
+					type: Boolean,
+					reflectToAttribute: true,
+					observer: 'attachLeftChanged'
 				},
-				readOnly: true
-			}
-		},
+				attachRight: {
+					type: Boolean,
+					reflectToAttribute: true,
+					observer: 'attachRightChanged'
+				},
+				coop: {
+					type: Boolean,
+					reflectToAttribute: true
+				},
+				forfeit: {
+					type: Boolean,
+					reflectToAttribute: true,
+					value: false
+				},
+				time: String,
+				place: Number,
+				name: {
+					type: String,
+					value: ''
+				},
+				twitch: {
+					type: String,
+					value: ''
+				},
+				timeTL: {
+					type: TimelineLite,
+					value() {
+						return new TimelineLite({autoRemoveChildren: true});
+					},
+					readOnly: true
+				},
+				audioTL: {
+					type: TimelineLite,
+					value() {
+						return new TimelineLite({autoRemoveChildren: true});
+					},
+					readOnly: true
+				}
+			};
+		}
 
 		audioChanged(newVal) {
 			// I have no idea why, but sometimes an empty string makes its way into this function??
@@ -125,19 +129,19 @@
 					});
 				}
 			}
-		},
+		}
 
 		attachLeftChanged(newVal) {
 			if (newVal && this.attachRight) {
 				this.attachRight = false;
 			}
-		},
+		}
 
 		attachRightChanged(newVal) {
 			if (newVal && this.attachLeft) {
 				this.attachLeft = false;
 			}
-		},
+		}
 
 		showTime() {
 			if (this._timeShowing) {
@@ -161,7 +165,7 @@
 			this.timeTL.set(this.$.timeShine, {transition: 'width 400ms linear', width: '140%', opacity: 0.5});
 			this.timeTL.set(this.$.medal, {className: '+=shine'}, '+=0.25');
 			this.timeTL.set(this.$.medal, {className: '-=shine'}, '+=0.35');
-		},
+		}
 
 		hideTime() {
 			if (!this._timeShowing) {
@@ -177,7 +181,7 @@
 				clearProps: 'webkitClipPath',
 				transition: '-webkit-clip-path 325ms ease-in'
 			});
-		},
+		}
 
 		calcMedalImage(newVal, forfeit) {
 			if (forfeit) {
@@ -202,9 +206,11 @@
 					this.hideTime();
 					return '';
 			}
-		},
+		}
 
 		ready() {
+			super.ready();
+
 			// Create looping anim for main nameplate.
 			this.nameTL = new TimelineMax({repeat: -1, paused: true});
 			this.nameTL.to(this.$.names, NAME_FADE_DURATION, {
@@ -360,7 +366,7 @@
 			currentRun.on('change', this.currentRunChanged.bind(this));
 			stopwatch.on('change', this.stopwatchChanged.bind(this));
 			gameAudioChannels.on('change', this.gameAudioChannelsChanged.bind(this));
-		},
+		}
 
 		/*
 		 * 1) For singleplayer, if both match (ignoring capitalization), show only twitch.
@@ -417,13 +423,13 @@
 						this.nameTL.restart();
 					}
 
-					this.async(this.fitName);
+					Polymer.RenderStatus.afterNextRender(this, this.fitName);
 				}.bind(this)
 			});
-		},
+		}
 
 		fitName() {
-			Polymer.dom.flush();
+			Polymer.flush();
 			const MAX_NAME_WIDTH = this.$.names.clientWidth - 32;
 			const nameWidth = this.$.namesName.clientWidth;
 			if (nameWidth > MAX_NAME_WIDTH) {
@@ -447,7 +453,7 @@
 			} else {
 				TweenLite.set(twitchSpan, {scaleX: 1});
 			}
-		},
+		}
 
 		stopwatchChanged(newVal) {
 			if (newVal.results[this.index]) {
@@ -458,7 +464,7 @@
 				this.forfeit = false;
 				this.place = 0;
 			}
-		},
+		}
 
 		gameAudioChannelsChanged(newVal) {
 			if (!newVal || newVal.length <= 0) {
@@ -470,5 +476,7 @@
 			const canHearHd = !channels.hd.muted && !channels.hd.fadedBelowThreshold;
 			this.audio = canHearSd || canHearHd;
 		}
-	});
+	}
+
+	customElements.define(GdqNameplate.is, GdqNameplate);
 })();

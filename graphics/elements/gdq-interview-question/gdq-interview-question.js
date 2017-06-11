@@ -5,28 +5,34 @@
 	const questionSortMap = nodecg.Replicant('interview:questionSortMap');
 	const questionShowing = nodecg.Replicant('interview:questionShowing');
 
-	Polymer({
-		is: 'gdq-interview-question',
+	class GdqInterviewQuestion extends Polymer.Element {
+		static get is() {
+			return 'gdq-interview-question';
+		}
 
-		properties: {
-			tl: {
-				type: TimelineLite,
-				value() {
-					return new TimelineLite({autoRemoveChildren: true});
+		static get properties() {
+			return {
+				tl: {
+					type: TimelineLite,
+					value() {
+						return new TimelineLite({autoRemoveChildren: true});
+					},
+					readOnly: true
 				},
-				readOnly: true
-			},
-			_questionsVal: {
-				type: Object
-			},
-			onScreenTweet: {
-				type: Object,
-				computed: 'calcOnScreenTweet(_questionsVal, _sortMapVal)',
-				value: null
-			}
-		},
+				_questionsVal: {
+					type: Object
+				},
+				onScreenTweet: {
+					type: Object,
+					computed: 'calcOnScreenTweet(_questionsVal, _sortMapVal)',
+					value: null
+				}
+			};
+		}
 
 		ready() {
+			super.ready();
+
 			questions.on('change', newVal => {
 				this._questionsVal = newVal.slice(0);
 			});
@@ -42,7 +48,7 @@
 					this.hide();
 				}
 			});
-		},
+		}
 
 		show() {
 			this.tl.call(() => {
@@ -60,7 +66,7 @@
 				y: 0,
 				ease: Power3.easeOut
 			});
-		},
+		}
 
 		hide() {
 			this.tl.to(this, 0.9, {
@@ -71,12 +77,14 @@
 				},
 				onCompleteScope: this
 			});
-		},
+		}
 
 		calcOnScreenTweet(_questionsVal, _sortMapVal) {
 			return _questionsVal.find(reply => {
 				return _sortMapVal.indexOf(reply.id_str) === 0;
 			});
 		}
-	});
+	}
+
+	customElements.define(GdqInterviewQuestion.is, GdqInterviewQuestion);
 })();

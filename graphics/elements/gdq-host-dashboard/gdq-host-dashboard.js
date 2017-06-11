@@ -12,43 +12,47 @@
 	const schedule = nodecg.Replicant('schedule');
 	const runOrderMap = nodecg.Replicant('runOrderMap');
 
-	Polymer({
-		is: 'gdq-host-dashboard',
+	class GdqHostDashboard extends Polymer.Element {
+		static get is() {
+			return 'gdq-host-dashboard';
+		}
 
-		properties: {
-			currentTime: {
-				type: String
-			},
-			currentRun: {
-				type: Object
-			},
-			elapsedTime: {
-				type: String
-			},
-			total: {
-				type: String
-			},
-			prizes: {
-				type: Array
-			},
-			relevantBids: {
-				type: Array
-			},
-			metroidBid: {
-				type: Object,
-				observer: 'metroidBidChanged'
-			},
-			saveTheAnimalsTotal: {
-				type: Object
-			},
-			killTheAnimalsTotal: {
-				type: Object
-			},
-			bidFilterString: {
-				type: String,
-				value: ''
-			}
-		},
+		static get properties() {
+			return {
+				currentTime: {
+					type: String
+				},
+				currentRun: {
+					type: Object
+				},
+				elapsedTime: {
+					type: String
+				},
+				total: {
+					type: String
+				},
+				prizes: {
+					type: Array
+				},
+				relevantBids: {
+					type: Array
+				},
+				metroidBid: {
+					type: Object,
+					observer: 'metroidBidChanged'
+				},
+				saveTheAnimalsTotal: {
+					type: Object
+				},
+				killTheAnimalsTotal: {
+					type: Object
+				},
+				bidFilterString: {
+					type: String,
+					value: ''
+				}
+			};
+		}
 
 		recalcRelevantBids() {
 			if (!allBids.value || !currentRun.value || !runOrderMap.value) {
@@ -60,7 +64,7 @@
 			}).sort((a, b) => {
 				return runOrderMap.value[a.speedrun] - runOrderMap.value[b.speedrun];
 			});
-		},
+		}
 
 		metroidBidChanged(newVal) {
 			if (newVal) {
@@ -92,9 +96,10 @@
 				this.$['metroid-save'].removeAttribute('ahead');
 				this.$['metroid-kill'].setAttribute('ahead', 'true');
 			}
-		},
+		}
 
-		attached() {
+		connectedCallback() {
+			super.connectedCallback();
 			this.updateCurrentTime = this.updateCurrentTime.bind(this);
 			this.updateCurrentTime();
 			setInterval(this.updateCurrentTime, 1000);
@@ -163,12 +168,12 @@
 				$cooldown.classList.remove('transiting');
 				$cooldown.value = 100;
 
-				this.async(() => {
+				Polymer.RenderStatus.afterNextRender(this, () => {
 					$cooldown.classList.add('transiting');
 					$cooldown.value = 0;
-				}, 16.7 * 3);
+				});
 			});
-		},
+		}
 
 		recalcUpcomingRuns() {
 			if (!schedule.value || !currentRun.value) {
@@ -177,7 +182,7 @@
 			}
 
 			this.upcomingRuns = schedule.value.slice(currentRun.value.order, currentRun.value.order + 3);
-		},
+		}
 
 		calcRunnersString(runners) {
 			let concatenatedRunners;
@@ -193,12 +198,12 @@
 				}, runners[0].name);
 			}
 			return concatenatedRunners;
-		},
+		}
 
 		updateCurrentTime() {
 			const date = new Date();
 			this.currentTime = date.toLocaleTimeString('en-US', {hour12: true});
-		},
+		}
 
 		updateTimeElapsed() {
 			const nowTimestamp = Date.now();
@@ -234,13 +239,13 @@
 			}
 
 			this.elapsedTime = timeString;
-		},
+		}
 
 		calcMetroidAheadText(saveOrKill, saveTheAnimalsTotal, killTheAnimalsTotal) {
 			if (!saveOrKill || !saveTheAnimalsTotal || !killTheAnimalsTotal) {
 				return;
 			}
-			
+
 			const diff = Math.abs(saveTheAnimalsTotal.raw - killTheAnimalsTotal.raw).toLocaleString('en-US', {
 				maximumFractionDigits: 2,
 				style: 'currency',
@@ -264,7 +269,7 @@
 			}
 
 			throw new Error(`Unexpected calcAheadText first argument: "${saveOrKill}". Acceptable values are "save" and "kill".`);
-		},
+		}
 
 		calcBids(bids, bidFilterString) {
 			if (!bids) {
@@ -279,7 +284,7 @@
 
 				return regexp.test(bid.description);
 			});
-		},
+		}
 
 		calcRunnerName(runners, index) {
 			if (!this.runners) {
@@ -291,10 +296,12 @@
 			}
 
 			return this.runners[index].name;
-		},
+		}
 
 		isValidResult(result, index, runners) {
 			return result && result !== null && runners[index] && runners[index].name;
 		}
-	});
+	}
+
+	customElements.define(GdqHostDashboard.is, GdqHostDashboard);
 })();

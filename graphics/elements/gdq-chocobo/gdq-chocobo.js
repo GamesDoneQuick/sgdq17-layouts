@@ -5,13 +5,16 @@
 	const FADE_EASE = Power1.easeInOut;
 	const allBids = nodecg.Replicant('allBids');
 
-	Polymer({
-		is: 'gdq-chocobo',
+	class GdqChocobo extends Polymer.Element {
+		static get is() {
+			return 'gdq-chocobo';
+		}
 
 		ready() {
+			super.ready();
 			this.tl = new TimelineLite({autoRemoveChildren: true});
 			allBids.on('change', this.chocoboCheck.bind(this));
-		},
+		}
 
 		showChocobo() {
 			this.tl.clear();
@@ -19,7 +22,7 @@
 				opacity: 1,
 				ease: FADE_EASE
 			});
-		},
+		}
 
 		hideChocobo() {
 			this.tl.clear();
@@ -27,7 +30,7 @@
 				opacity: 0,
 				ease: FADE_EASE
 			});
-		},
+		}
 
 		chocoboCheck() {
 			console.log('checking');
@@ -41,5 +44,7 @@
 				}
 			});
 		}
-	});
+	}
+
+	customElements.define(GdqChocobo.is, GdqChocobo);
 })();

@@ -53,35 +53,39 @@
 		});
 	}
 
-	Polymer({
-		is: 'gdq-break-prizes',
+	class GdqBreakPrizes extends Polymer.Element {
+		static get is() {
+			return 'gdq-break-prizes';
+		}
 
-		properties: {
-			hidden: {
-				type: Boolean,
-				reflectToAttribute: true,
-				observer: '_hiddenChanged'
-			},
-			tl: {
-				type: TimelineLite,
-				value() {
-					return new TimelineLite({autoRemoveChildren: true});
+		static get properties() {
+			return {
+				hidden: {
+					type: Boolean,
+					reflectToAttribute: true,
+					observer: '_hiddenChanged'
 				},
-				readOnly: true
-			},
-			screenHeader: {
-				type: String,
-				value: 'COMMUNITY PRIZES',
-				readOnly: true
-			}
-		},
+				tl: {
+					type: TimelineLite,
+					value() {
+						return new TimelineLite({autoRemoveChildren: true});
+					},
+					readOnly: true
+				},
+				screenHeader: {
+					type: String,
+					value: 'COMMUNITY PRIZES',
+					readOnly: true
+				}
+			};
+		}
 
 		_hiddenChanged(newVal) {
 			if (newVal) {
 				this.$['provider-wrap'].innerText = '';
 				this.$['prize-name'].innerText = '';
 			}
-		},
+		}
 
 		/**
 		 * Returns whether or not there are any prizes to show at this time.
@@ -93,7 +97,7 @@
 			}
 
 			return this._calcPrizesToDisplay(currentPrizes.value).length > 0;
-		},
+		}
 
 		/**
 		 * Adds an animation to the global timeline for showing the current prizes
@@ -117,7 +121,7 @@
 				prizesToDisplay.forEach(this.showPrize, this);
 				this.tl.call(resolve);
 			});
-		},
+		}
 
 		/**
 		 * Adds an animation to the global timeline for showing a specific prize.
@@ -191,7 +195,7 @@
 			}, null, null, '+=0.1');
 
 			this.tl.call(() => {
-				Polymer.dom(this.$['prize-minbid']).innerHTML =
+				this.$['prize-minbid'].innerHTML =
 					`Minimum&nbsp;bid:&nbsp;<div id="prize-minbid-amount">${prize.minimumbid}</div>`;
 				this._typeAnim(this.$['prize-minbid']);
 			}, null, null, '+=0.1');
@@ -226,7 +230,7 @@
 			if (index === 0 && prizesArray.length === 1) {
 				this.tl.set(this.$.disclaimer.style, {opacity: 0});
 			}
-		},
+		}
 
 		preloadFirstImage() {
 			if (!currentPrizes.value || currentPrizes.value.length <= 0) {
@@ -234,7 +238,7 @@
 			}
 
 			this.$['prize-image-current'].src = currentPrizes.value[0].image;
-		},
+		}
 
 		_calcPrizesToDisplay(prizesArray) {
 			const currentGrandPrizes = prizesArray.filter(prize => prize.grand);
@@ -253,7 +257,7 @@
 			}
 
 			return prizesToDisplay;
-		},
+		}
 
 		_typeAnim($el, {splitType = 'chars,words'} = {}) {
 			const tl = new TimelineLite();
@@ -286,7 +290,7 @@
 			}
 
 			return tl;
-		},
+		}
 
 		_untypeAnim($el) {
 			return new Promise(resolve => {
@@ -317,5 +321,7 @@
 				return tl;
 			});
 		}
-	});
+	}
+
+	customElements.define(GdqBreakPrizes.is, GdqBreakPrizes);
 })();

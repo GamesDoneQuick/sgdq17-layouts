@@ -3,35 +3,41 @@
 
 	const stopwatch = nodecg.Replicant('stopwatch');
 
-	Polymer({
-		is: 'gdq-timer',
+	class GdqTimer extends Polymer.Element {
+		static get is() {
+			return 'gdq-timer';
+		}
 
-		properties: {
-			paused: {
-				type: Boolean,
-				observer: 'pausedChanged',
-				reflectToAttribute: true
-			},
-			finished: {
-				type: Boolean,
-				observer: 'finishedChanged',
-				reflectToAttribute: true
-			}
-		},
+		static get properties() {
+			return {
+				paused: {
+					type: Boolean,
+					observer: 'pausedChanged',
+					reflectToAttribute: true
+				},
+				finished: {
+					type: Boolean,
+					observer: 'finishedChanged',
+					reflectToAttribute: true
+				}
+			};
+		}
 
 		pausedChanged(newVal) {
 			if (newVal && this.finished) {
 				this.finished = false;
 			}
-		},
+		}
 
 		finishedChanged(newVal) {
 			if (newVal && this.paused) {
 				this.paused = false;
 			}
-		},
+		}
 
 		ready() {
+			super.ready();
+
 			const timerTL = new TimelineLite({autoRemoveChildren: true});
 
 			stopwatch.on('change', (newVal, oldVal) => {
@@ -61,5 +67,7 @@
 				}
 			});
 		}
-	});
+	}
+
+	customElements.define(GdqTimer.is, GdqTimer);
 })();

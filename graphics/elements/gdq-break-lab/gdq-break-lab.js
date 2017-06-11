@@ -8,30 +8,35 @@
 	const EMPTY_OBJ = {};
 	const nowPlaying = nodecg.Replicant('nowPlaying');
 
-	Polymer({
-		is: 'gdq-break-lab',
+	class GdqBreakLab extends Polymer.Element {
+		static get is() {
+			return 'gdq-break-lab';
+		}
 
-		properties: {
-			nowPlayingTL: {
-				type: TimelineLite,
-				value() {
-					return new TimelineLite({autoRemoveChildren: true});
+		static get properties() {
+			return {
+				nowPlayingTL: {
+					type: TimelineLite,
+					value() {
+						return new TimelineLite({autoRemoveChildren: true});
+					},
+					readOnly: true
 				},
-				readOnly: true
-			},
-			tweetTL: {
-				type: TimelineLite,
-				value() {
-					return new TimelineLite({autoRemoveChildren: true});
-				},
-				readOnly: true
-			}
-		},
+				tweetTL: {
+					type: TimelineLite,
+					value() {
+						return new TimelineLite({autoRemoveChildren: true});
+					},
+					readOnly: true
+				}
+			};
+		}
 
 		ready() {
+			super.ready();
 			nowPlaying.on('change', this._nowPlayingChanged.bind(this));
 			nodecg.listenFor('showTweet', this.showTweet.bind(this));
-		},
+		}
 
 		showTweet(tweet) {
 			const tl = this.tweetTL;
@@ -70,7 +75,7 @@
 					charsClass: 'character style-scope gdq-break-lab'
 				});
 
-				const charsAndEmoji = Polymer.dom(this.$['tweet-body-text']).querySelectorAll('.character, .emoji');
+				const charsAndEmoji = this.$['tweet-body-text'].querySelectorAll('.character, .emoji');
 				splitTL.staggerFrom(charsAndEmoji, 0.001, {
 					visibility: 'hidden'
 				}, TYPE_INTERVAL);
@@ -107,7 +112,7 @@
 
 			// Padding
 			tl.to(EMPTY_OBJ, 0.1, EMPTY_OBJ);
-		},
+		}
 
 		_nowPlayingChanged(newVal) {
 			const nowPlayingTL = this.nowPlayingTL;
@@ -134,12 +139,12 @@
 					}].forEach(({element, scrollMultiplier, newContent}) => {
 						element.innerHTML = newContent || '?';
 						if (element.scrollWidth > element.clientWidth) {
-							Polymer.dom(element).innerHTML =
+							element.innerHTML =
 								`<div class="scroller">${newContent}&nbsp;&nbsp;&nbsp;&nbsp;</div>` +
 								`<div class="scroller">${newContent}&nbsp;&nbsp;&nbsp;&nbsp;</div>`;
-							Polymer.dom(element).flush();
+							Polymer.flush();
 							this.async(() => {
-								const scrollerWidth = Polymer.dom(element).querySelector('.scroller').scrollWidth;
+								const scrollerWidth = element.querySelector('.scroller').scrollWidth;
 								const duration = scrollerWidth * scrollMultiplier;
 								TweenMax.to(element, duration, {
 									ease: Linear.easeNone,
@@ -159,5 +164,7 @@
 				ease: Power1.easeOut
 			});
 		}
-	});
+	}
+
+	customElements.define(GdqBreakLab.is, GdqBreakLab);
 })();

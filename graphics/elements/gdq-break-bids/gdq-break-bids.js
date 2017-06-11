@@ -14,39 +14,43 @@
 	const SMALL_PIP_WIDTH = 4;
 	const EMPTY_OBJ = {};
 
-	Polymer({
-		is: 'gdq-break-bids',
+	class GdqBreakBids extends Polymer.Element {
+		static get is() {
+			return 'gdq-break-bids';
+		}
 
-		properties: {
-			hidden: {
-				type: Boolean,
-				reflectToAttribute: true,
-				observer: '_hiddenChanged'
-			},
-			bidType: {
-				type: String,
-				reflectToAttribute: true
-			},
-			tl: {
-				type: TimelineLite,
-				value() {
-					return new TimelineLite({autoRemoveChildren: true});
+		static get properties() {
+			return {
+				hidden: {
+					type: Boolean,
+					reflectToAttribute: true,
+					observer: '_hiddenChanged'
 				},
-				readOnly: true
-			},
-			screenHeader: {
-				type: String,
-				value: 'DONATION INCENTIVES',
-				readOnly: true
-			}
-		},
+				bidType: {
+					type: String,
+					reflectToAttribute: true
+				},
+				tl: {
+					type: TimelineLite,
+					value() {
+						return new TimelineLite({autoRemoveChildren: true});
+					},
+					readOnly: true
+				},
+				screenHeader: {
+					type: String,
+					value: 'DONATION INCENTIVES',
+					readOnly: true
+				}
+			};
+		}
 
 		_hiddenChanged(newVal) {
 			if (newVal) {
 				this.$['runName-content'].innerText = '';
 				this.$['bidDescription-content'].innerText = '';
 			}
-		},
+		}
 
 		/**
 		 * Returns whether or not there are any bids to show at this time.
@@ -58,7 +62,7 @@
 			}
 
 			return this._calcBidsToDisplay(currentBids.value).length > 0;
-		},
+		}
 
 		/**
 		 * Adds an animation to the global timeline for showing some current bids.
@@ -77,7 +81,7 @@
 				bidsToDisplay.forEach(this.showBid, this);
 				this.tl.call(resolve);
 			});
-		},
+		}
 
 		/**
 		 * Adds an animation to the global timeline for showing a specific bid.
@@ -112,8 +116,10 @@
 				});
 			} else if (bid.type === 'choice-many') {
 				this.tl.call(() => {
-					const pd = Polymer.dom(this.$.choice);
-					const qsa = Polymer.dom(this.$.choice).querySelectorAll.bind(pd);
+					const qsa = selector => {
+						return Array.from(this.$.choice.querySelectorAll(selector));
+					};
+
 					qsa('.choice-row-meter-fill').forEach(el => {
 						el.style.width = 0;
 					});
@@ -263,7 +269,7 @@
 				}
 
 				case 'choice-many': {
-					const rows = Polymer.dom(this.$.choice).querySelectorAll('.choice-row');
+					const rows = Array.from(this.$.choice.querySelectorAll('.choice-row'));
 
 					rows.forEach(row => {
 						this.tl.call(() => {
@@ -354,7 +360,7 @@
 				y: 15,
 				ease: Power1.easeIn
 			});
-		},
+		}
 
 		_formatRunName(runName) {
 			if (!runName || typeof runName !== 'string') {
@@ -362,7 +368,7 @@
 			}
 
 			return runName.replace('\\n', ' ');
-		},
+		}
 
 		_calcBidsToDisplay(bidsArray) {
 			const bidsToDisplay = [];
@@ -388,7 +394,7 @@
 				}
 			});
 			return bidsToDisplay;
-		},
+		}
 
 		_typeAnim($el, {splitType = 'chars,words'} = {}) {
 			const tl = new TimelineLite();
@@ -421,7 +427,7 @@
 			}
 
 			return tl;
-		},
+		}
 
 		_untypeAnim($el) {
 			return new Promise(resolve => {
@@ -452,5 +458,7 @@
 				return tl;
 			});
 		}
-	});
+	}
+
+	customElements.define(GdqBreakBids.is, GdqBreakBids);
 })();

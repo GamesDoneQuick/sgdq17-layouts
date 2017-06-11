@@ -5,18 +5,24 @@
 	const currentRun = nodecg.Replicant('currentRun');
 	const checklistComplete = nodecg.Replicant('checklistComplete');
 
-	Polymer({
-		is: 'gdq-timekeeper',
+	class GdqTimekeeper extends Polymer.Element {
+		static get is() {
+			return 'gdq-timekeeper';
+		}
 
-		properties: {
-			checklistIncomplete: {
-				type: Boolean,
-				reflectToAttribute: true,
-				value: false
-			}
-		},
+		static get properties() {
+			return {
+				checklistIncomplete: {
+					type: Boolean,
+					reflectToAttribute: true,
+					value: false
+				}
+			};
+		}
 
 		ready() {
+			super.ready();
+
 			stopwatch.on('change', this.stopwatchChanged.bind(this));
 			currentRun.on('change', newVal => {
 				const runners = newVal.runners.slice(0);
@@ -30,29 +36,29 @@
 			checklistComplete.on('change', newVal => {
 				this.checklistIncomplete = !newVal;
 			});
-		},
+		}
 
 		stopwatchChanged(newVal) {
 			this.state = newVal.state;
 			this.time = newVal.formatted;
 			this.results = newVal.results.slice(0);
-		},
+		}
 
 		confirmReset() {
 			this.$.resetDialog.open();
-		},
+		}
 
 		startTimer() {
 			nodecg.sendMessage('startTimer');
-		},
+		}
 
 		stopTimer() {
 			nodecg.sendMessage('stopTimer');
-		},
+		}
 
 		resetTimer() {
 			nodecg.sendMessage('resetTimer');
-		},
+		}
 
 		calcWingText(checklistIncomplete, coop) {
 			if (checklistIncomplete) {
@@ -64,19 +70,19 @@
 			}
 
 			return '';
-		},
+		}
 
 		calcStartDisabled(checklistIncomplete, state) {
 			return checklistIncomplete || state !== 'stopped';
-		},
+		}
 
 		calcPauseDisabled(state) {
 			return state !== 'running';
-		},
+		}
 
 		calcEditDisabled(results, runnerIndex) {
 			return !results[runnerIndex];
-		},
+		}
 
 		calcRunnerStatus(results, index) {
 			if (results[index]) {
@@ -84,7 +90,7 @@
 			}
 
 			return 'Running';
-		},
+		}
 
 		calcRunnerStatusClass(results, index) {
 			if (results[index] && !results[index].forfeit) {
@@ -92,41 +98,41 @@
 			}
 
 			return '';
-		},
+		}
 
 		calcFinishHidden(results, index) {
 			return results[index] && !results[index].forfeit;
-		},
+		}
 
 		calcResumeHidden(results, index) {
 			return !results[index];
-		},
+		}
 
 		calcForfeitHidden(results, index) {
 			return results[index] && results[index].forfeit;
-		},
+		}
 
 		finishRunner(e) {
 			const index = e.target.closest('.runner').getAttribute('data-index');
 			nodecg.sendMessage('completeRunner', {index, forfeit: false});
-		},
+		}
 
 		forfeitRunner(e) {
 			const index = e.target.closest('.runner').getAttribute('data-index');
 			nodecg.sendMessage('completeRunner', {index, forfeit: true});
-		},
+		}
 
 		resumeRunner(e) {
 			const index = e.target.closest('.runner').getAttribute('data-index');
 			nodecg.sendMessage('resumeRunner', index);
-		},
+		}
 
 		editMasterTime() {
 			this.$['editDialog-text'].textContent = `Enter a new master time.`;
 			this.$.editDialog.setAttribute('data-index', 'master');
 			this.$['editDialog-input'].value = this.time;
 			this.$.editDialog.open();
-		},
+		}
 
 		editRunnerTime(e) {
 			const runnerEl = e.target.closest('.runner');
@@ -135,7 +141,7 @@
 			this.$.editDialog.setAttribute('data-index', index);
 			this.$['editDialog-input'].value = this.results[index].formatted;
 			this.$.editDialog.open();
-		},
+		}
 
 		saveEditedTime() {
 			nodecg.sendMessage('editTime', {
@@ -144,5 +150,7 @@
 			});
 			this.$['editDialog-input'].value = '';
 		}
-	});
+	}
+
+	customElements.define(GdqTimekeeper.is, GdqTimekeeper);
 })();

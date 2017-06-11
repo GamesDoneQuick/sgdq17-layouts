@@ -5,32 +5,46 @@
 	const questionSortMap = nodecg.Replicant('interview:questionSortMap');
 	const questionShowing = nodecg.Replicant('interview:questionShowing');
 
-	Polymer({
-		is: 'gdq-interview-tier2',
+	class GdqInterviewTier2 extends Polymer.Element {
+		static get is() {
+			return 'gdq-interview-tier2';
+		}
 
-		properties: {
-			replies: {
-				type: Object
-			},
-			onScreenTweet: {
-				type: Object,
-				computed: 'calcOnScreenTweet(replies, _sortMapVal)',
-				observer: 'onScreenTweetChanged',
-				value: null
-			}
-		},
+		static get properties() {
+			return {
+				replies: {
+					type: Object
+				},
+				onScreenTweet: {
+					type: Object,
+					computed: 'calcOnScreenTweet(replies, _sortMapVal)',
+					observer: 'onScreenTweetChanged',
+					value: null
+				}
+			};
+		}
 
 		ready() {
+			super.ready();
+
 			// Fades new question nodes from purple to white when added.
-			Polymer.dom(this.$.list).observeNodes(mutation => {
-				mutation.addedNodes.filter(node => {
-					return node.classList && node.classList.contains('tweet');
-				}).forEach(node => {
-					const tweetMaterialNode = node.firstElementChild;
-					flushCss(tweetMaterialNode);
-					tweetMaterialNode.style.backgroundColor = 'white';
+			this._listObserver = new MutationObserver(mutations => {
+				mutations.forEach(mutation => {
+					if (!mutation.addedNodes) {
+						return;
+					}
+
+					mutation.addedNodes.filter(node => {
+						return node.classList && node.classList.contains('tweet');
+					}).forEach(node => {
+						const tweetMaterialNode = node.firstElementChild;
+						flushCss(tweetMaterialNode);
+						tweetMaterialNode.style.backgroundColor = 'white';
+					});
 				});
 			});
+
+			this._listObserver.observe(this.$.list, {childList: true});
 
 			questions.on('change', newVal => {
 				this.replies = newVal.slice(0);
@@ -80,7 +94,7 @@
 			questionShowing.on('change', newVal => {
 				this._questionShowingVal = newVal;
 			});
-		},
+		}
 
 		_flashBgIfAppropriate(operations) {
 			if (operations && operations.length === 1) {
@@ -101,13 +115,13 @@
 			flushCss(this.$.list);
 			this.$.list.classList.add('bg-color-transition');
 			this.$.list.style.backgroundColor = 'transparent';
-		},
+		}
 
 		calcOnScreenTweet(replies, _sortMapVal) {
 			return replies.find(reply => {
 				return _sortMapVal.indexOf(reply.id_str) === 0;
 			});
-		},
+		}
 
 		calcListReplies(replies, _sortMapVal) {
 			if (!_sortMapVal) {
@@ -117,7 +131,7 @@
 			return replies.filter(reply => {
 				return _sortMapVal.indexOf(reply.id_str) !== 0;
 			});
-		},
+		}
 
 		onScreenTweetChanged(newVal, oldVal) {
 			if (newVal && oldVal && newVal.id_str === oldVal.id_str) {
@@ -129,23 +143,23 @@
 			flushCss(this.$.onScreen);
 			this.$.onScreen.classList.add('bg-color-transition');
 			this.$.onScreen.style.backgroundColor = '#ccffd2';
-		},
+		}
 
 		showQuestion() {
 			questionShowing.value = true;
-		},
+		}
 
 		hideQuestion() {
 			questionShowing.value = false;
-		},
+		}
 
 		openEndInterviewDialog() {
 			this.$.endInterviewDialog.open();
-		},
+		}
 
 		endInterview() {
 			nodecg.sendMessage('interview:end');
-		},
+		}
 
 		showNextQuestion() {
 			this.hideQuestion();
@@ -157,7 +171,7 @@
 					this.$.errorToast.show();
 				}
 			});
-		},
+		}
 
 		_handleSortList() {
 			const newSortOrder = this.$.list.items.map(item => item.tweetId);
@@ -182,7 +196,7 @@
 				return aMapIndex - bMapIndex;
 			});
 			questionSortMap.value = questionSortMap.value.slice(0, 1).concat(newSortOrder);
-		},
+		}
 
 		mapSort(a, b) {
 			if (!this._sortMapVal) {
@@ -206,7 +220,7 @@
 			}
 
 			return aMapIndex - bMapIndex;
-		},
+		}
 
 		reject(event) {
 			const button = event.target.closest('paper-button');
@@ -228,7 +242,7 @@
 			}
 
 			return sortIndex <= 1;
-		},
+		}
 
 		calcDemoteDisabled(tweet, _sortableListOrder) {
 			const sortIndex = _sortableListOrder.indexOf(tweet.id_str);
@@ -237,17 +251,19 @@
 			}
 
 			return sortIndex >= _sortableListOrder.length - 1;
-		},
+		}
 
 		promote(e) {
 			nodecg.sendMessage('promoteQuestion', e.model.reply.id_str);
-		},
+		}
 
 		demote(e) {
 			nodecg.sendMessage('demoteQuestion', e.model.reply.id_str);
 		}
 		*/
-	});
+	}
+
+	customElements.define(GdqInterviewTier2.is, GdqInterviewTier2);
 
 	/**
 	 * By reading the offsetHeight property, we are forcing

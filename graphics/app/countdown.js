@@ -52,7 +52,6 @@
 	});
 
 	nowPlaying.on('change', newVal => {
-		console.log('nowPlaying', newVal);
 		TweenLite.to(nowPlayingDisplay, 0.33, {
 			opacity: 0,
 			ease: Power1.easeInOut,

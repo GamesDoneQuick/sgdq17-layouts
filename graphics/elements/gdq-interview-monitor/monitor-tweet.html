@@ -1,8 +1,10 @@
 <link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../style/gdq-text-styles.html">
 
 <dom-module id="monitor-tweet">
 	<template>
-		<style>
+		<style include="gdq-text-styles">
 			:host {
 				font-size: 50px;
 				font-weight: 700;
@@ -42,17 +44,6 @@
 				font-weight: 700;
 				line-height: 61px;
 			}
-
-			img.emoji {
-				height: 1em;
-				width: 1em;
-				margin: 0 .05em 0 .1em;
-				vertical-align: -0.1em;
-			}
-
-			.hashtag {
-				color: #2f5b80;
-			}
 		</style>
 
 		<paper-material id="material">
@@ -62,27 +53,29 @@
 	</template>
 
 	<script>
-		(function () {
-			'use strict';
+		class MonitorTweet extends Polymer.Element {
+			static get is() {
+				return 'monitor-tweet';
+			}
 
-			Polymer({
-				is: 'monitor-tweet',
-
-				properties: {
+			static get properties() {
+				return {
 					tweet: {
 						type: Object,
 						observer: 'populateBody'
 					}
-				},
+				};
+			}
 
-				populateBody() {
-					if (!this.tweet) {
-						return;
-					}
-
-					Polymer.dom(this.$.body).innerHTML = this.tweet.text;
+			populateBody() {
+				if (!this.tweet) {
+					return;
 				}
-			});
-		})();
+
+				this.$.body.innerHTML = this.tweet.text;
+			}
+		}
+
+		customElements.define(MonitorTweet.is, MonitorTweet);
 	</script>
 </dom-module>

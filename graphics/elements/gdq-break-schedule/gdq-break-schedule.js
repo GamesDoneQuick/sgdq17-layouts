@@ -8,40 +8,45 @@
 	const TYPE_INTERVAL = 0.03;
 	const EMPTY_OBJ = {};
 
-	Polymer({
-		is: 'gdq-break-schedule',
+	class GdqBreakSchedule extends Polymer.Element {
+		static get is() {
+			return 'gdq-break-schedule';
+		}
 
-		properties: {
-			onDeckTL: {
-				type: TimelineMax,
-				value() {
-					return new TimelineMax({
-						repeat: -1,
-						repeatDelay: displayDuration
-					});
-				},
-				readOnly: true
-			}
-		},
+		static get properties() {
+			return {
+				onDeckTL: {
+					type: TimelineMax,
+					value() {
+						return new TimelineMax({
+							repeat: -1,
+							repeatDelay: displayDuration
+						});
+					},
+					readOnly: true
+				}
+			};
+		}
 
 		ready() {
+			super.ready();
 			currentRun.on('change', this._handleCurrentRunChange.bind(this));
 			schedule.on('change', () => {
-				this.async(this.recalcOnDeckRuns);
+				Polymer.RenderStatus.afterNextRender(this, this.recalcOnDeckRuns);
 			});
-		},
+		}
 
 		_handleCurrentRunChange(newVal) {
 			this._typeAnim(this.$.upNext, newVal);
 			this.recalcOnDeckRuns();
-		},
+		}
 
 		recalcOnDeckRuns() {
-			Polymer.dom(this.$.onDeck).querySelectorAll('.run-name, .run-details').forEach(el => {
+			Array.from(this.$.onDeck.querySelectorAll('.run-name, .run-details')).forEach(el => {
 				el.innerHTML = '';
 			});
 
-			Polymer.dom(this.$.onDeck).querySelectorAll('.onDeckRun').forEach(el => {
+			Array.from(this.$.onDeck.querySelectorAll('.onDeckRun')).forEach(el => {
 				el.style.display = 'none';
 			});
 
@@ -86,11 +91,11 @@
 					break;
 				}
 				default:
-					// Display something about there being no on deck runs
+				// Display something about there being no on deck runs
 			}
 
 			tl.restart();
-		},
+		}
 
 		_typeAnim($parent, run, tl) {
 			tl = tl || new TimelineLite();
@@ -114,7 +119,7 @@
 			categoryAndRunnerSplit.words.forEach(processWord);
 
 			return tl;
-		},
+		}
 
 		_formatRunName(runName) {
 			if (!runName || typeof runName !== 'string') {
@@ -122,7 +127,7 @@
 			}
 
 			return runName.replace('\\n', '<br/>');
-		},
+		}
 
 		concatRunners(runners) {
 			if (!runners || !Array.isArray(runners)) {
@@ -144,5 +149,7 @@
 
 			return concatenatedRunners;
 		}
-	});
+	}
+
+	customElements.define(GdqBreakSchedule.is, GdqBreakSchedule);
 })();

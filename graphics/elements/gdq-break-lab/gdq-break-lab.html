@@ -1,3 +1,5 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+
 <dom-module id="gdq-break-lab">
 	<template>
 		<style>
@@ -113,12 +115,12 @@
 		<div id="bg"></div>
 
 		<div id="nowplaying">
-			<img src="img/music-note.png">
+			<img src="[[importPath]]/img/music-note.png">
 			<div id="nowplaying-text">
 				<div id="nowplaying-game"></div>
 				<div id="nowplaying-title"></div>
 			</div>
-			<img src="img/music-note.png">
+			<img src="[[importPath]]/img/music-note.png">
 		</div>
 
 		<div id="tweet">
@@ -130,7 +132,7 @@
 			</div>
 		</div>
 
-		<img id="fg" src="img/lab-fg.png">
+		<img id="fg" src="[[importPath]]/img/lab-fg.png">
 	</template>
 
 	<script src="gdq-break-lab.js"></script>

@@ -4,24 +4,29 @@
 	const interviewNames = nodecg.Replicant('interview:names');
 	const lowerthirdShowing = nodecg.Replicant('interview:lowerthirdShowing');
 
-	Polymer({
-		is: 'gdq-lowerthird',
+	class GdqLowerthird extends Polymer.Element {
+		static get is() {
+			return 'gdq-lowerthird';
+		}
 
-		properties: {
-			tl: {
-				type: TimelineLite,
-				value() {
-					return new TimelineLite({autoRemoveChildren: true});
+		static get properties() {
+			return {
+				tl: {
+					type: TimelineLite,
+					value() {
+						return new TimelineLite({autoRemoveChildren: true});
+					},
+					readOnly: true
 				},
-				readOnly: true
-			},
-			numNames: {
-				type: Number,
-				reflectToAttribute: true
-			}
-		},
+				numNames: {
+					type: Number,
+					reflectToAttribute: true
+				}
+			};
+		}
 
 		ready() {
+			super.ready();
 			lowerthirdShowing.on('change', newVal => {
 				if (newVal) {
 					this.show();
@@ -29,7 +34,7 @@
 					this.hide();
 				}
 			});
-		},
+		}
 
 		show() {
 			const tl = this.tl;
@@ -63,7 +68,7 @@
 					this.$['dropdown-middle-text'].innerHTML = '#SGDQ2017';
 				}
 
-				Polymer.dom.flush();
+				Polymer.flush();
 			}, null, null, '+=0.3'); // Give time for interviewNames replicant to update.
 
 			// Fit names
@@ -101,7 +106,7 @@
 					ease: Power3.easeOut
 				});
 			}, null, this, '-=0.4');
-		},
+		}
 
 		hide() {
 			const tl = this.tl;
@@ -112,5 +117,7 @@
 
 			tl.set([this, this.$.names, this.$.dropdown], {clearProps: 'all'});
 		}
-	});
+	}
+
+	customElements.define(GdqLowerthird.is, GdqLowerthird);
 })();

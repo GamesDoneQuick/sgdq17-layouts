@@ -1,4 +1,4 @@
-<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../style/gdq-text-styles.html">
 
 <dom-module id="gdq-omnibar">
@@ -227,7 +227,7 @@
 
 		<div id="gdqLogo"></div>
 		<div id="body">
-			<img id="labelShadow" src="img/label-shadow.png">
+			<img id="labelShadow" src="[[importPath]]img/label-shadow.png">
 			<div id="label">
 				<div id="labelRibbon3" class="label-ribbon"></div>
 				<div id="labelRibbon2" class="label-ribbon"></div>
@@ -252,7 +252,7 @@
 				<div id="totalTextAmount"></div>
 			</div>
 		</div>
-		<img id="charityLogo" src="img/logo-charity.png">
+		<img id="charityLogo" src="[[importPath]]img/logo-charity.png">
 		<div id="topBorder"></div>
 	</template>
 

@@ -1,10 +1,11 @@
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../../bower_components/iron-icons/editor-icons.html">
 <link rel="import" href="../../../bower_components/iron-icons/av-icons.html">
+<link rel="import" href="../../../bower_components/iron-icons/editor-icons.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 
 <dom-module id="gdq-timekeeper">
 	<template>
@@ -12,7 +13,7 @@
 			:host {
 				@apply --layout-vertical;
 				width: 914px;
-				font-family: 'roboto';
+				font-family: 'roboto', sans-serif;
 				white-space: nowrap;
 				height: 100%;
 				position: absolute;
@@ -210,7 +211,7 @@
 					<div class="runner-buttons">
 						<paper-button raised class="green" on-tap="finishRunner"
 									  hidden="[[calcFinishHidden(results, index)]]">
-							<iron-icon src="img/flag-checkered.svg"></iron-icon>
+							<iron-icon src="[[importPath]]/img/flag-checkered.svg"></iron-icon>
 							&nbsp;Finish
 						</paper-button>
 

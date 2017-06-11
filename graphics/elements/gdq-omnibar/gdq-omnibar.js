@@ -9,37 +9,43 @@
 	const currentPrizes = nodecg.Replicant('currentPrizes');
 	const currentScene = nodecg.Replicant('currentScene');
 
-	Polymer({
-		is: 'gdq-omnibar',
+	class GdqOmnibar extends Polymer.Element {
+		static get is() {
+			return 'gdq-omnibar';
+		}
 
-		properties: {
-			state: {
-				type: Object,
-				value() {
-					return {
-						totalShowing: true,
-						labelShowing: false
-					};
+		static get properties() {
+			return {
+				state: {
+					type: Object,
+					value() {
+						return {
+							totalShowing: true,
+							labelShowing: false
+						};
+					}
+				},
+				lastShownGrandPrize: {
+					type: Object
+				},
+				_latestMainLine1: {
+					type: Object,
+					value() {
+						return {};
+					}
+				},
+				_latestMainLine2: {
+					type: Object,
+					value() {
+						return {};
+					}
 				}
-			},
-			lastShownGrandPrize: {
-				type: Object
-			},
-			_latestMainLine1: {
-				type: Object,
-				value() {
-					return {};
-				}
-			},
-			_latestMainLine2: {
-				type: Object,
-				value() {
-					return {};
-				}
-			}
-		},
+			};
+		}
 
 		ready() {
+			super.ready();
+
 			this.tl = new TimelineLite({autoRemoveChildren: true});
 
 			// Play the shine animation every 2 minutes.
@@ -56,7 +62,7 @@
 
 			// CTA is the first thing we show, so we use this to start our loop
 			this.showCTA();
-		},
+		}
 
 		totalChanged(newVal) {
 			if (!this._totalInitialized) {
@@ -86,7 +92,7 @@
 					}
 				}.bind(this)
 			});
-		},
+		}
 
 		fitMainText() {
 			const maxWidth = this.$.main.clientWidth;
@@ -98,7 +104,7 @@
 					TweenLite.set(element, {scaleX: 1});
 				}
 			});
-		},
+		}
 
 		/**
 		 * Creates an animation timeline for showing the label.
@@ -144,7 +150,7 @@
 			}
 
 			return tmpTL;
-		},
+		}
 
 		/**
 		 * Creates an animation timeline for hiding the label.
@@ -173,7 +179,7 @@
 			}
 
 			return tmpTL;
-		},
+		}
 
 		/**
 		 * Creates an animation timeline for showing mainLine1.
@@ -217,7 +223,7 @@
 			}
 
 			return tmpTL;
-		},
+		}
 
 		/**
 		 * Creates an animation timeline for showing mainLine2.
@@ -260,7 +266,7 @@
 			}
 
 			return tmpTL;
-		},
+		}
 
 		/**
 		 * Adds an animation to the global timeline for showing the next upcoming speedrun.
@@ -329,7 +335,7 @@
 				}.bind(this),
 				onComplete: this.showCTA.bind(this)
 			});
-		},
+		}
 
 		/**
 		 * Adds an animation to the global timeline for showing all current bids.
@@ -379,7 +385,7 @@
 				}.bind(this),
 				onComplete: this.showCurrentPrizes.bind(this)
 			});
-		},
+		}
 
 		/**
 		 * Adds an animation to the global timeline for showing a specific bid.
@@ -416,7 +422,7 @@
 
 			// Give the bid some time to show
 			this.tl.to({}, displayDuration, {});
-		},
+		}
 
 		/**
 		 * Adds an animation to the global timeline for showing the current prizes
@@ -458,7 +464,7 @@
 				}.bind(this),
 				onComplete: this.showUpNext.bind(this)
 			});
-		},
+		}
 
 		/**
 		 * Adds an animation to the global timeline for showing a specific prize.
@@ -481,7 +487,7 @@
 
 			// Give the prize some time to show
 			this.tl.to({}, displayDuration, {});
-		},
+		}
 
 		/**
 		 * Adds an animation to the global timeline for showing the call-to-action.
@@ -509,5 +515,7 @@
 
 			this.tl.call(this.showCurrentBids, null, this, '+=0.3');
 		}
-	});
+	}
+
+	customElements.define(GdqOmnibar.is, GdqOmnibar);
 })();

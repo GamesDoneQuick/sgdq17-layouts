@@ -1,10 +1,12 @@
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../../bower_components/iron-image/iron-image.html">
-<link rel="import" href="../gdq-time-ago/gdq-time-ago.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../shared/elements/gdq-time-ago/gdq-time-ago.html">
+<link rel="import" href="../../style/gdq-text-styles.html">
 
 <dom-module id="gdq-tweet">
 	<template>
-		<style>
+		<style include="gdq-text-styles">
 			:host {
 				position: relative;
 				padding-left: 64px;
@@ -65,17 +67,6 @@
 			a {
 				text-transform: none;
 				text-decoration: none;
-			}
-
-			img.emoji {
-				height: 1em;
-				width: 1em;
-				margin: 0 .05em 0 .1em;
-				vertical-align: -0.1em;
-			}
-
-			.hashtag {
-				color: #2f5b80;
 			}
 		</style>
 

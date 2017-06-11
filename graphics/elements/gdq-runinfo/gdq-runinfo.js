@@ -3,24 +3,29 @@
 
 	const currentRun = nodecg.Replicant('currentRun');
 
-	Polymer({
-		is: 'gdq-runinfo',
+	class GdqRuninfo extends Polymer.Element {
+		static get is() {
+			return 'gdq-runinfo';
+		}
 
-		properties: {
-			maxNameSize: {
-				type: Number,
-				value: 45
-			},
-			singleLineName: {
-				type: Boolean,
-				reflectToAttribute: true,
-				value: false
-			}
-		},
+		static get properties() {
+			return {
+				maxNameSize: {
+					type: Number,
+					value: 45
+				},
+				singleLineName: {
+					type: Boolean,
+					reflectToAttribute: true,
+					value: false
+				}
+			};
+		}
 
 		ready() {
+			super.ready();
 			currentRun.on('change', this.currentRunChanged.bind(this));
-		},
+		}
 
 		currentRunChanged(newVal) {
 			this.name = newVal.name.replace('\\n', this.singleLineName ? ' ' : '<br/>');
@@ -36,13 +41,13 @@
 			if (this.initialized) {
 				this.fitText();
 			} else {
-				this.async(this.fitText, 100);
+				Polymer.RenderStatus.afterNextRender(this, this.fitText);
 				this.initialized = true;
 			}
-		},
+		}
 
 		fitText() {
-			Polymer.dom.flush();
+			Polymer.flush();
 			textFit(this.$.name, {maxFontSize: this.maxNameSize});
 
 			const MAX_CATEGORY_WIDTH = this.clientWidth - 32;
@@ -53,12 +58,14 @@
 			} else {
 				TweenLite.set(categorySpan, {scaleX: 1});
 			}
-		},
+		}
 
 		calcReleaseYearDisplay(releaseYear) {
 			if (releaseYear) {
 				return ` - ${releaseYear}`;
 			}
 		}
-	});
+	}
+
+	customElements.define(GdqRuninfo.is, GdqRuninfo);
 })();

@@ -6,10 +6,20 @@
 	const FADE_IN_EASE = Power1.easeOut;
 	const HOLD_DURATION = 20;
 
-	Polymer({
-		is: 'gdq-sponsors',
+	class GdqSponsors extends Polymer.Element {
+		static get is() {
+			return 'gdq-sponsors';
+		}
+
+		static get properties() {
+			return {
+
+			};
+		}
 
 		ready() {
+			super.ready();
+
 			let sponsors;
 			const layoutName = window.location.pathname.split('/').pop();
 			switch (layoutName) {
@@ -64,7 +74,7 @@
 
 			// Cycle through sponsor logos every this.duration seconds
 			setInterval(this.nextSponsor.bind(this), HOLD_DURATION * 1000);
-		},
+		}
 
 		nextSponsor() {
 			// If there's no images, do nothing
@@ -110,5 +120,7 @@
 				ease: FADE_IN_EASE
 			}, 'start');
 		}
-	});
+	}
+
+	customElements.define(GdqSponsors.is, GdqSponsors);
 })();
