@@ -237,6 +237,10 @@
 		},
 
 		calcMetroidAheadText(saveOrKill, saveTheAnimalsTotal, killTheAnimalsTotal) {
+			if (!saveOrKill || !saveTheAnimalsTotal || !killTheAnimalsTotal) {
+				return;
+			}
+			
 			const diff = Math.abs(saveTheAnimalsTotal.raw - killTheAnimalsTotal.raw).toLocaleString('en-US', {
 				maximumFractionDigits: 2,
 				style: 'currency',
@@ -263,6 +267,10 @@
 		},
 
 		calcBids(bids, bidFilterString) {
+			if (!bids) {
+				return;
+			}
+
 			const regexp = new RegExp(bidFilterString, 'i');
 			return bids.filter(bid => {
 				if (!bidFilterString) {
@@ -274,6 +282,10 @@
 		},
 
 		calcRunnerName(runners, index) {
+			if (!this.runners) {
+				return;
+			}
+
 			if (index > this.runners.length - 1) {
 				return '';
 			}
