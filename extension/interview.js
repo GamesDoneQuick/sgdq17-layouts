@@ -8,7 +8,7 @@ const nodecg = require('./util/nodecg-api-context').get();
 
 firebase.initializeApp({
 	credential: firebase.credential.cert(nodecg.bundleConfig.firebase),
-	databaseURL: nodecg.bundleConfig.firebase.databaseURL
+	databaseURL: `https://${nodecg.bundleConfig.firebase.project_id}.firebaseio.com`
 });
 
 const database = firebase.database();

@@ -79,7 +79,7 @@
 						return;
 					}
 
-					mutation.addedNodes.filter(node => {
+					Array.from(mutation.addedNodes).filter(node => {
 						return node.is === 'monitor-tweet';
 					}).forEach(node => {
 						const isFirstChild = node === node.parentNode.querySelector('monitor-tweet');

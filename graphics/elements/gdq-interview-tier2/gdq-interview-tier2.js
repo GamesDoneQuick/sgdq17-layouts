@@ -14,18 +14,21 @@
 			return {
 				replies: {
 					type: Object
-				},
-				onScreenTweet: {
-					type: Object,
-					computed: 'calcOnScreenTweet(replies, _sortMapVal)',
-					observer: 'onScreenTweetChanged',
-					value: null
 				}
 			};
 		}
 
 		ready() {
 			super.ready();
+
+			this.$.list.createMirror = originalElement => {
+				const rect = originalElement.getBoundingClientRect();
+				const mirror = originalElement.cloneNode(true);
+				mirror.style.width = rect.width + 'px';
+				mirror.style.height = rect.height + 'px';
+				mirror.querySelector('gdq-tweet').tweet = originalElement.querySelector('gdq-tweet').tweet;
+				return mirror;
+			};
 
 			// Fades new question nodes from purple to white when added.
 			this._listObserver = new MutationObserver(mutations => {
@@ -34,17 +37,16 @@
 						return;
 					}
 
-					mutation.addedNodes.filter(node => {
+					Array.from(mutation.addedNodes).filter(node => {
 						return node.classList && node.classList.contains('tweet');
 					}).forEach(node => {
-						const tweetMaterialNode = node.firstElementChild;
-						flushCss(tweetMaterialNode);
-						tweetMaterialNode.style.backgroundColor = 'white';
+						flushCss(node);
+						node.style.backgroundColor = 'white';
 					});
 				});
 			});
 
-			this._listObserver.observe(this.$.list, {childList: true});
+			this._listObserver.observe(this.$.list, {childList: true, subtree: true});
 
 			questions.on('change', newVal => {
 				this.replies = newVal.slice(0);
@@ -53,34 +55,13 @@
 
 			questionSortMap.on('change', (newVal, oldVal, operations) => {
 				// If the new sortMap is equal to the currently rendered sort order, do nothing.
-				if (JSON.stringify(newVal.slice(1)) === JSON.stringify(this._sortableListOrder)) {
+				if (JSON.stringify(newVal.slice(0)) === JSON.stringify(this._sortableListOrder)) {
 					return;
 				}
 
 				this._sortMapVal = newVal.slice(0);
+				console.log(this._sortMapVal);
 				this.$.repeat.render();
-
-				if (this.$.list.items) {
-					this.$.list.items.sort((a, b) => {
-						const aMapIndex = newVal.indexOf(a.id_str);
-						const bMapIndex = newVal.indexOf(b.id_str);
-
-						if (aMapIndex >= 0 && bMapIndex < 0) {
-							return -1;
-						}
-
-						if (aMapIndex < 0 && bMapIndex >= 0) {
-							return 1;
-						}
-
-						// If neither of these replies are in the sort map, just leave them where they are.
-						if (aMapIndex < 0 && bMapIndex < 0) {
-							return 0;
-						}
-
-						return aMapIndex - bMapIndex;
-					});
-				}
 
 				if (newVal.length > 0) {
 					this._flashBgIfAppropriate(operations);
@@ -117,34 +98,6 @@
 			this.$.list.style.backgroundColor = 'transparent';
 		}
 
-		calcOnScreenTweet(replies, _sortMapVal) {
-			return replies.find(reply => {
-				return _sortMapVal.indexOf(reply.id_str) === 0;
-			});
-		}
-
-		calcListReplies(replies, _sortMapVal) {
-			if (!_sortMapVal) {
-				return [];
-			}
-
-			return replies.filter(reply => {
-				return _sortMapVal.indexOf(reply.id_str) !== 0;
-			});
-		}
-
-		onScreenTweetChanged(newVal, oldVal) {
-			if (newVal && oldVal && newVal.id_str === oldVal.id_str) {
-				return;
-			}
-
-			this.$.onScreen.classList.remove('bg-color-transition');
-			this.$.onScreen.style.backgroundColor = '#9966cc';
-			flushCss(this.$.onScreen);
-			this.$.onScreen.classList.add('bg-color-transition');
-			this.$.onScreen.style.backgroundColor = '#ccffd2';
-		}
-
 		showQuestion() {
 			questionShowing.value = true;
 		}
@@ -173,29 +126,11 @@
 			});
 		}
 
-		_handleSortList() {
-			const newSortOrder = this.$.list.items.map(item => item.tweetId);
+		_handleDragEnd() {
+			const items = Array.from(this.$.list.querySelectorAll('.tweet'));
+			const newSortOrder = items.map(item => item.tweetId);
 			this._sortableListOrder = newSortOrder;
-			this.$.repeat._instances.sort((a, b) => {
-				const aMapIndex = newSortOrder.indexOf(a.__data__.reply.id_str);
-				const bMapIndex = newSortOrder.indexOf(b.__data__.reply.id_str);
-
-				if (aMapIndex >= 0 && bMapIndex < 0) {
-					return -1;
-				}
-
-				if (aMapIndex < 0 && bMapIndex >= 0) {
-					return 1;
-				}
-
-				// If neither of these replies are in the sort map, just leave them where they are.
-				if (aMapIndex < 0 && bMapIndex < 0) {
-					return 0;
-				}
-
-				return aMapIndex - bMapIndex;
-			});
-			questionSortMap.value = questionSortMap.value.slice(0, 1).concat(newSortOrder);
+			questionSortMap.value = newSortOrder;
 		}
 
 		mapSort(a, b) {
@@ -203,6 +138,7 @@
 				return 0;
 			}
 
+			console.log('MAP SORT!!!');
 			const aMapIndex = this._sortMapVal.indexOf(a.id_str);
 			const bMapIndex = this._sortMapVal.indexOf(b.id_str);
 

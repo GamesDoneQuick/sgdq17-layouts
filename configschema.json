@@ -107,9 +107,6 @@
 			"type": "object",
 			"description": "Credentials used to log into Firebase, which is what hosts Lightning Round.",
 			"properties": {
-				"databaseURL": {
-					"type": "string"
-				},
 				"type": {
 					"type": "string"
 				},
@@ -141,7 +138,7 @@
 					"type": "string"
 				}
 			},
-			"required": ["databaseURL", "project_id", "private_key", "client_email"],
+			"required": ["project_id", "private_key", "client_email"],
 			"additionalProperties": false
 		}
 	}
