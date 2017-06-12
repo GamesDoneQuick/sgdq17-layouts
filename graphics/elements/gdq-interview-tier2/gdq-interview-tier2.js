@@ -60,16 +60,13 @@
 				}
 
 				this._sortMapVal = newVal.slice(0);
-				console.log(this._sortMapVal);
 				this.$.repeat.render();
 
 				if (newVal.length > 0) {
 					this._flashBgIfAppropriate(operations);
 				}
 
-				if (!this._sortableListOrder) {
-					this._sortableListOrder = newVal.slice(0);
-				}
+				this._sortableListOrder = newVal.slice(0);
 			});
 
 			questionShowing.on('change', newVal => {
@@ -138,7 +135,6 @@
 				return 0;
 			}
 
-			console.log('MAP SORT!!!');
 			const aMapIndex = this._sortMapVal.indexOf(a.id_str);
 			const bMapIndex = this._sortMapVal.indexOf(b.id_str);
 
