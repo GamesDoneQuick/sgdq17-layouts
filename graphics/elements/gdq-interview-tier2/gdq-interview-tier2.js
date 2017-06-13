@@ -5,7 +5,7 @@
 	const questionSortMap = nodecg.Replicant('interview:questionSortMap');
 	const questionShowing = nodecg.Replicant('interview:questionShowing');
 
-	class GdqInterviewTier2 extends Polymer.Element {
+	class GdqInterviewTier2 extends Polymer.GestureEventListeners(Polymer.Element) {
 		static get is() {
 			return 'gdq-interview-tier2';
 		}
@@ -20,6 +20,19 @@
 
 		ready() {
 			super.ready();
+
+			let start;
+			Polymer.Gestures.addListener(this.$['list-container'], 'track', e => {
+				if (this._dragging) {
+					return;
+				}
+
+				if (e.detail.state === 'start') {
+					start = this.$['list'].scrollTop;
+				}
+
+				this.$['list'].scrollTop = start - e.detail.dy;
+			});
 
 			this.$.list.createMirror = originalElement => {
 				const rect = originalElement.getBoundingClientRect();
@@ -123,7 +136,12 @@
 			});
 		}
 
+		_handleDrag() {
+			this._dragging = true;
+		}
+
 		_handleDragEnd() {
+			this._dragging = false;
 			const items = Array.from(this.$.list.querySelectorAll('.tweet'));
 			const newSortOrder = items.map(item => item.tweetId);
 			this._sortableListOrder = newSortOrder;
