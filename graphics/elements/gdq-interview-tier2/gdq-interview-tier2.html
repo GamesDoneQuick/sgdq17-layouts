@@ -1,5 +1,6 @@
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-icons/editor-icons.html">
 <link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
@@ -89,6 +90,16 @@
 				@apply --layout-flex;
 			}
 
+			.tweet-handle {
+				position: relative;
+				width: 50px;
+				border-right: 1px solid black;
+				cursor: move;
+				@apply --layout-flex-none;
+				@apply --layout-vertical;
+				@apply --layout-center-center;
+			}
+
 			.tweet-buttons {
 				width: 52px;
 				@apply --layout-horizontal;
@@ -99,18 +110,14 @@
 				width: 46px;
 				height: 46px;
 				min-width: 46px;
-
-				--paper-button: {
-					background-color: #137400;
-				};
-
+				margin-right: 0;
 				@apply --layout-horizontal;
 				@apply --layout-center-center;
 			}
 
 			.tweet-buttons-reject {
 				--paper-button: {
-					background-color: #9e0b0f;
+					background-color: #C9513E;
 				};
 			}
 
@@ -119,7 +126,6 @@
 			}
 
 			iron-icon {
-				position: absolute;
 				--iron-icon-height: 46px;
 				--iron-icon-width: 46px;
 			}
@@ -184,7 +190,11 @@
 				</paper-button>
 			</div>
 
-			<dragula-element id="list" container-class="container" on-dragula-dragend="_handleDragEnd">
+			<dragula-element
+				id="list"
+				container-class="container"
+				handle-class="tweet-handle"
+				on-dragula-dragend="_handleDragEnd">
 				<div class="container">
 					<template
 						id="repeat"
@@ -193,6 +203,12 @@
 						as="reply"
 						sort="mapSort">
 						<div class="tweet bg-color-transition" tweet-id="[[reply.id_str]]">
+							<div class="tweet-handle">
+								<iron-icon
+									style="pointer-events: none;"
+									icon="editor:drag-handle"></iron-icon>
+							</div>
+
 							<gdq-tweet class="tweet-content" tweet="[[reply]]"></gdq-tweet>
 
 							<div class="tweet-buttons">
