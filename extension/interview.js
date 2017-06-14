@@ -12,64 +12,43 @@ firebase.initializeApp({
 });
 
 const database = firebase.database();
-
+const lowerthirdPulseTimeRemaining = nodecg.Replicant('interview:lowerthirdTimeRemaining', {defaultValue: 0, persistent: false});
 const lowerthirdShowing = nodecg.Replicant('interview:lowerthirdShowing', {defaultValue: false, persistent: false});
-const lowerthirdPulsing = nodecg.Replicant('interview:lowerthirdPulsing', {defaultValue: false, persistent: false});
-const lowerthirdPulseTimeRemaining = nodecg.Replicant('interview:lowerthirdTimeRemaining', {
-	defaultValue: 0,
-	persistent: false
-});
-let timeout;
-let interval;
+const questionPulseTimeRemaining = nodecg.Replicant('interview:questionTimeRemaining', {defaultValue: 0, persistent: false});
+const questionShowing = nodecg.Replicant('interview:questionShowing', {defaultValue: false, persistent: false});
+const questionSortMap = nodecg.Replicant('interview:questionSortMap');
+const questionTweetsRep = nodecg.Replicant('interview:questionTweets');
+const pulseIntervalMap = new Map();
+const pulseTimeoutMap = new Map();
+let _repliesListener;
+let _repliesRef;
+
 nodecg.Replicant('interview:names', {defaultValue: []});
 
 lowerthirdShowing.on('change', newVal => {
 	if (!newVal) {
-		clearInterval(interval);
-		clearTimeout(timeout);
-		lowerthirdPulsing.value = false;
+		clearRight(pulseIntervalMap, lowerthirdShowing);
+		clearRight(pulseTimeoutMap, lowerthirdShowing);
 		lowerthirdPulseTimeRemaining.value = 0;
 	}
 });
 
 nodecg.listenFor('pulseInterviewLowerthird', duration => {
-	// Don't stack pulses
-	if (lowerthirdPulsing.value) {
-		return;
-	}
-
-	lowerthirdShowing.value = true;
-	lowerthirdPulsing.value = true;
-	lowerthirdPulseTimeRemaining.value = duration;
-
-	// Count down lowerthirdPulseTimeRemaining
-	interval = setInterval(() => {
-		if (lowerthirdPulseTimeRemaining.value > 0) {
-			lowerthirdPulseTimeRemaining.value--;
-		} else {
-			clearInterval(interval);
-			lowerthirdPulseTimeRemaining.value = 0;
-		}
-	}, 1000);
-
-	// End pulse after "duration" seconds
-	timeout = setTimeout(() => {
-		clearInterval(interval);
-		lowerthirdShowing.value = false;
-		lowerthirdPulsing.value = false;
-	}, duration * 1000);
+	pulse(lowerthirdShowing, lowerthirdPulseTimeRemaining, duration);
 });
 
-/* ---------------- */
-
-const questionSortMap = nodecg.Replicant('interview:questionSortMap');
-const questionTweetsRep = nodecg.Replicant('interview:questionTweets');
-const questionShowing = nodecg.Replicant('interview:questionShowing');
+nodecg.listenFor('pulseInterviewQuestion', duration => {
+	pulse(questionShowing, questionPulseTimeRemaining, duration);
+});
 
 questionShowing.on('change', newVal => {
 	// Hide the interview lowerthird when a question starts showing.
 	if (newVal) {
 		lowerthirdShowing.value = false;
+	} else {
+		clearRight(pulseIntervalMap, questionShowing);
+		clearRight(pulseTimeoutMap, questionShowing);
+		questionPulseTimeRemaining.value = 0;
 	}
 });
 
@@ -79,8 +58,6 @@ questionSortMap.on('change', (newVal, oldVal) => {
 	}
 });
 
-let _repliesRef;
-let _repliesListener;
 database.ref('/active_tweet_id').on('value', snapshot => {
 	if (_repliesRef && _repliesListener) {
 		_repliesRef.off('value', _repliesListener);
@@ -117,7 +94,6 @@ database.ref('/active_tweet_id').on('value', snapshot => {
 		}
 
 		questionTweetsRep.value = convertedAndFilteredReplies;
-
 		updateQuestionSortMap();
 	});
 });
@@ -170,6 +146,50 @@ function updateQuestionSortMap() {
 			questionSortMap.value.splice(i, 1);
 		}
 	}
+}
+
+/**
+ * Pulses a replicant for a specified duration, and tracks the remaining time in another replicant.
+ * @param {Replicant} showingRep - The Boolean replicant that controls if the element is showing or not.
+ * @param {Replicant} pulseTimeRemainingRep - The Number replicant that tracks the remaining time in this pulse.
+ * @param {Number} duration - The desired duration of the pulse in seconds.
+ * @returns {undefined}
+ */
+function pulse(showingRep, pulseTimeRemainingRep, duration) {
+	// Don't stack pulses
+	if (showingRep.value) {
+		return;
+	}
+
+	showingRep.value = true;
+	pulseTimeRemainingRep.value = duration;
+	clearRight(pulseIntervalMap, showingRep);
+	clearRight(pulseTimeoutMap, showingRep);
+
+	// Count down lowerthirdPulseTimeRemaining
+	pulseIntervalMap.set(showingRep, setInterval(() => {
+		console.log('PULSE');
+		if (pulseTimeRemainingRep.value > 0) {
+			pulseTimeRemainingRep.value--;
+		} else {
+			clearRight(pulseIntervalMap, showingRep);
+			pulseTimeRemainingRep.value = 0;
+		}
+	}, 1000));
+
+	// End pulse after "duration" seconds
+	pulseTimeoutMap.set(showingRep, setTimeout(() => {
+		console.log('TIMEOUT END!');
+		clearRight(pulseIntervalMap, showingRep);
+		pulseTimeRemainingRep.value = 0;
+		showingRep.value = false;
+	}, duration * 1000));
+}
+
+function clearRight(map, key) {
+	clearInterval(map.get(key));
+	clearTimeout(map.get(key));
+	map.delete(key);
 }
 
 /* Disabled for now. Can't get drag sort and button sort to work simultaneously.

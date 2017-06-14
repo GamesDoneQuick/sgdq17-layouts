@@ -133,20 +133,26 @@
 				}
 			}
 
-			#list {
-				margin-top: 14px;
-				padding: 0 10px;
-				box-sizing: border-box;
-				overflow-y: scroll;
-				@apply --layout-vertical;
-			}
-
 			#approvedQuestionsHeader {
 				text-transform: uppercase;
 				padding-left: 9px;
 				font-weight: bold;
 				font-size: 24px;
 				margin-top: 15px;
+				margin-bottom: 6px;
+			}
+
+			#placeholder {
+				padding-left: 10px;
+			}
+
+			#list {
+				margin-top: 14px;
+				padding: 0 10px;
+				box-sizing: border-box;
+				overflow-y: auto;
+				overflow-x: hidden;
+				@apply --layout-vertical;
 			}
 
 			.tweet {
@@ -164,8 +170,9 @@
 				@apply --layout-horizontal;
 			}
 
-			.tweet:first-of-type {
+			#list .tweet:first-of-type {
 				margin-top: 0;
+				background-color: #BFE7C4 !important;
 			}
 
 			.tweet-content {
@@ -215,6 +222,10 @@
 			#endInterviewDialog paper-button {
 				color: #00bebe;
 			}
+
+			[hidden] {
+				display: none !important;
+			}
 		</style>
 
 		<div class="frame" style="margin-bottom: 4px;">
@@ -258,7 +269,7 @@
 				</dragula-element>
 
 				<div class="layout horizontal center-center">
-					<paper-button id="showLowerthird" raised on-tap="showLowerthird" disabled="[[lowerthirdShowing]]">
+					<paper-button id="showLowerthird" raised on-tap="showLowerthird" disabled="[[any(lowerthirdShowing, questionShowing)]]">
 						Show
 					</paper-button>
 
@@ -266,7 +277,7 @@
 						Hide
 					</paper-button>
 
-					<paper-button id="autoLowerthird" raised on-tap="autoLowerthird" disabled="[[lowerthirdShowing]]">
+					<paper-button id="autoLowerthird" raised on-tap="autoLowerthird" disabled="[[any(lowerthirdShowing, questionShowing)]]">
 						Auto
 					</paper-button>
 				</div>
@@ -283,11 +294,11 @@
 
 			<div id="approvedQuestionsHeader">APPROVED QUESTIONS</div>
 
-			<div id="placeholder" hidden="[[onScreenTweet]]">
+			<div id="placeholder" hidden="[[replies.length]]">
 				There are no Twitter questions currently approved for use.
 			</div>
 
-			<div class="layout horizontal center-center">
+			<div class="layout horizontal center-center" hidden="[[!replies.length]]">
 				<paper-button id="showQuestion" raised on-tap="showQuestion" disabled="[[questionShowing]]">
 					Show
 				</paper-button>
@@ -353,7 +364,7 @@
 			</dragula-element>
 		</div>
 
-		<paper-dialog id="endInterviewDialog">
+		<paper-dialog id="endInterviewDialog" with-backdrop>
 			<h2>End Interview</h2>
 			<p>Are you sure you wish to end this interview?</p>
 			<p>This will clear the current "prompt" tweet and prepare the interface for the next set of questions.</p>

@@ -8,6 +8,7 @@
 	const questionSortMap = nodecg.Replicant('interview:questionSortMap');
 	const runners = nodecg.Replicant('runners');
 	const lowerthirdTimeRemaining = nodecg.Replicant('interview:lowerthirdTimeRemaining');
+	const questionTimeRemaining = nodecg.Replicant('interview:questionTimeRemaining');
 
 	class GdqInterviewTier2 extends Polymer.GestureEventListeners(Polymer.Element) {
 		static get is() {
@@ -115,7 +116,7 @@
 				}
 
 				if (newVal.length === 5) {
-					typeaheads[0].value = newVal[0];
+					typeaheads[0].selectedItem = newVal[0];
 				}
 
 				const lastFour = newVal.slice(-4);
@@ -129,7 +130,7 @@
 				if (newVal) {
 					this.$.hideLowerthird.removeAttribute('disabled');
 					this.$.autoLowerthird.setAttribute('disabled', 'true');
-					this.$.autoLowerthird.innerText = lowerthirdTimeRemaining.value;
+					this.$.autoLowerthird.innerText = lowerthirdTimeRemaining.value === 0 ? 'Auto' : lowerthirdTimeRemaining.value;
 				} else {
 					this.$.hideLowerthird.setAttribute('disabled', 'true');
 					this.$.autoLowerthird.removeAttribute('disabled');
@@ -142,6 +143,14 @@
 					this.$.autoLowerthird.innerText = newVal;
 				} else {
 					this.$.autoLowerthird.innerText = 'Auto';
+				}
+			});
+
+			questionTimeRemaining.on('change', newVal => {
+				if (questionShowing.value) {
+					this.$.autoQuestion.innerText = newVal;
+				} else {
+					this.$.autoQuestion.innerText = 'Auto';
 				}
 			});
 
@@ -168,6 +177,15 @@
 
 			questionShowing.on('change', newVal => {
 				this.questionShowing = newVal;
+				if (newVal) {
+					this.$.hideQuestion.removeAttribute('disabled');
+					this.$.autoQuestion.setAttribute('disabled', 'true');
+					this.$.autoQuestion.innerText = questionTimeRemaining.value === 0 ? 'Auto' : questionTimeRemaining.value;
+				} else {
+					this.$.hideQuestion.setAttribute('disabled', 'true');
+					this.$.autoQuestion.removeAttribute('disabled');
+					this.$.autoQuestion.innerText = 'Auto';
+				}
 			});
 		}
 
@@ -181,6 +199,10 @@
 
 		hideQuestion() {
 			questionShowing.value = false;
+		}
+
+		autoQuestion() {
+			nodecg.sendMessage('pulseInterviewQuestion', 10);
 		}
 
 		showLowerthird() {
@@ -208,7 +230,7 @@
 		showNextQuestion() {
 			this.hideQuestion();
 			this.$.showNext.disabled = true;
-			nodecg.sendMessage('interview:markQuestionAsDone', this.onScreenTweet.id_str, error => {
+			nodecg.sendMessage('interview:markQuestionAsDone', questionSortMap.value[0], error => {
 				this.$.showNext.disabled = false;
 				if (error) {
 					this.$.errorToast.text = 'Failed to load next interview question.';
@@ -240,6 +262,10 @@
 			}
 
 			interviewNames.value = inputs.map(input => input.value);
+		}
+
+		any(...args) {
+			return args.find(arg => arg);
 		}
 
 		_flashBgIfAppropriate(operations) {
