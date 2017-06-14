@@ -80,6 +80,10 @@
 		}
 
 		calcOnScreenTweet(_questionsVal, _sortMapVal) {
+			if (!_questionsVal || !_sortMapVal) {
+				return;
+			}
+
 			return _questionsVal.find(reply => {
 				return _sortMapVal.indexOf(reply.id_str) === 0;
 			});

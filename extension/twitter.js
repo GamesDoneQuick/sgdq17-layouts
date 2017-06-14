@@ -177,18 +177,18 @@ function addTweet(tweet) {
  */
 function removeTweetById(idToRemove) {
 	if (typeof idToRemove !== 'string') {
-		throw new Error('[twitter] Must provide a string ID when removing a tweet. ID provided was: ', idToRemove);
+		throw new Error(`[twitter] Must provide a string ID when removing a tweet. ID provided was: ${idToRemove}`);
 	}
 
-	let removedTweet;
+	let didRemoveTweet = false;
 	tweets.value.some((tweet, index) => {
 		if (tweet.id_str === idToRemove || tweet.gdqRetweetId === idToRemove) {
 			tweets.value.splice(index, 1);
-			removedTweet = true;
+			didRemoveTweet = true;
 			return true;
 		}
 
 		return false;
 	});
-	return removedTweet;
+	return didRemoveTweet;
 }

@@ -4,6 +4,7 @@
 		"new-cap": [2, {
 			"capIsNewExceptions": [
 				"Polymer",
+				"Polymer.GestureEventListeners",
 				"nodecg.Replicant"
 			]
 		}],

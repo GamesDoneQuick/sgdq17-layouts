@@ -1,9 +1,13 @@
 (function () {
 	'use strict';
 
+	const interviewNames = nodecg.Replicant('interview:names');
+	const lowerthirdShowing = nodecg.Replicant('interview:lowerthirdShowing');
 	const questions = nodecg.Replicant('interview:questionTweets');
-	const questionSortMap = nodecg.Replicant('interview:questionSortMap');
 	const questionShowing = nodecg.Replicant('interview:questionShowing');
+	const questionSortMap = nodecg.Replicant('interview:questionSortMap');
+	const runners = nodecg.Replicant('runners');
+	const lowerthirdTimeRemaining = nodecg.Replicant('interview:lowerthirdTimeRemaining');
 
 	class GdqInterviewTier2 extends Polymer.GestureEventListeners(Polymer.Element) {
 		static get is() {
@@ -14,6 +18,19 @@
 			return {
 				replies: {
 					type: Object
+				},
+				lowerthirdShowing: {
+					type: Boolean
+				},
+				questionShowing: {
+					type: Boolean,
+					reflectToAttribute: true
+				},
+				_typeaheadCandidates: {
+					type: Array,
+					value() {
+						return [];
+					}
 				}
 			};
 		}
@@ -28,10 +45,10 @@
 				}
 
 				if (e.detail.state === 'start') {
-					start = this.$['list'].scrollTop;
+					start = this.$.list.scrollTop;
 				}
 
-				this.$['list'].scrollTop = start - e.detail.dy;
+				this.$.list.scrollTop = start - e.detail.dy;
 			});
 
 			this.$.list.createMirror = originalElement => {
@@ -40,6 +57,23 @@
 				mirror.style.width = rect.width + 'px';
 				mirror.style.height = rect.height + 'px';
 				mirror.querySelector('gdq-tweet').tweet = originalElement.querySelector('gdq-tweet').tweet;
+				return mirror;
+			};
+
+			this.$.nameInputs.moves = function (element, source, handle) {
+				return handle.id === 'handle';
+			};
+
+			this.$.nameInputs.createMirror = originalElement => {
+				const rect = originalElement.getBoundingClientRect();
+				const mirror = originalElement.cloneNode(true);
+				mirror.style.width = rect.width + 'px';
+				mirror.style.height = rect.height + 'px';
+				mirror.allowCustomValue = true;
+				mirror.value = originalElement.value;
+				Polymer.RenderStatus.beforeNextRender(mirror, () => {
+					mirror.$.input.$.input.value = originalElement.value;
+				});
 				return mirror;
 			};
 
@@ -60,6 +94,56 @@
 			});
 
 			this._listObserver.observe(this.$.list, {childList: true, subtree: true});
+
+			runners.on('change', newVal => {
+				if (newVal && newVal.length > 0) {
+					this._typeaheadCandidates = newVal.filter(runner => runner).map(runner => runner.name);
+				} else {
+					this._typeaheadCandidates = [];
+				}
+			});
+
+			interviewNames.on('change', newVal => {
+				const typeaheads = Array.from(this.shadowRoot.querySelectorAll('gdq-lowerthird-name-input'));
+				typeaheads.unshift(this.$.fifthPersonInput);
+
+				if (!newVal || newVal.length <= 0) {
+					typeaheads.forEach(input => {
+						input.value = '';
+					});
+					return;
+				}
+
+				if (newVal.length === 5) {
+					typeaheads[0].value = newVal[0];
+				}
+
+				const lastFour = newVal.slice(-4);
+				lastFour.forEach((name, index) => {
+					typeaheads[index + 1].selectedItem = name;
+				});
+			});
+
+			lowerthirdShowing.on('change', newVal => {
+				this.lowerthirdShowing = newVal;
+				if (newVal) {
+					this.$.hideLowerthird.removeAttribute('disabled');
+					this.$.autoLowerthird.setAttribute('disabled', 'true');
+					this.$.autoLowerthird.innerText = lowerthirdTimeRemaining.value;
+				} else {
+					this.$.hideLowerthird.setAttribute('disabled', 'true');
+					this.$.autoLowerthird.removeAttribute('disabled');
+					this.$.autoLowerthird.innerText = 'Auto';
+				}
+			});
+
+			lowerthirdTimeRemaining.on('change', newVal => {
+				if (lowerthirdShowing.value) {
+					this.$.autoLowerthird.innerText = newVal;
+				} else {
+					this.$.autoLowerthird.innerText = 'Auto';
+				}
+			});
 
 			questions.on('change', newVal => {
 				this.replies = newVal.slice(0);
@@ -83,8 +167,79 @@
 			});
 
 			questionShowing.on('change', newVal => {
-				this._questionShowingVal = newVal;
+				this.questionShowing = newVal;
 			});
+		}
+
+		calcStartDisabled(lowerthirdShowing, questionShowing) {
+			return lowerthirdShowing || questionShowing;
+		}
+
+		showQuestion() {
+			questionShowing.value = true;
+		}
+
+		hideQuestion() {
+			questionShowing.value = false;
+		}
+
+		showLowerthird() {
+			this.takeNames();
+			lowerthirdShowing.value = true;
+		}
+
+		hideLowerthird() {
+			lowerthirdShowing.value = false;
+		}
+
+		autoLowerthird() {
+			this.takeNames();
+			nodecg.sendMessage('pulseInterviewLowerthird', 10);
+		}
+
+		openEndInterviewDialog() {
+			this.$.endInterviewDialog.open();
+		}
+
+		endInterview() {
+			nodecg.sendMessage('interview:end');
+		}
+
+		showNextQuestion() {
+			this.hideQuestion();
+			this.$.showNext.disabled = true;
+			nodecg.sendMessage('interview:markQuestionAsDone', this.onScreenTweet.id_str, error => {
+				this.$.showNext.disabled = false;
+				if (error) {
+					this.$.errorToast.text = 'Failed to load next interview question.';
+					this.$.errorToast.show();
+				}
+			});
+		}
+
+		reject(event) {
+			const button = event.target.closest('paper-button');
+			button.disabled = true;
+			nodecg.sendMessage('interview:markQuestionAsDone', event.model.reply.id_str, error => {
+				button.disabled = false;
+				if (error) {
+					this.$.errorToast.text = 'Failed to reject interview question.';
+					this.$.errorToast.show();
+				}
+			});
+		}
+
+		/**
+		 * Takes the names currently entered into the nodecg-typeahead-inputs.
+		 * @returns {undefined}
+		 */
+		takeNames() {
+			const inputs = Array.from(this.shadowRoot.querySelectorAll('gdq-lowerthird-name-input'));
+			if (this.fivePersonMode) {
+				inputs.unshift(this.$.fifthPersonInput);
+			}
+
+			interviewNames.value = inputs.map(input => input.value);
 		}
 
 		_flashBgIfAppropriate(operations) {
@@ -108,34 +263,6 @@
 			this.$.list.style.backgroundColor = 'transparent';
 		}
 
-		showQuestion() {
-			questionShowing.value = true;
-		}
-
-		hideQuestion() {
-			questionShowing.value = false;
-		}
-
-		openEndInterviewDialog() {
-			this.$.endInterviewDialog.open();
-		}
-
-		endInterview() {
-			nodecg.sendMessage('interview:end');
-		}
-
-		showNextQuestion() {
-			this.hideQuestion();
-			this.$.showNext.disabled = true;
-			nodecg.sendMessage('interview:markQuestionAsDone', this.onScreenTweet.id_str, error => {
-				this.$.showNext.disabled = false;
-				if (error) {
-					this.$.errorToast.text = 'Failed to load next interview question.';
-					this.$.errorToast.show();
-				}
-			});
-		}
-
 		_handleDrag() {
 			this._dragging = true;
 		}
@@ -148,7 +275,7 @@
 			questionSortMap.value = newSortOrder;
 		}
 
-		mapSort(a, b) {
+		_mapSort(a, b) {
 			if (!this._sortMapVal) {
 				return 0;
 			}
@@ -170,18 +297,6 @@
 			}
 
 			return aMapIndex - bMapIndex;
-		}
-
-		reject(event) {
-			const button = event.target.closest('paper-button');
-			button.disabled = true;
-			nodecg.sendMessage('interview:markQuestionAsDone', event.model.reply.id_str, error => {
-				button.disabled = false;
-				if (error) {
-					this.$.errorToast.text = 'Failed to reject interview question.';
-					this.$.errorToast.show();
-				}
-			});
 		}
 
 		/* Disabled for now. Can't get drag sort and button sort to work simultaneously.
