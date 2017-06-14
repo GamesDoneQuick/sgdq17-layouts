@@ -1,6 +1,6 @@
 'use strict';
 
-const DONATION_STATS_URL = 'https://gamesdonequick.com/tracker/19?json';
+const DONATION_STATS_URL = 'https://gamesdonequick.com/tracker/20?json';
 
 // Packages
 const request = require('request');

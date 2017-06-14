@@ -172,7 +172,7 @@ function update() {
 			'https://private.gamesdonequick.com/tracker/search',
 		qs: {
 			type: 'runner',
-			event: 19
+			event: 20
 		},
 		json: true
 	});
@@ -183,7 +183,7 @@ function update() {
 			'https://private.gamesdonequick.com/tracker/search',
 		qs: {
 			type: 'run',
-			event: 19
+			event: 20
 		},
 		json: true
 	});
