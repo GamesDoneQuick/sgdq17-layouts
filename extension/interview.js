@@ -102,7 +102,7 @@ nodecg.listenFor('interview:updateQuestionSortMap', updateQuestionSortMap);
 
 nodecg.listenFor('interview:markQuestionAsDone', (id, cb = function () {}) => {
 	if (!_repliesRef) {
-		return;
+		return cb(new Error('_repliesRef not ready!'));
 	}
 
 	_repliesRef.child(id).transaction(tweet => {
@@ -116,6 +116,7 @@ nodecg.listenFor('interview:markQuestionAsDone', (id, cb = function () {}) => {
 
 		return tweet;
 	}).then(() => {
+		updateQuestionSortMap();
 		cb();
 	}).catch(error => {
 		nodecg.log.error('[interview]', error);

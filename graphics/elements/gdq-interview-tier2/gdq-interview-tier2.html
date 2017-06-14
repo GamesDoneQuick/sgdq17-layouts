@@ -9,6 +9,7 @@
 <link rel="import" href="../../../bower_components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
 <link rel="import" href="../../../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
+<link rel="import" href="../../../bower_components/polymer/lib/mixins/mutable-data.html">
 <link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
 <link rel="import" href="../../../shared/style/gdq-input-style.html">
@@ -298,7 +299,7 @@
 				There are no Twitter questions currently approved for use.
 			</div>
 
-			<div class="layout horizontal center-center" hidden="[[!replies.length]]">
+			<div class="layout horizontal center-center flex-none" hidden="[[!replies.length]]">
 				<paper-button id="showQuestion" raised on-tap="showQuestion" disabled="[[questionShowing]]">
 					Show
 				</paper-button>
@@ -324,7 +325,8 @@
 						is="dom-repeat"
 						items="[[replies]]"
 						as="reply"
-						sort="_mapSort">
+						sort="_mapSort"
+						mutable-data>
 						<div class="tweet bg-color-transition" tweet-id="[[reply.id_str]]">
 							<div class="tweet-handle">
 								<iron-icon

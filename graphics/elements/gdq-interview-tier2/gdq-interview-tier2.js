@@ -10,7 +10,7 @@
 	const lowerthirdTimeRemaining = nodecg.Replicant('interview:lowerthirdTimeRemaining');
 	const questionTimeRemaining = nodecg.Replicant('interview:questionTimeRemaining');
 
-	class GdqInterviewTier2 extends Polymer.GestureEventListeners(Polymer.Element) {
+	class GdqInterviewTier2 extends Polymer.MutableData(Polymer.GestureEventListeners(Polymer.Element)) {
 		static get is() {
 			return 'gdq-interview-tier2';
 		}
@@ -128,12 +128,8 @@
 			lowerthirdShowing.on('change', newVal => {
 				this.lowerthirdShowing = newVal;
 				if (newVal) {
-					this.$.hideLowerthird.removeAttribute('disabled');
-					this.$.autoLowerthird.setAttribute('disabled', 'true');
 					this.$.autoLowerthird.innerText = lowerthirdTimeRemaining.value === 0 ? 'Auto' : lowerthirdTimeRemaining.value;
 				} else {
-					this.$.hideLowerthird.setAttribute('disabled', 'true');
-					this.$.autoLowerthird.removeAttribute('disabled');
 					this.$.autoLowerthird.innerText = 'Auto';
 				}
 			});
@@ -155,35 +151,30 @@
 			});
 
 			questions.on('change', newVal => {
-				this.replies = newVal.slice(0);
-				this.$.repeat.render();
+				this.set('replies', newVal);
 			});
 
 			questionSortMap.on('change', (newVal, oldVal, operations) => {
 				// If the new sortMap is equal to the currently rendered sort order, do nothing.
-				if (JSON.stringify(newVal.slice(0)) === JSON.stringify(this._sortableListOrder)) {
+				if (JSON.stringify(newVal) === JSON.stringify(this._dragListOrder)) {
 					return;
 				}
 
-				this._sortMapVal = newVal.slice(0);
-				this.$.repeat.render();
+				this._sortMapVal = newVal;
+				this.notifyPath('replies');
 
 				if (newVal.length > 0) {
 					this._flashBgIfAppropriate(operations);
 				}
 
-				this._sortableListOrder = newVal.slice(0);
+				this._dragListOrder = newVal.slice(0);
 			});
 
 			questionShowing.on('change', newVal => {
 				this.questionShowing = newVal;
 				if (newVal) {
-					this.$.hideQuestion.removeAttribute('disabled');
-					this.$.autoQuestion.setAttribute('disabled', 'true');
 					this.$.autoQuestion.innerText = questionTimeRemaining.value === 0 ? 'Auto' : questionTimeRemaining.value;
 				} else {
-					this.$.hideQuestion.setAttribute('disabled', 'true');
-					this.$.autoQuestion.removeAttribute('disabled');
 					this.$.autoQuestion.innerText = 'Auto';
 				}
 			});
@@ -235,6 +226,7 @@
 				if (error) {
 					this.$.errorToast.text = 'Failed to load next interview question.';
 					this.$.errorToast.show();
+					nodecg.log.error(error);
 				}
 			});
 		}
@@ -247,6 +239,7 @@
 				if (error) {
 					this.$.errorToast.text = 'Failed to reject interview question.';
 					this.$.errorToast.show();
+					nodecg.log.error(error);
 				}
 			});
 		}
@@ -297,7 +290,26 @@
 			this._dragging = false;
 			const items = Array.from(this.$.list.querySelectorAll('.tweet'));
 			const newSortOrder = items.map(item => item.tweetId);
-			this._sortableListOrder = newSortOrder;
+			this._dragListOrder = newSortOrder;
+			this.$.repeat.__instances.sort((a, b) => {
+				const aMapIndex = newSortOrder.indexOf(a.__data.reply.id_str);
+				const bMapIndex = newSortOrder.indexOf(b.__data.reply.id_str);
+
+				if (aMapIndex >= 0 && bMapIndex < 0) {
+					return -1;
+				}
+
+				if (aMapIndex < 0 && bMapIndex >= 0) {
+					return 1;
+				}
+
+				// If neither of these replies are in the sort map, just leave them where they are.
+				if (aMapIndex < 0 && bMapIndex < 0) {
+					return 0;
+				}
+
+				return aMapIndex - bMapIndex;
+			});
 			questionSortMap.value = newSortOrder;
 		}
 
@@ -326,8 +338,8 @@
 		}
 
 		/* Disabled for now. Can't get drag sort and button sort to work simultaneously.
-		calcPromoteDisabled(tweet, _sortableListOrder) {
-			const sortIndex = _sortableListOrder.indexOf(tweet.id_str);
+		calcPromoteDisabled(tweet, _dragListOrder) {
+			const sortIndex = _dragListOrder.indexOf(tweet.id_str);
 			if (sortIndex === -1) {
 				return false;
 			}
@@ -335,13 +347,13 @@
 			return sortIndex <= 1;
 		}
 
-		calcDemoteDisabled(tweet, _sortableListOrder) {
-			const sortIndex = _sortableListOrder.indexOf(tweet.id_str);
+		calcDemoteDisabled(tweet, _dragListOrder) {
+			const sortIndex = _dragListOrder.indexOf(tweet.id_str);
 			if (sortIndex === -1) {
 				return false;
 			}
 
-			return sortIndex >= _sortableListOrder.length - 1;
+			return sortIndex >= _dragListOrder.length - 1;
 		}
 
 		promote(e) {

@@ -5,6 +5,7 @@
 			"capIsNewExceptions": [
 				"Polymer",
 				"Polymer.GestureEventListeners",
+				"Polymer.MutableData",
 				"nodecg.Replicant"
 			]
 		}],
