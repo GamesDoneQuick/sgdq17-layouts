@@ -98,7 +98,7 @@
 
 			runners.on('change', newVal => {
 				if (newVal && newVal.length > 0) {
-					this._typeaheadCandidates = newVal.filter(runner => runner).map(runner => runner.name);
+					this._typeaheadCandidates = newVal.filter(runner => runner).map(runner => runner.name).sort();
 				} else {
 					this._typeaheadCandidates = [];
 				}
