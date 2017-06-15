@@ -105,6 +105,10 @@ nodecg.listenFor('interview:markQuestionAsDone', (id, cb = function () {}) => {
 		return cb(new Error('_repliesRef not ready!'));
 	}
 
+	if (!id) {
+		return cb();
+	}
+
 	_repliesRef.child(id).transaction(tweet => {
 		if (tweet) {
 			if (!tweet.approval_status) {

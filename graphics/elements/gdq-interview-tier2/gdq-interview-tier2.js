@@ -220,9 +220,9 @@
 
 		showNextQuestion() {
 			this.hideQuestion();
-			this.$.showNext.disabled = true;
+			this._markingTopQuestionAsDone = true;
 			nodecg.sendMessage('interview:markQuestionAsDone', questionSortMap.value[0], error => {
-				this.$.showNext.disabled = false;
+				this._markingTopQuestionAsDone = false;
 				if (error) {
 					this.$.errorToast.text = 'Failed to load next interview question.';
 					this.$.errorToast.show();

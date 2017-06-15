@@ -290,7 +290,13 @@
 
 			<div class="layout horizontal center-center">
 				<paper-button id="endInterview" raised on-tap="openEndInterviewDialog">End Interview (Clear Questions)</paper-button>
-				<paper-button id="showNext" raised on-tap="showNextQuestion">Load Next Approved Question</paper-button>
+				<paper-button
+					id="showNext"
+					raised
+					on-tap="showNextQuestion"
+					disabled="[[!any(replies.length, _markingTopQuestionAsDone)]]">
+					Load Next Approved Question
+				</paper-button>
 			</div>
 
 			<div id="approvedQuestionsHeader">APPROVED QUESTIONS</div>
