@@ -3,12 +3,15 @@
 <link rel="import" href="../../../bower_components/nodecg-toast/nodecg-toast.html">
 <link rel="import" href="../../../bower_components/nodecg-typeahead-input/nodecg-typeahead-input.html">
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../gdq-run-editor/gdq-run-editor.html">
 <link rel="import" href="gdq-schedule-runinfo.html">
 
 <dom-module id="gdq-schedule">
 	<template>
 		<style>
 			:host {
+				padding: 22px 24px;
 				@apply --layout-vertical;
 			}
 
@@ -140,6 +143,13 @@
 			<paper-button id="fetchLatestSchedule" raised on-tap="fetchLatestSchedule">FETCH LATEST SCHEDULE</paper-button>
 			<paper-button id="editNext" raised on-tap="editNext">EDIT NEXT</paper-button>
 		</div>
+
+		<paper-dialog id="editDialog" with-backdrop>
+			<gdq-run-editor id="editor"></gdq-run-editor>
+			<div class="buttons">
+				<paper-button dialog-dismiss autofocus>Cancel</paper-button>
+			</div>
+		</paper-dialog>
 	</template>
 
 	<script src="gdq-schedule.js"></script>

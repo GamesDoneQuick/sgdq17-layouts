@@ -54,13 +54,13 @@ class GdqRunEditor extends Polymer.Element {
 			runners,
 			pk: this.pk
 		}, () => {
-			nodecg.getDialog('edit-run').close();
+			this.closest('paper-dialog').close();
 		});
 	}
 
 	resetRun() {
 		nodecg.sendMessage('resetRun', this.pk, () => {
-			nodecg.getDialog('edit-run').close();
+			this.closest('paper-dialog').close();
 		});
 	}
 

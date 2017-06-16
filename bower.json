@@ -11,7 +11,6 @@
     "nodecg-replicant": "NodeCGElements/nodecg-replicant#^1.0.0",
     "nodecg-replicant-input": "NodeCGElements/nodecg-replicant-input#^0.4.0",
     "nodecg-toast": "NodeCGElements/nodecg-toast#^1.0.0",
-    "nodecg-toggle": "NodeCGElements/nodecg-toggle#^0.2.0",
     "nodecg-typeahead-input": "NodeCGElements/nodecg-typeahead-input#polymer-2",
     "nodecg-widget-obs": "npm:nodecg-widget-obs#^2.0.5",
     "paper-button": "PolymerElements/paper-button#^2.0.0",

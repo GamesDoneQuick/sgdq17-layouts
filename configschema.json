@@ -140,6 +140,20 @@
 			},
 			"required": ["project_id", "private_key", "client_email"],
 			"additionalProperties": false
-		}
+		},
+		"tracker": {
+			"type": "object",
+			"properties": {
+				"username": {
+					"type": "string"
+				},
+				"password": {
+					"type": "string"
+				}
+			},
+			"description": "Login information for the private areas of the tracker API.",
+			"required": ["username", "password"]
+		},
+		"required": ["tracker"]
 	}
 }

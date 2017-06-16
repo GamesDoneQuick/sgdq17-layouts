@@ -33,6 +33,25 @@ obs.replicants.programScene.on('change', newVal => {
 
 module.exports = {
 	resetCropping() {
-		obs.send('ResetCropping');
+		obs.send('ResetCropping').catch(error => {
+			console.log('resetCropping error:', error);
+		});
+	},
+
+	async cycleRecordings() {
+		console.log('cycling recordings');
+		try {
+			await obs.stopRecording();
+		} catch (error) {
+			if (error.error !== 'recording not active') {
+				obs.log.error(error);
+			}
+		}
+
+		await obs.startRecording();
+	},
+
+	get connected() {
+		return obs._connected;
 	}
 };

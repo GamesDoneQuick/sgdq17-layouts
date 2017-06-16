@@ -113,17 +113,17 @@
 		}
 
 		editCurrent() {
-			const editor = nodecg.getDialogDocument('edit-run').getElementById('editor');
+			const editor = this.$.editor;
 			editor.title = `Edit Current Run (#${currentRun.value.order})`;
 			editor.loadRun(currentRun.value);
-			nodecg.getDialog('edit-run').open();
+			this.$.editDialog.open();
 		}
 
 		editNext() {
-			const editor = nodecg.getDialogDocument('edit-run').getElementById('editor');
+			const editor = this.$.editor;
 			editor.title = `Edit Next Run (#${nextRun.value.order})`;
 			editor.loadRun(nextRun.value);
-			nodecg.getDialog('edit-run').open();
+			this.$.editDialog.open();
 		}
 
 		_typeaheadKeyup(e) {

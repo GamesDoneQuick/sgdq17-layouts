@@ -81,8 +81,9 @@ checklist.on('change', newVal => {
 
 module.exports = {
 	reset() {
-		if (nodecg.bundleConfig.obsWebsocket && nodecg.bundleConfig.obsWebsocket.ip) {
+		if (obs.connected) {
 			obs.resetCropping();
+			obs.cycleRecordings();
 		}
 
 		for (const category in checklist.value) {

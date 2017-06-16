@@ -22,11 +22,12 @@
 		}
 
 		_checkboxChanged(e) {
-			const category = e.target.getAttribute('category');
-			const name = e.target.innerText.trim();
+			const target = e.path[0];
+			const category = target.getAttribute('category');
+			const name = target.innerText.trim();
 			checklist.value[category].find(task => {
 				if (task.name === name) {
-					task.complete = e.target.checked;
+					task.complete = target.checked;
 					return true;
 				}
 

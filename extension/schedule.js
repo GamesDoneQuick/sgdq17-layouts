@@ -2,15 +2,17 @@
 
 // Packages
 const assign = require('lodash.assign');
+const cheerio = require('cheerio');
 const clone = require('clone');
 const equals = require('deep-equal');
 const Promise = require('bluebird');
-const request = require('request-promise');
+const request = require('request-promise').defaults({jar: true}); // <= Automatically saves and re-uses cookies.
 
 // Ours
 const nodecg = require('./util/nodecg-api-context').get();
 const {calcOriginalValues, mergeChangesFromTracker} = require('./lib/diff-run');
 
+const LOGIN_URL = 'https://private.gamesdonequick.com/tracker/admin/login/';
 const POLL_INTERVAL = 60 * 1000;
 let updateInterval;
 
@@ -57,28 +59,53 @@ if (nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.titleTemplate) {
 	});
 }
 
-update();
+// Fetch the login page, and run the response body through cheerio
+// so we can extract the CSRF token from the hidden input field.
+// Then, POST with our username, password, and the csrfmiddlewaretoken.
+request({
+	uri: LOGIN_URL,
+	transform(body) {
+		return cheerio.load(body);
+	}
+}).then($ => request({
+	method: 'POST',
+	uri: LOGIN_URL,
+	form: {
+		username: nodecg.bundleConfig.tracker.username,
+		password: nodecg.bundleConfig.tracker.password,
+		csrfmiddlewaretoken: $('#login-form > input[name="csrfmiddlewaretoken"]').val()
+	},
+	headers: {
+		Referer: LOGIN_URL
+	},
+	resolveWithFullResponse: true,
+	simple: false
+})).then(() => {
+	update();
 
-// Get latest schedule data every POLL_INTERVAL milliseconds
-nodecg.log.info('Polling schedule every %d seconds...', POLL_INTERVAL / 1000);
-updateInterval = setInterval(update, POLL_INTERVAL);
-
-// Dashboard can invoke manual updates
-nodecg.listenFor('updateSchedule', (data, cb) => {
-	nodecg.log.info('Manual schedule update button pressed, invoking update...');
-	clearInterval(updateInterval);
+	// Get latest schedule data every POLL_INTERVAL milliseconds
+	nodecg.log.info('Polling schedule every %d seconds...', POLL_INTERVAL / 1000);
 	updateInterval = setInterval(update, POLL_INTERVAL);
-	update().then(updated => {
-		if (updated) {
-			nodecg.log.info('Schedule successfully updated');
-		} else {
-			nodecg.log.info('Schedule unchanged, not updated');
-		}
 
-		cb(null, updated);
-	}, error => {
-		cb(error);
+	// Dashboard can invoke manual updates
+	nodecg.listenFor('updateSchedule', (data, cb) => {
+		nodecg.log.info('Manual schedule update button pressed, invoking update...');
+		clearInterval(updateInterval);
+		updateInterval = setInterval(update, POLL_INTERVAL);
+		update().then(updated => {
+			if (updated) {
+				nodecg.log.info('Schedule successfully updated');
+			} else {
+				nodecg.log.info('Schedule unchanged, not updated');
+			}
+
+			cb(null, updated);
+		}, error => {
+			cb(error);
+		});
 	});
+}).catch(err => {
+	nodecg.log.error('[schedule] Error authenticating with tracker!\n', err);
 });
 
 nodecg.listenFor('nextRun', cb => {

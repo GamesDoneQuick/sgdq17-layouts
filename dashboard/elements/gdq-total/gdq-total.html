@@ -1,0 +1,68 @@
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/nodecg-toast/nodecg-toast.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-toggle-button/paper-toggle-button.html">
+
+<dom-module id="gdq-total">
+	<template>
+		<style include="iron-flex iron-flex-alignment">
+			:host {
+				@apply --layout-horizontal;
+				@apply --layout-center;
+				@apply --layout-justified;
+			}
+
+			#toggleLabel {
+				text-transform: uppercase;
+				font-size: 12px;
+				font-weight: bold;
+				margin-bottom: 4px;
+				pointer-events: none;
+				user-select: none;
+			}
+
+			#total {
+				width: 380px;
+				height: 64px;
+				border: 1px solid black;
+				border-radius: 5px;
+				box-sizing: border-box;
+				font-size: 48px;
+				line-height: 1;
+				background-color: white;
+				@apply --layout-horizontal;
+				@apply --layout-center-center;
+			}
+
+			#edit {
+				margin-right: 0;
+				--paper-button: {
+					background-color: #A50074;
+					color: white;
+				}
+			}
+		</style>
+
+		<div class="layout vertical center" style="margin-left: -14px;">
+			<div id="toggleLabel">Auto Update</div>
+			<paper-toggle-button
+				on-change="_handleAutoUpdateToggleChange"
+				checked="[[autoUpdateTotal]]"></paper-toggle-button>
+		</div>
+
+		<nodecg-toast id="toast"></nodecg-toast>
+		<div id="total">[[total]]</div>
+		<paper-button id="edit" on-tap="edit" raised>Edit</paper-button>
+
+		<paper-dialog id="editDialog" with-backdrop>
+			<h2>Edit Donation Total</h2>
+			<paper-input id="editTotalInput" label="Donation Total" type="number"></paper-input>
+			<div class="buttons">
+				<paper-button dialog-confirm on-tap="_handleEditDialogConfirmed">Accept</paper-button>
+				<paper-button dialog-dismiss autofocus>Cancel</paper-button>
+			</div>
+		</paper-dialog>
+	</template>
+
+	<script src="gdq-total.js"></script>
+</dom-module>

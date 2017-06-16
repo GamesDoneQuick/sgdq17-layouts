@@ -9,13 +9,6 @@
 				"nodecg.Replicant"
 			]
 		}],
-		"require-jsdoc": ["warn", {
-			"require": {
-				"FunctionDeclaration": true,
-				"MethodDefinition": true,
-				"ClassDeclaration": true
-			}
-		}],
 		"valid-jsdoc": ["error"],
 		"capitalized-comments": [0]
 	},
