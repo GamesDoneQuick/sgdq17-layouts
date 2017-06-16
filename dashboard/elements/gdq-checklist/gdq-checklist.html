@@ -1,11 +1,15 @@
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/neon-animation/web-animations.html">
 <link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../../../bower_components/polymer/lib/mixins/mutable-data.html">
+<link rel="import" href="../../../shared/style/gdq-checkbox-style.html">
 
 <dom-module id="gdq-checklist">
 	<template>
-		<style>
+		<style include="gdq-checkbox-style">
 			:host {
-				user-select: none;
+				padding: 16px;
 				@apply --layout-vertical;
 			}
 
@@ -14,93 +18,83 @@
 				font-weight: 500;
 				border-bottom: 1px solid black;
 				margin-bottom: 5px;
+				user-select: none;
 			}
 
 			.group {
-				@apply --layout-horizontal;
-				padding: 0 15px;
+				@apply --layout-vertical;
 			}
 
-			.group.horizontal {
-				@apply --layout-justified;
-			}
-
-			.columns {
+			#columns {
 				@apply --layout-horizontal;
 			}
 
-			.columns > * {
+			#columns > * {
 				@apply --layout-flex;
 				margin: 0 7px;
 			}
 
-			.columns > :first-child {
+			#columns > :first-child {
 				margin-left: 0;
 			}
 
-			.columns > :first-child .group {
-				padding-left: 15px;
-			}
-
-			.columns > :last-child {
+			#columns > :last-child {
 				margin-right: 0;
 			}
 
-			.columns > :last-child .group {
-				padding-right: 15px;
+			#audioCheckboxWrapper {
+				cursor: not-allowed;
 			}
 
-			.columns .group {
-				@apply --layout-vertical;
-				padding: 0 8px;
-			}
-
-			paper-checkbox {
-				border: 1px solid black;
-				height: 39px;
-				display: flex;
-				align-items: center;
-				border-radius: 3px;
-				padding: 0 12px;
-				margin-top: 5px;
-				width: 209px; /* hardcoded! */
-				--paper-checkbox-checked-color: #169b14;
-			}
-
-			paper-checkbox[checked] {
-				border: 1px solid transparent;
-				background-color: #9bd470;
+			#audioTooltip {
+				max-width: 400px;
+				--paper-tooltip: {
+					font-size: 14px;
+				};
 			}
 		</style>
 
-		<section style="margin-bottom: 11px;">
-			<div class="header">Extra Content</div>
-			<div class="group horizontal">
-				<template is="dom-repeat" items="[[extraContent]]">
-					<paper-checkbox category="extraContent" checked="{{item.complete}}">[[item.name]]</paper-checkbox>
-				</template>
-			</div>
-		</section>
-
-		<div class="columns">
+		<div id="columns">
 			<section>
 				<div class="header">Tech Station Duties</div>
 				<div class="group">
-					<template is="dom-repeat" items="[[techStationDuties]]">
-						<paper-checkbox category="techStationDuties" checked="{{item.complete}}">[[item.name]]</paper-checkbox>
+					<template is="dom-repeat" items="[[techStationDuties]]" mutable-data>
+						<paper-checkbox category="techStationDuties" checked="[[item.complete]]">[[item.name]]</paper-checkbox>
 					</template>
+
+					<div id="audioCheckboxWrapper">
+						<paper-checkbox
+							id="audioCheckbox"
+							class="non-interactive"
+							checked="[[audioReady]]">Audio Engineer(s) Ready</paper-checkbox>
+					</div>
 				</div>
 			</section>
 
 			<section>
-				<div class="header">Other Duties</div>
+				<div class="header">Extra Content</div>
+				<div class="group horizontal">
+					<template is="dom-repeat" items="[[extraContent]]" mutable-data>
+						<paper-checkbox category="extraContent" checked="[[item.complete]]">[[item.name]]</paper-checkbox>
+					</template>
+				</div>
+
+				<div class="header" style="margin-top: 21px;">Stage Tech Duties</div>
 				<div class="group">
-					<template is="dom-repeat" items="[[otherDuties]]">
-						<paper-checkbox category="otherDuties" checked="{{item.complete}}">[[item.name]]</paper-checkbox>
+					<template is="dom-repeat" items="[[stageTechDuties]]" mutable-data>
+						<paper-checkbox category="stageTechDuties" checked="[[item.complete]]">[[item.name]]</paper-checkbox>
 					</template>
 				</div>
 			</section>
 		</div>
+
+		<paper-tooltip
+			id="audioTooltip"
+			for="audioCheckboxWrapper"
+			position="right"
+			animation-delay="0">
+			Automatically checked when the Audio Engineer(s) have completed their own checklist.
+		</paper-tooltip>
 	</template>
 
 	<script src="gdq-checklist.js"></script>

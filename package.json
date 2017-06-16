@@ -46,7 +46,7 @@
     "compatibleRange": "0.9.0-beta",
     "dashboardPanels": [
       {
-        "name": "fullbleed-controls",
+        "name": "fullbleed controls",
         "title": "SGDQ 2017",
         "file": "fullbleed-controls.html",
         "headerColor": "#2d4e8a",
@@ -188,6 +188,11 @@
       },
       {
         "file": "host.html",
+        "width": 1920,
+        "height": 1080
+      },
+      {
+        "file": "audio_dashboard.html",
         "width": 1920,
         "height": 1080
       }

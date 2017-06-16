@@ -22,13 +22,15 @@ const checklistDefault = {
 		{name: 'Runner Info/Position', complete: false},
 		{name: 'Camera', complete: false}
 	],
-	otherDuties: [
+	stageTechDuties: [
+		{name: 'TVs have Video', complete: false},
+		{name: 'Steam Notifications Off', complete: false}
+	],
+	audioEngineerDuties: [
 		{name: 'Cue Break Music', complete: false},
 		{name: 'Runner Game Audio', complete: false},
-		{name: 'TVs have Video', complete: false},
 		{name: 'Commentator Mics', complete: false},
-		{name: 'Stream Audio', complete: false},
-		{name: 'Steam Notifications Off', complete: false}
+		{name: 'Stream Audio', complete: false}
 	]
 };
 
