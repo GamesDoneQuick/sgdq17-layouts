@@ -16,7 +16,6 @@ const checklistDefault = {
 	],
 	techStationDuties: [
 		{name: 'Reset Timer', complete: false},
-		{name: 'Stop/Start Recording', complete: false},
 		{name: 'Check Tech Notes', complete: false},
 		{name: 'Stream Layout', complete: false},
 		{name: 'Runner Info/Position', complete: false},
