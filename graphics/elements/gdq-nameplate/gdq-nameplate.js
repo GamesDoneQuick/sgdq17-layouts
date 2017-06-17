@@ -186,7 +186,7 @@
 		calcMedalImage(newVal, forfeit) {
 			if (forfeit) {
 				this.showTime();
-				return '';
+				return 'elements/gdq-nameplate/img/medal-fail.png';
 			}
 
 			switch (newVal) {
