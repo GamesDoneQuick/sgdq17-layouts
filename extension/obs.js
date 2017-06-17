@@ -1,5 +1,10 @@
 'use strict';
 
+// Native
+const fs = require('fs');
+const path = require('path');
+const {exec} = require('child_process');
+
 // Packages
 const OBSUtility = require('nodecg-utility-obs');
 
@@ -10,6 +15,26 @@ const nodecg = require('./util/nodecg-api-context').get();
 // A given layout can be on multiple scenes.
 const currentLayout = nodecg.Replicant('gdq:currentLayout', {defaultValue: ''});
 const obs = new OBSUtility(nodecg);
+
+const uploadScriptPath = nodecg.bundleConfig.youtubeUploadScriptPath;
+if (uploadScriptPath) {
+	let stats;
+	try {
+		stats = fs.lstatSync(uploadScriptPath);
+	} catch (e) {
+		if (e.code === 'ENOENT') {
+			throw new Error(`Configured youtubeUploadScriptPath (${uploadScriptPath}) does not exist.`);
+		} else {
+			throw e;
+		}
+	}
+
+	if (!stats.isFile()) {
+		throw new Error(`Configured youtubeUploadScriptPath (${uploadScriptPath}) is not a file.`);
+	}
+
+	nodecg.log.info('Automatic VOD uploading enabled.');
+}
 
 obs.replicants.programScene.on('change', newVal => {
 	if (!newVal) {
@@ -33,22 +58,60 @@ obs.replicants.programScene.on('change', newVal => {
 
 module.exports = {
 	resetCropping() {
-		obs.send('ResetCropping').catch(error => {
+		/* obs.send('ResetCropping').catch(error => {
 			console.log('resetCropping error:', error);
-		});
+		}); */
 	},
 
 	async cycleRecordings() {
-		console.log('cycling recordings');
-		try {
-			await obs.stopRecording();
-		} catch (error) {
-			if (error.error !== 'recording not active') {
-				obs.log.error(error);
-			}
-		}
+		await new Promise((resolve, reject) => {
+			const timeout = setTimeout(() => {
+				reject(new Error('Timed out waiting for OBS to stop recording.'));
+			}, 10000);
+
+			const listener = () => {
+				obs.log.info('Recording stopped.');
+				clearTimeout(timeout);
+				resolve();
+			};
+
+			obs.once('RecordingStopped', listener);
+			obs.stopRecording().catch(error => {
+				if (error.error === 'recording not active') {
+					obs.removeListener('RecordingStopped', listener);
+					resolve();
+				} else {
+					obs.log.error(error);
+					reject(error);
+				}
+			});
+		});
 
 		await obs.startRecording();
+		obs.log.info('Recording started.');
+
+		if (uploadScriptPath) {
+			nodecg.log.info('Executing upload script...');
+			exec(`python "${uploadScriptPath}"`, {
+				cwd: path.parse(uploadScriptPath).dir
+			}, (error, stdout, stderr) => {
+				if (error) {
+					nodecg.log.error('Upload script failed:', error);
+					return;
+				}
+
+				if (stderr) {
+					nodecg.log.error('Upload script failed:', stderr);
+					return;
+				}
+
+				if (stdout.trim().length > 0) {
+					nodecg.log.info('Upload script ran successfully:', stdout.trim());
+				} else {
+					nodecg.log.info('Upload script ran successfully.');
+				}
+			});
+		}
 	},
 
 	get connected() {

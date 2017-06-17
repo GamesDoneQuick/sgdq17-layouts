@@ -85,7 +85,9 @@ module.exports = {
 	reset() {
 		if (obs.connected) {
 			obs.resetCropping();
-			obs.cycleRecordings();
+			obs.cycleRecordings().catch(error => {
+				nodecg.log.error('Failed to cycle recordings:', error);
+			});
 		}
 
 		for (const category in checklist.value) {
