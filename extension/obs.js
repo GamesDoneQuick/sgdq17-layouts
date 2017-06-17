@@ -14,7 +14,8 @@ const nodecg = require('./util/nodecg-api-context').get();
 // We track what _layout_ is active, not necessarily what _scene_ is active.
 // A given layout can be on multiple scenes.
 const currentLayout = nodecg.Replicant('gdq:currentLayout', {defaultValue: ''});
-const obs = new OBSUtility(nodecg);
+const streamingOBS = new OBSUtility(nodecg, {namespace: 'streamingOBS'});
+const recordingOBS = new OBSUtility(nodecg, {namespace: 'recordingOBS'});
 
 const uploadScriptPath = nodecg.bundleConfig.youtubeUploadScriptPath;
 if (uploadScriptPath) {
@@ -36,7 +37,7 @@ if (uploadScriptPath) {
 	nodecg.log.info('Automatic VOD uploading enabled.');
 }
 
-obs.replicants.programScene.on('change', newVal => {
+streamingOBS.replicants.programScene.on('change', newVal => {
 	if (!newVal) {
 		return;
 	}
@@ -56,6 +57,36 @@ obs.replicants.programScene.on('change', newVal => {
 	});
 });
 
+function cycleRecording(obs) {
+	return new Promise((resolve, reject) => {
+		const timeout = setTimeout(() => {
+			reject(new Error(`Timed out waiting for ${obs.namespace} to stop recording.`));
+		}, 10000);
+
+		const recordingStoppedListener = () => {
+			obs.log.info('Recording stopped.');
+			clearTimeout(timeout);
+
+			setTimeout(() => {
+				resolve();
+			}, 2500);
+		};
+
+		obs.once('RecordingStopped', recordingStoppedListener);
+		obs.stopRecording().catch(error => {
+			if (error.error === 'recording not active') {
+				obs.removeListener('RecordingStopped', recordingStoppedListener);
+				resolve();
+			} else {
+				obs.log.error(error);
+				reject(error);
+			}
+		});
+	}).then(() => {
+		return obs.startRecording();
+	});
+}
+
 module.exports = {
 	resetCropping() {
 		/* obs.send('ResetCropping').catch(error => {
@@ -64,31 +95,29 @@ module.exports = {
 	},
 
 	async cycleRecordings() {
-		await new Promise((resolve, reject) => {
-			const timeout = setTimeout(() => {
-				reject(new Error('Timed out waiting for OBS to stop recording.'));
-			}, 10000);
+		nodecg.log.info('Cycling recordings...');
 
-			const listener = () => {
-				obs.log.info('Recording stopped.');
-				clearTimeout(timeout);
-				resolve();
-			};
+		const cycleRecordingPromises = [];
+		if (recordingOBS._connected) {
+			cycleRecordingPromises.push(cycleRecording(recordingOBS));
+		} else {
+			nodecg.log.error('Recording OBS is disconnected! Not cycling its recording.');
+		}
 
-			obs.once('RecordingStopped', listener);
-			obs.stopRecording().catch(error => {
-				if (error.error === 'recording not active') {
-					obs.removeListener('RecordingStopped', listener);
-					resolve();
-				} else {
-					obs.log.error(error);
-					reject(error);
-				}
-			});
-		});
+		if (streamingOBS._connected) {
+			cycleRecordingPromises.push(cycleRecording(streamingOBS));
+		} else {
+			nodecg.log.error('Streaming OBS is disconnected! Not cycling its recording.');
+		}
 
-		await obs.startRecording();
-		obs.log.info('Recording started.');
+		if (cycleRecordingPromises.length <= 0) {
+			nodecg.log.warn('Neither instance of OBS is connected, aborting cycleRecordings.');
+			return;
+		}
+
+		await Promise.all(cycleRecordingPromises);
+
+		nodecg.log.info('Recordings successfully cycled.');
 
 		if (uploadScriptPath) {
 			nodecg.log.info('Executing upload script...');
@@ -114,7 +143,7 @@ module.exports = {
 		}
 	},
 
-	get connected() {
-		return obs._connected;
+	get streamingOBSConnected() {
+		return streamingOBS._connected;
 	}
 };

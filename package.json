@@ -18,7 +18,7 @@
     "lodash.assign": "^4.0.9",
     "lodash.debounce": "^4.0.6",
     "lodash.merge": "^4.4.0",
-    "nodecg-utility-obs": "^2.0.4",
+    "nodecg-utility-obs": "^3.0.0",
     "numeral": "^2.0.6",
     "object-path": "^0.11.3",
     "obs-websocket-js": "^0.5.3",

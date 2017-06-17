@@ -15,6 +15,10 @@
 			super.ready();
 
 			schedule.on('change', newVal => {
+				if (!newVal) {
+					return;
+				}
+
 				this.$.typeahead.candidates = newVal.map(speedrun => speedrun.name);
 			});
 

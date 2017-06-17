@@ -26,7 +26,7 @@ const nextRun = nodecg.Replicant('nextRun', {defaultValue: {}});
 // If a "streamTitle" template has been defined in the bundle config, and if lfg-twitch api is present,
 // automatically update the Twitch game and title when currentRun changes.
 if (nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.titleTemplate) {
-	nodecg.log.info('Automatic stream title updating is enabled.');
+	nodecg.log.info('Automatic stream title updating enabled.');
 	let lastLongName;
 	currentRun.on('change', newVal => {
 		if (newVal.longName === lastLongName) {
