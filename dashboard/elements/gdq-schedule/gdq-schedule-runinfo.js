@@ -8,6 +8,10 @@ class GdqScheduleRuninfo extends Polymer.Element {
 			notes: {
 				type: String,
 				observer: '_notesChanged'
+			},
+			label: {
+				type: String,
+				reflectToAttribute: true
 			}
 		};
 	}
