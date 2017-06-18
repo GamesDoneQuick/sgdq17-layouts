@@ -157,6 +157,9 @@
 		"youtubeUploadScriptPath": {
 			"type": "string"
 		},
+		"donationSocketUrl": {
+			"type": "string"
+		},
 		"required": ["tracker"]
 	}
 }
