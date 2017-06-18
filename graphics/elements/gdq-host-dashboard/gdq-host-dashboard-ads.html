@@ -1,0 +1,38 @@
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="gdq-host-dashboard-styles.html">
+
+<dom-module id="gdq-host-dashboard-ads">
+	<template>
+		<style include="gdq-host-dashboard-styles iron-flex iron-flex-alignment">
+			:host {
+				grid-column: 3;
+				grid-row: 2;
+				box-sizing: border-box;
+				@apply --layout-vertical;
+			}
+
+			paper-button {
+				height: 64px;
+			}
+
+			#start {
+				--paper-button: {
+					background-color: #5BA664;
+				}
+			}
+		</style>
+
+		<div class="header" style="background-color: #CED4FF;">Ad Breaks & Sponsors</div>
+
+		<div class="layout vertical" style="padding: 14px;">
+			<paper-button id="start" raised>Start Break</paper-button>
+		</div>
+
+		<template is="dom-repeat" items="[[ads]]" as="ad">
+			<gdq-host-dashboard-ad></gdq-host-dashboard-ad>
+		</template>
+	</template>
+
+	<script src="gdq-host-dashboard-ads.js"></script>
+</dom-module>

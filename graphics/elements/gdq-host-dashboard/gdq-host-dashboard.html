@@ -2,10 +2,14 @@
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../../bower_components/paper-styles/shadow.html">
+<link rel="import" href="../../../bower_components/polymer/lib/mixins/mutable-data.html">
 <link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../shared/elements/gdq-rundown/gdq-rundown.html">
+<link rel="import" href="gdq-host-dashboard-ads.html">
 <link rel="import" href="gdq-host-dashboard-bid.html">
 
 <dom-module id="gdq-host-dashboard">
@@ -41,41 +45,44 @@
 				line-height: 43px;
 				text-transform: uppercase;
 				margin-bottom: 9px;
+				@apply --layout-flex-none;
 				@apply --layout-horizontal;
 				@apply --layout-justified;
 			}
 
-			#left {
-				width: 555px;
-				margin-right: 8px;
-				@apply --layout-vertical;
+			#gridWrapper {
+				display: grid;
+				grid-template-columns: repeat(3, 422px) auto;
+				grid-template-rows: 147px 387px auto;
+				grid-gap: 10px;
 			}
 
 			#total {
+				grid-column: 1;
+				grid-row: 1;
 				font-size: 72px;
 				font-weight: 700;
 				line-height: 43px;
-				height: 147px;
-				margin-bottom: 13px;
+				@apply --layout-vertical;
+				@apply --layout-center-center;
+			}
+
+			.header {
+				margin-top: 11px;
+				height: 54px;
+				background-color: rgba(215, 215, 215, 0.55);
+				font-size: 24px;
+				font-weight: 700;
+				text-transform: uppercase;
 				@apply --layout-vertical;
 				@apply --layout-center-center;
 			}
 
 			#prizes {
-				padding-top: 11px;
+				grid-column: 1;
+				grid-row: 2 / 4;
 				flex-grow: 1;
 				@apply --layout-flex;
-			}
-
-			#prizes-header {
-				height: 49px;
-				background-color: rgba(215, 215, 215, 0.55);
-				font-size: 30px;
-				font-weight: 700;
-				text-transform: uppercase;
-				margin: 0 14px;
-				@apply --layout-vertical;
-				@apply --layout-center-center;
 			}
 
 			#prizes-list {
@@ -86,31 +93,44 @@
 			}
 
 			.prize {
-				padding-bottom: 14px;
+				padding-bottom: 10px;
 				font-size: 36px;
 				font-weight: 400;
 				line-height: 43px;
+			}
+
+			.prize .material {
+				padding: 19px;
+				border: 1px solid #d2d2d2;
 			}
 
 			.prize:first-of-type {
 				padding-top: 4px;
 			}
 
-			.prize-material {
-				padding: 19px;
-				border: 1px solid #d2d2d2;
-			}
-
-			#center {
-				width: 745px;
+			.material {
+				background-color: white;
+				@apply --shadow-elevation-2dp;
 			}
 
 			#metroid {
-				height: 147px;
-				background-color: #ffffff;
-				padding: 11px;
+				grid-column: 2 / 4;
+				grid-row: 1;
 				box-sizing: border-box;
-				margin-bottom: 13px;
+				@apply --layout-vertical;
+			}
+
+			#metroid-state {
+				height: 32px;
+				margin: 0 167px;
+				font-size: 18px;
+				@apply --shadow-elevation-2dp;
+				@apply --layout-horizontal;
+				@apply --layout-center-center;
+			}
+
+			#metroid-results {
+				@apply --layout-flex;
 				@apply --layout-horizontal;
 			}
 
@@ -125,6 +145,7 @@
 				line-height: 43px;
 				text-transform: uppercase;
 				padding: 4px 16px 0 16px;
+				@apply --layout-center-justified;
 				@apply --layout-vertical;
 			}
 
@@ -139,12 +160,14 @@
 			}
 
 			.metroid-category-ahead {
-				font-size: 24px;
+				font-size: 18px;
 				font-weight: 400;
 				text-transform: none;
 			}
 
 			#bids {
+				grid-column: 2;
+				grid-row: 2 / 4;
 				box-sizing: border-box;
 			}
 
@@ -155,7 +178,7 @@
 				--paper-progress-transition-timing-function: linear;
 				--paper-progress-transition-duration: 60s;
 				--paper-progress-indeterminate-cycle-duration: 2.5s;
-				--paper-progress-height: 7px;
+				--paper-progress-height: 11px;
 				--paper-progress-container-color: white;
 			}
 
@@ -187,17 +210,22 @@
 			}
 
 			#bids-list {
-				height: 688px;
+				height: 635px;
 				padding: 0 14px;
 				margin-top: 13px;
 				margin-right: 11px;
 			}
 
-			#right {
+			#ads {
+				grid-column: 3;
+				grid-row: 2 / 4;
+			}
+
+			#schedule {
+				grid-column: 4;
+				grid-row: 2;
 				padding: 11px;
-				margin-left: 8px;
 				@apply --layout-vertical;
-				@apply --layout-flex;
 			}
 
 			#checklistStatus {
@@ -253,8 +281,6 @@
 
 			#currentRun {
 				text-align: center;
-				border-bottom: 1px solid black;
-				padding-bottom: 18px;
 			}
 
 			#currentRun-name {
@@ -272,98 +298,85 @@
 				text-overflow: ellipsis;
 			}
 
-			.upcomingRun {
-				margin-top: 22px;
-			}
-
-			.upcomingRun-name {
-				font-size: 30px;
-				font-weight: 500;
-				line-height: 33px;
-			}
-
-			.upcomingRun-runners {
-				font-size: 22px;
-				font-weight: 400;
-				overflow: hidden;
-				white-space: nowrap;
-				text-overflow: ellipsis;
-			}
-
-			.upcomingRun-category {
-				font-size: 22px;
-				font-weight: 400;
-			}
-
-			paper-material {
-				background-color: white;
+			#rundown {
+				grid-column: 4;
+				grid-row: 3;
 			}
 		</style>
 
 		<div id="header">
 			<div>[[currentTime]] -- [[elapsedTime]]</div>
-			<div>AWESOME GAMES DONE QUICK 2017</div>
+			<div>SUMMER GAMES DONE QUICK 2017</div>
 		</div>
 
-		<div class="layout horizontal flex">
-			<div id="left">
-				<paper-material id="total">[[total]]</paper-material>
-				<paper-material id="prizes">
-					<div id="prizes-header">PRIZES CURRENTLY AVAILABLE</div>
-					<iron-list id="prizes-list" items="[[prizes]]" as="prize">
-						<template>
-							<div class="prize">
-								<paper-material class="prize-material">
-									<div id="prize-[[prize.id]]">[[prize.description]]</div>
-									<div>[[prize.minimumbid]]</div>
-								</paper-material>
+		<div id="gridWrapper">
+			<div id="total" class="material">[[total]]</div>
+
+			<div id="prizes" class="material">
+				<div class="header">PRIZES CURRENTLY AVAILABLE</div>
+				<iron-list id="prizes-list" items="[[prizes]]" as="prize">
+					<template>
+						<div class="prize">
+							<div class="material">
+								<div id="prize-[[prize.id]]">[[prize.description]]</div>
+								<div>[[prize.minimumbid]]</div>
 							</div>
-						</template>
-					</iron-list>
-				</paper-material>
+						</div>
+					</template>
+				</iron-list>
 			</div>
 
-			<div id="center">
-				<paper-material id="metroid">
+			<div id="metroid">
+				<div id="metroid-state">[[calcMetroidStateText(metroidBid.state)]]</div>
+
+				<div id="metroid-results" class="material">
 					<div id="metroid-save" class="metroid-category">
 						<div class="metroid-category-name">SAVE THE ANIMALS</div>
-						<div>[[saveTheAnimalsTotal.formatted]]</div>
-						<div class="metroid-category-ahead">
-							[[calcMetroidAheadText('save', saveTheAnimalsTotal, killTheAnimalsTotal)]]
+						<div class="layout horizontal center justified">
+							<div>[[saveTheAnimalsTotal.formatted]]</div>
+							<div class="metroid-category-ahead">
+								[[calcMetroidAheadText('save', saveTheAnimalsTotal, killTheAnimalsTotal)]]
+							</div>
 						</div>
 					</div>
 					<div id="metroid-kill" class="metroid-category">
 						<div class="metroid-category-name">KILL THE ANIMALS</div>
-						<div>[[killTheAnimalsTotal.formatted]]</div>
-						<div class="metroid-category-ahead">
-							[[calcMetroidAheadText('kill', saveTheAnimalsTotal, killTheAnimalsTotal)]]
+						<div class="layout horizontal center justified">
+							<div class="metroid-category-ahead">
+								[[calcMetroidAheadText('kill', saveTheAnimalsTotal, killTheAnimalsTotal)]]
+							</div>
+							<div>[[killTheAnimalsTotal.formatted]]</div>
 						</div>
 					</div>
-				</paper-material>
-
-				<paper-material id="bids">
-					<paper-progress id="bids-cooldown" indeterminate></paper-progress>
-
-					<paper-input
-						id="bids-filter"
-						label="Filter"
-						placeholder="Type in filter here"
-						value="{{bidFilterString}}">
-					</paper-input>
-					<iron-list id="bids-list" items="[[calcBids(relevantBids, bidFilterString)]]" as="bid" filter="bidsFilter">
-						<template>
-							<gdq-host-dashboard-bid bid="[[bid]]"></gdq-host-dashboard-bid>
-						</template>
-					</iron-list>
-				</paper-material>
+				</div>
 			</div>
 
-			<paper-material id="right">
+			<div id="bids" class="material">
+				<paper-progress id="bids-cooldown" indeterminate></paper-progress>
+
+				<div class="header" style="margin-top: 0;">Incentive & Bid Wars</div>
+
+				<paper-input
+					id="bids-filter"
+					label="Filter"
+					placeholder="Type in filter here"
+					value="{{bidFilterString}}">
+				</paper-input>
+				<iron-list id="bids-list" items="[[calcBids(relevantBids, bidFilterString)]]" as="bid" filter="bidsFilter">
+					<template>
+						<gdq-host-dashboard-bid bid="[[bid]]"></gdq-host-dashboard-bid>
+					</template>
+				</iron-list>
+			</div>
+
+			<gdq-host-dashboard-ads id="ads" class="material"></gdq-host-dashboard-ads>
+
+			<div id="schedule" class="material">
 				<div id="checklistStatus"></div>
 
 				<div id="stopwatch">
 					<div id="stopwatch-time">[[stopwatchTime]]</div>
-					<div id="stopwatch-results">
+					<div 1id="stopwatch-results">
 						<template is="dom-repeat" items="[[stopwatchResults]]" as="result">
 							<div class="result" display$="[[isValidResult(result, index, runners)]]">
 								<div class="result-time">[[result.formatted]]</div>
@@ -379,17 +392,9 @@
 					<div id="currentRun-name"></div>
 					<div id="currentRun-runners">[[calcRunnersString(runners)]]</div>
 				</div>
+			</div>
 
-				<div id="schedule">
-					<template is="dom-repeat" items="[[upcomingRuns]]" as="run">
-						<div class="upcomingRun">
-							<div class="upcomingRun-name">[[run.name]]</div>
-							<div class="upcomingRun-runners">[[calcRunnersString(run.runners)]]</div>
-							<div class="upcomingRun-category">[[run.category]]</div>
-						</div>
-					</template>
-				</div>
-			</paper-material>
+			<gdq-rundown id="rundown" class="material"></gdq-rundown>
 		</div>
 	</template>
 

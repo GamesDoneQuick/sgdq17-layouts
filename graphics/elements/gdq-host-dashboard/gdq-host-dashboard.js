@@ -1,18 +1,17 @@
 (function () {
 	'use strict';
 
-	const METROID_BID_ID = 5140;
-	const EVENT_START_TIMESTAMP = 1483893000000;
+	const METROID_BID_ID = 5744;
+	const EVENT_START_TIMESTAMP = 1499013000000;
 	const total = nodecg.Replicant('total');
 	const currentPrizes = nodecg.Replicant('currentPrizes');
 	const allBids = nodecg.Replicant('allBids');
 	const checklistComplete = nodecg.Replicant('checklistComplete');
 	const stopwatch = nodecg.Replicant('stopwatch');
 	const currentRun = nodecg.Replicant('currentRun');
-	const schedule = nodecg.Replicant('schedule');
 	const runOrderMap = nodecg.Replicant('runOrderMap');
 
-	class GdqHostDashboard extends Polymer.Element {
+	class GdqHostDashboard extends Polymer.MutableData(Polymer.Element) {
 		static get is() {
 			return 'gdq-host-dashboard';
 		}
@@ -54,8 +53,78 @@
 			};
 		}
 
+		connectedCallback() {
+			super.connectedCallback();
+
+			this.updateCurrentTime = this.updateCurrentTime.bind(this);
+			this.updateCurrentTime();
+			setInterval(this.updateCurrentTime, 1000);
+
+			this.updateTimeElapsed = this.updateTimeElapsed.bind(this);
+			this.updateTimeElapsed();
+			setInterval(this.updateTimeElapsed, 1000);
+
+			total.on('change', newVal => {
+				this.total = newVal.formatted;
+			});
+
+			currentPrizes.on('change', newVal => {
+				this.prizes = newVal;
+			});
+
+			allBids.on('change', newVal => {
+				this.recalcRelevantBids();
+				const metroidBid = newVal.find(bid => bid.id === METROID_BID_ID);
+				this.metroidBid = metroidBid ? metroidBid : null;
+			});
+
+			checklistComplete.on('change', newVal => {
+				if (newVal) {
+					this.$.checklistStatus.style.backgroundColor = '#cfffcf';
+					this.$.checklistStatus.innerText = 'READY TO START';
+				} else {
+					this.$.checklistStatus.style.backgroundColor = '#ffe2e2';
+					this.$.checklistStatus.innerText = 'NOT READY YET';
+				}
+			});
+
+			currentRun.on('change', newVal => {
+				this.$['currentRun-name'].innerHTML = newVal.name.replace('\\n', '<br/>').trim();
+				this.runners = newVal.runners;
+				this.recalcRelevantBids();
+			});
+
+			stopwatch.on('change', newVal => {
+				this.stopwatchState = newVal.state;
+				this.stopwatchTime = newVal.formatted;
+				this.stopwatchResults = newVal.results;
+			});
+
+			runOrderMap.on('change', () => {
+				this.recalcRelevantBids();
+			});
+
+			nodecg.listenFor('bids:updating', () => {
+				this.$['bids-cooldown'].indeterminate = true;
+			});
+
+			nodecg.listenFor('bids:updated', () => {
+				const $cooldown = this.$['bids-cooldown'];
+				$cooldown.indeterminate = false;
+				$cooldown.classList.remove('transiting');
+				$cooldown.value = 100;
+
+				Polymer.RenderStatus.afterNextRender(this, () => {
+					$cooldown.classList.add('transiting');
+					$cooldown.value = 0;
+				});
+			});
+		}
+
 		recalcRelevantBids() {
-			if (!allBids.value || !currentRun.value || !runOrderMap.value) {
+			if (allBids.status !== 'declared' ||
+				currentRun.status !== 'declared' ||
+				runOrderMap.status !== 'declared') {
 				return;
 			}
 
@@ -96,92 +165,6 @@
 				this.$['metroid-save'].removeAttribute('ahead');
 				this.$['metroid-kill'].setAttribute('ahead', 'true');
 			}
-		}
-
-		connectedCallback() {
-			super.connectedCallback();
-			this.updateCurrentTime = this.updateCurrentTime.bind(this);
-			this.updateCurrentTime();
-			setInterval(this.updateCurrentTime, 1000);
-
-			this.updateTimeElapsed = this.updateTimeElapsed.bind(this);
-			this.updateTimeElapsed();
-			setInterval(this.updateTimeElapsed, 1000);
-
-			total.on('change', newVal => {
-				this.total = newVal.formatted;
-			});
-
-			currentPrizes.on('change', newVal => {
-				this.prizes = newVal.slice(0);
-			});
-
-			allBids.on('change', newVal => {
-				this.recalcRelevantBids();
-
-				const metroidBid = newVal.find(bid => bid.id === METROID_BID_ID);
-				if (metroidBid) {
-					this.metroidBid = JSON.parse(JSON.stringify(metroidBid));
-				} else {
-					this.metroidBid = null;
-				}
-			});
-
-			checklistComplete.on('change', newVal => {
-				if (newVal) {
-					this.$.checklistStatus.style.backgroundColor = '#cfffcf';
-					this.$.checklistStatus.innerText = 'READY TO START';
-				} else {
-					this.$.checklistStatus.style.backgroundColor = '#ffe2e2';
-					this.$.checklistStatus.innerText = 'NOT READY YET';
-				}
-			});
-
-			currentRun.on('change', newVal => {
-				this.$['currentRun-name'].innerHTML = newVal.name.replace('\\n', '<br/>').trim();
-				this.runners = newVal.runners.slice(0);
-				this.recalcUpcomingRuns();
-				this.recalcRelevantBids();
-			});
-
-			stopwatch.on('change', newVal => {
-				this.stopwatchState = newVal.state;
-				this.stopwatchTime = newVal.formatted;
-				this.stopwatchResults = newVal.results.slice(0);
-			});
-
-			schedule.on('change', () => {
-				this.recalcUpcomingRuns();
-			});
-
-			runOrderMap.on('change', () => {
-				this.recalcRelevantBids();
-			});
-
-			nodecg.listenFor('bids:updating', () => {
-				this.$['bids-cooldown'].indeterminate = true;
-			});
-
-			nodecg.listenFor('bids:updated', () => {
-				const $cooldown = this.$['bids-cooldown'];
-				$cooldown.indeterminate = false;
-				$cooldown.classList.remove('transiting');
-				$cooldown.value = 100;
-
-				Polymer.RenderStatus.afterNextRender(this, () => {
-					$cooldown.classList.add('transiting');
-					$cooldown.value = 0;
-				});
-			});
-		}
-
-		recalcUpcomingRuns() {
-			if (!schedule.value || !currentRun.value) {
-				this.upcomingRuns = [];
-				return;
-			}
-
-			this.upcomingRuns = schedule.value.slice(currentRun.value.order, currentRun.value.order + 3);
 		}
 
 		calcRunnersString(runners) {
@@ -241,6 +224,16 @@
 			this.elapsedTime = timeString;
 		}
 
+		calcMetroidStateText(bidState) {
+			if (bidState && bidState.toLowerCase() === 'open') {
+				this.$['metroid-state'].style.backgroundColor = '#CFFFD0';
+				return 'INCENTIVE OPEN';
+			}
+
+			this.$['metroid-state'].style.backgroundColor = '#FFE2E4';
+			return 'INCENTIVE CLOSED';
+		}
+
 		calcMetroidAheadText(saveOrKill, saveTheAnimalsTotal, killTheAnimalsTotal) {
 			if (!saveOrKill || !saveTheAnimalsTotal || !killTheAnimalsTotal) {
 				return;
@@ -287,15 +280,15 @@
 		}
 
 		calcRunnerName(runners, index) {
-			if (!this.runners) {
+			if (!runners) {
 				return;
 			}
 
-			if (index > this.runners.length - 1) {
+			if (index > runners.length - 1) {
 				return '';
 			}
 
-			return this.runners[index].name;
+			return runners[index].name;
 		}
 
 		isValidResult(result, index, runners) {

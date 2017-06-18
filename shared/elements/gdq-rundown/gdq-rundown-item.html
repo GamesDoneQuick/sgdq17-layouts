@@ -1,0 +1,79 @@
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/paper-styles/shadow.html">
+
+<dom-module id="gdq-rundown-item">
+	<template>
+		<style>
+			:host {
+				position: relative;
+				padding: 4px 9px;
+				margin: 8px 0;
+				min-height: 55px;
+				box-sizing: border-box;
+				font-weight: bold;
+				@apply --layout-horizontal;
+				@apply --layout-justified;
+				@apply --shadow-elevation-2dp;
+			}
+
+			:host(:first-of-type) {
+				margin-top: 0;
+			}
+
+			:host(:last-of-type) {
+				margin-bottom: 0;
+			}
+
+			:host([item-type="run"]) {
+				background-color: #E3E3E3;
+			}
+
+			:host([item-type="adBreak"]) {
+				background-color: #D9D3FF;
+			}
+
+			:host([item-type="interview"]) {
+				background-color: #EBCFCF;
+			}
+
+			:host([current]) #green {
+				display: block !important;
+			}
+
+			:host([current]) {
+				padding-left: 14px;
+			}
+
+			#green {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 9px;
+				height: 100%;
+				background: #5BA664;
+				display: none;
+			}
+
+			#name {
+				font-size: 20px;
+				@apply --layout-flex;
+			}
+
+			#right {
+				font-size: 14px;
+				font-style: italic;
+				margin-left: 36px;
+				@apply --layout-flex-none;
+				@apply --layout-vertical;
+				@apply --layout-end;
+			}
+		</style>
+
+		<div id="green"></div>
+		<div id="name">[[name]]</div>
+		<div id="right"></div>
+	</template>
+
+	<script src="gdq-rundown-item.js"></script>
+</dom-module>
