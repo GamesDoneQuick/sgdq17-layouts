@@ -19,7 +19,9 @@
 					return;
 				}
 
-				this.$.typeahead.candidates = newVal.map(speedrun => speedrun.name);
+				this.$.typeahead.items = newVal
+					.filter(item => item.type === 'run')
+					.map(speedrun => speedrun.name);
 			});
 
 			currentRun.on('change', newVal => {
@@ -63,6 +65,10 @@
 
 			// Find the run based on the name.
 			const matched = schedule.value.some(run => {
+				if (run.type !== 'run') {
+					return false;
+				}
+
 				if (run.name.toLowerCase() === nameToFind.toLowerCase()) {
 					nodecg.sendMessage('setCurrentRunByOrder', run.order, () => {
 						this.$.take.removeAttribute('disabled');

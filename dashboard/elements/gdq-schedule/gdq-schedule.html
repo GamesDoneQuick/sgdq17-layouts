@@ -1,9 +1,9 @@
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../../bower_components/nodecg-toast/nodecg-toast.html">
-<link rel="import" href="../../../bower_components/nodecg-typeahead-input/nodecg-typeahead-input.html">
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
 <link rel="import" href="../gdq-run-editor/gdq-run-editor.html">
 <link rel="import" href="gdq-schedule-runinfo.html">
 
@@ -113,12 +113,11 @@
 			</paper-button>
 
 			<div id="typeahead-container">
-				<nodecg-typeahead-input
+				<vaadin-combo-box
 					id="typeahead"
-					max-suggestions="3"
 					placeholder="Search"
 					raised
-					on-keyup="_typeaheadKeyup"></nodecg-typeahead-input>
+					on-keyup="_typeaheadKeyup"></vaadin-combo-box>
 
 				<paper-button id="take" on-tap="takeTypeahead" raised>
 					<span>Take</span>
