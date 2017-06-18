@@ -14,10 +14,11 @@ const POLL_INTERVAL = 60 * 1000;
 let updateInterval;
 
 const checklist = require('./checklist');
-const scheduleRep = nodecg.Replicant('schedule', {defaultValue: [], persistent: false});
-const runnersRep = nodecg.Replicant('runners', {defaultValue: [], persistent: false});
 const currentRunRep = nodecg.Replicant('currentRun', {defaultValue: {}});
 const nextRunRep = nodecg.Replicant('nextRun', {defaultValue: {}});
+const runnersRep = nodecg.Replicant('runners', {defaultValue: [], persistent: false});
+const runOrderMap = nodecg.Replicant('runOrderMap', {defaultValue: {}, persistent: false});
+const scheduleRep = nodecg.Replicant('schedule', {defaultValue: [], persistent: false});
 
 // If the appropriate config params are present,
 // automatically update the Twitch game and title when currentRun changes.
@@ -222,6 +223,12 @@ function update() {
 		}
 
 		scheduleRep.value = formattedSchedule;
+
+		const newRunOrderMap = {};
+		runsJSON.forEach(run => {
+			newRunOrderMap[run.fields.name] = run.fields.order;
+		});
+		runOrderMap.value = newRunOrderMap;
 
 		/* If no currentRun is set, set currentRun to the first run.
 		 * Else, update the currentRun by pk, merging with and local changes.

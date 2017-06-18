@@ -1,4 +1,5 @@
 <link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/paper-styles/shadow.html">
 
 <dom-module id="gdq-host-dashboard-bid">
 	<template>
@@ -23,6 +24,8 @@
 			#material {
 				padding: 19px;
 				border: 1px solid #d2d2d2;
+				background-color: white;
+				@apply --shadow-elevation-2dp;
 			}
 
 			.option {
@@ -42,7 +45,7 @@
 			}
 		</style>
 
-		<paper-material id="material">
+		<div id="material">
 			<div>[[calcBidName(bid.description)]]</div>
 
 			<template is="dom-if" if="[[bidIsChallenge(bid)]]">
@@ -63,7 +66,7 @@
 					</div>
 				</template>
 			</template>
-		</paper-material>
+		</div>
 	</template>
 
 	<script src="gdq-host-dashboard-bid.js"></script>
