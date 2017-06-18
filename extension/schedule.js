@@ -2,33 +2,29 @@
 
 // Packages
 const assign = require('lodash.assign');
-const cheerio = require('cheerio');
 const clone = require('clone');
-const equals = require('deep-equal');
-const Promise = require('bluebird');
+const deepEqual = require('deep-equal');
 const request = require('request-promise').defaults({jar: true}); // <= Automatically saves and re-uses cookies.
 
 // Ours
 const nodecg = require('./util/nodecg-api-context').get();
 const {calcOriginalValues, mergeChangesFromTracker} = require('./lib/diff-run');
 
-const LOGIN_URL = 'https://private.gamesdonequick.com/tracker/admin/login/';
 const POLL_INTERVAL = 60 * 1000;
 let updateInterval;
 
 const checklist = require('./checklist');
 const scheduleRep = nodecg.Replicant('schedule', {defaultValue: [], persistent: false});
 const runnersRep = nodecg.Replicant('runners', {defaultValue: [], persistent: false});
-const runOrderMap = nodecg.Replicant('runOrderMap', {defaultValue: {}, persistent: false});
-const currentRun = nodecg.Replicant('currentRun', {defaultValue: {}});
-const nextRun = nodecg.Replicant('nextRun', {defaultValue: {}});
+const currentRunRep = nodecg.Replicant('currentRun', {defaultValue: {}});
+const nextRunRep = nodecg.Replicant('nextRun', {defaultValue: {}});
 
-// If a "streamTitle" template has been defined in the bundle config, and if lfg-twitch api is present,
+// If the appropriate config params are present,
 // automatically update the Twitch game and title when currentRun changes.
 if (nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.titleTemplate) {
 	nodecg.log.info('Automatic stream title updating enabled.');
 	let lastLongName;
-	currentRun.on('change', newVal => {
+	currentRunRep.on('change', newVal => {
 		if (newVal.longName === lastLongName) {
 			return;
 		}
@@ -59,53 +55,28 @@ if (nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.titleTemplate) {
 	});
 }
 
-// Fetch the login page, and run the response body through cheerio
-// so we can extract the CSRF token from the hidden input field.
-// Then, POST with our username, password, and the csrfmiddlewaretoken.
-request({
-	uri: LOGIN_URL,
-	transform(body) {
-		return cheerio.load(body);
-	}
-}).then($ => request({
-	method: 'POST',
-	uri: LOGIN_URL,
-	form: {
-		username: nodecg.bundleConfig.tracker.username,
-		password: nodecg.bundleConfig.tracker.password,
-		csrfmiddlewaretoken: $('#login-form > input[name="csrfmiddlewaretoken"]').val()
-	},
-	headers: {
-		Referer: LOGIN_URL
-	},
-	resolveWithFullResponse: true,
-	simple: false
-})).then(() => {
-	update();
+update();
 
-	// Get latest schedule data every POLL_INTERVAL milliseconds
-	nodecg.log.info('Polling schedule every %d seconds...', POLL_INTERVAL / 1000);
+// Get latest schedule data every POLL_INTERVAL milliseconds
+nodecg.log.info('Polling schedule every %d seconds...', POLL_INTERVAL / 1000);
+updateInterval = setInterval(update, POLL_INTERVAL);
+
+// Dashboard can invoke manual updates
+nodecg.listenFor('updateSchedule', (data, cb) => {
+	nodecg.log.info('Manual schedule update button pressed, invoking update...');
+	clearInterval(updateInterval);
 	updateInterval = setInterval(update, POLL_INTERVAL);
+	update().then(updated => {
+		if (updated) {
+			nodecg.log.info('Schedule successfully updated');
+		} else {
+			nodecg.log.info('Schedule unchanged, not updated');
+		}
 
-	// Dashboard can invoke manual updates
-	nodecg.listenFor('updateSchedule', (data, cb) => {
-		nodecg.log.info('Manual schedule update button pressed, invoking update...');
-		clearInterval(updateInterval);
-		updateInterval = setInterval(update, POLL_INTERVAL);
-		update().then(updated => {
-			if (updated) {
-				nodecg.log.info('Schedule successfully updated');
-			} else {
-				nodecg.log.info('Schedule unchanged, not updated');
-			}
-
-			cb(null, updated);
-		}, error => {
-			cb(error);
-		});
+		cb(null, updated);
+	}, error => {
+		cb(error);
 	});
-}).catch(err => {
-	nodecg.log.error('[schedule] Error authenticating with tracker!\n', err);
 });
 
 nodecg.listenFor('nextRun', cb => {
@@ -123,11 +94,11 @@ nodecg.listenFor('previousRun', cb => {
 });
 
 nodecg.listenFor('setCurrentRunByOrder', (order, cb) => {
-	const run = scheduleRep.value[order - 1];
-	if (run) {
-		_seekToArbitraryRun(scheduleRep.value[order - 1]);
-	} else {
-		nodecg.log.error(`Tried to set currentRun to non-existent order: ${order}`);
+	try {
+		_seekToArbitraryRun(order);
+	} catch (e) {
+		nodecg.log.error(e);
+		return cb(e);
 	}
 
 	if (typeof cb === 'function') {
@@ -137,20 +108,14 @@ nodecg.listenFor('setCurrentRunByOrder', (order, cb) => {
 
 nodecg.listenFor('modifyRun', (data, cb) => {
 	let run;
-	if (currentRun.value.pk === data.pk) {
-		run = currentRun.value;
-	} else if (nextRun.value.pk === data.pk) {
-		run = nextRun.value;
+	if (currentRunRep.value.pk === data.pk) {
+		run = currentRunRep.value;
+	} else if (nextRunRep.value.pk === data.pk) {
+		run = nextRunRep.value;
 	}
 
 	if (run) {
-		let original;
-		if (scheduleRep.value[run.order - 1] && scheduleRep.value[run.order - 1].pk === run.pk) {
-			original = scheduleRep.value[run.order - 1];
-		} else {
-			original = scheduleRep.value.find(r => r.pk === run.pk);
-		}
-
+		const original = findRunByPk(run.pk);
 		if (original) {
 			assign(run, data);
 			run.originalValues = calcOriginalValues(run, original);
@@ -168,14 +133,14 @@ nodecg.listenFor('modifyRun', (data, cb) => {
 
 nodecg.listenFor('resetRun', (pk, cb) => {
 	let runRep;
-	if (currentRun.value.pk === pk) {
-		runRep = currentRun;
-	} else if (nextRun.value.pk === pk) {
-		runRep = nextRun;
+	if (currentRunRep.value.pk === pk) {
+		runRep = currentRunRep;
+	} else if (nextRunRep.value.pk === pk) {
+		runRep = nextRunRep;
 	}
 
 	if (runRep) {
-		runRep.value = clone(scheduleRep.value.find(r => r.pk === pk));
+		runRep.value = clone(findRunByPk(pk));
 		if ({}.hasOwnProperty.call(runRep.value, 'originalValues')) {
 			nodecg.log.error('%s had an `originalValues` property after being reset! This is bad! Deleting it...',
 				runRep.value.name);
@@ -204,7 +169,7 @@ function update() {
 		json: true
 	});
 
-	const schedulePromise = request({
+	const runsPromise = request({
 		uri: nodecg.bundleConfig.useMockData ?
 			'https://dl.dropboxusercontent.com/u/6089084/gdq_mock/schedule.json' :
 			'https://private.gamesdonequick.com/tracker/search',
@@ -215,7 +180,23 @@ function update() {
 		json: true
 	});
 
-	return Promise.join(runnersPromise, schedulePromise, (runnersJSON, scheduleJSON) => {
+	const adsPromise = request({
+		uri: nodecg.bundleConfig.useMockData ?
+			'https://dl.dropboxusercontent.com/u/6089084/gdq_mock/ads.json' :
+			'https://private.gamesdonequick.com/tracker/gdq/ads/20/',
+		json: true
+	});
+
+	const interviewsPromise = request({
+		uri: nodecg.bundleConfig.useMockData ?
+			'https://dl.dropboxusercontent.com/u/6089084/gdq_mock/interviews.json' :
+			'https://private.gamesdonequick.com/tracker/gdq/interviews/20/',
+		json: true
+	});
+
+	return Promise.all([
+		runnersPromise, runsPromise, adsPromise, interviewsPromise
+	]).then(([runnersJSON, runsJSON, adsJSON, interviewsJSON]) => {
 		const formattedRunners = [];
 		runnersJSON.forEach(obj => {
 			formattedRunners[obj.pk] = {
@@ -224,51 +205,55 @@ function update() {
 			};
 		});
 
-		if (!equals(formattedRunners, runnersRep.value)) {
+		if (!deepEqual(formattedRunners, runnersRep.value)) {
 			runnersRep.value = clone(formattedRunners);
 		}
 
-		const formattedSchedule = calcFormattedSchedule(formattedRunners, scheduleJSON);
+		const formattedSchedule = calcFormattedSchedule({
+			rawRuns: runsJSON,
+			formattedRunners,
+			formattedAds: adsJSON.map(formatAd),
+			formattedInterviews: interviewsJSON.map(formatInterview)
+		});
 
 		// If nothing has changed, return.
-		if (equals(formattedSchedule, scheduleRep.value)) {
+		if (deepEqual(formattedSchedule, scheduleRep.value)) {
 			return false;
 		}
 
 		scheduleRep.value = formattedSchedule;
 
-		const newRunOrderMap = {};
-		formattedSchedule.forEach(run => {
-			newRunOrderMap[run.name] = run.order;
-		});
-		runOrderMap.value = newRunOrderMap;
-
-		/* If no currentRun is set or if the order of the current run is greater than
-		 * the length of the schedule, set current run to the first run.
+		/* If no currentRun is set, set currentRun to the first run.
 		 * Else, update the currentRun by pk, merging with and local changes.
 		 */
-		if (!currentRun.value || typeof currentRun.value.order === 'undefined' ||
-			currentRun.value.order > scheduleRep.value.length) {
-			_seekToArbitraryRun(scheduleRep.value[0]);
+		if (!currentRunRep.value || typeof currentRunRep.value.order === 'undefined') {
+			_seekToArbitraryRun(1);
 		} else {
-			const currentRunAsInSchedule = formattedSchedule.find(run => run.pk === currentRun.value.pk);
+			const currentRunAsInSchedule = findRunByPk(currentRunRep.value.pk);
 
 			/* If currentRun was found in the schedule, merge any changes from the schedule into currentRun.
 			 * Else if currentRun has been removed from the schedule (determined by its `pk`),
 			 * set currentRun to whatever run now has currentRun's `order` value.
-			 * Else, set currentRun to the final run in the schedule.
+			 * If that fails, set currentRun to the final run in the schedule.
 			 */
 			if (currentRunAsInSchedule) {
-				[currentRun, nextRun].forEach(activeRun => {
+				[currentRunRep, nextRunRep].forEach(activeRun => {
 					if (activeRun.value && activeRun.value.pk) {
-						const runFromSchedule = formattedSchedule.find(run => run.pk === activeRun.value.pk);
+						const runFromSchedule = findRunByPk(activeRun.value.pk);
 						activeRun.value = mergeChangesFromTracker(activeRun.value, runFromSchedule);
 					}
 				});
-			} else if (formattedSchedule[currentRun.order - 1]) {
-				_seekToArbitraryRun(formattedSchedule[currentRun.order - 1]);
 			} else {
-				_seekToArbitraryRun(formattedSchedule[formattedSchedule.length - 1]);
+				try {
+					_seekToArbitraryRun(currentRunRep.order - 1);
+				} catch (e) {
+					if (e.message === 'Could not find run at specified order.') {
+						const lastRunInSchedule = formattedSchedule.slice(0).reverse().find(item => item.type === 'run');
+						_seekToArbitraryRun(lastRunInSchedule);
+					} else {
+						throw e;
+					}
+				}
 			}
 		}
 
@@ -286,9 +271,16 @@ function update() {
  * @returns {undefined}
  */
 function _seekToPreviousRun() {
-	const prevIndex = currentRun.value.order - 2;
-	nextRun.value = clone(currentRun.value);
-	currentRun.value = clone(scheduleRep.value[prevIndex]);
+	const prevRun = scheduleRep.value.slice(0).reverse().find(item => {
+		if (item.type !== 'run') {
+			return;
+		}
+
+		return item.order < currentRunRep.value.order;
+	});
+
+	nextRunRep.value = clone(currentRunRep.value);
+	currentRunRep.value = clone(prevRun);
 	checklist.reset();
 }
 
@@ -300,9 +292,16 @@ function _seekToPreviousRun() {
  * @returns {undefined}
  */
 function _seekToNextRun() {
-	const newNextIndex = nextRun.value.order;
-	currentRun.value = clone(nextRun.value);
-	nextRun.value = clone(scheduleRep.value[newNextIndex]);
+	const newNextRun = scheduleRep.value.find(item => {
+		if (item.type !== 'run') {
+			return;
+		}
+
+		return item.order > nextRunRep.value.order;
+	});
+
+	currentRunRep.value = clone(nextRunRep.value);
+	nextRunRep.value = clone(newNextRun);
 	checklist.reset();
 }
 
@@ -311,23 +310,35 @@ function _seekToNextRun() {
  * relative to any existing currentRun.
  * If so, call _seekToPreviousRun or _seekToNextRun, accordingly. This preserves local changes.
  * Else, blow away currentRun and nextRun and replace them with the new run and its successor.
- * @param {Object} run - The run to set as the new currentRun.
+ * @param {Object|Number} runOrOrder - Either a run order or a run object to set as the new currentRun.
  * @returns {undefined}
  */
-function _seekToArbitraryRun(run) {
-	if (run.order === currentRun.value.order + 1) {
-		_seekToNextRun();
-	} else if (run.order === currentRun.value.order - 1) {
-		_seekToPreviousRun();
-	} else {
-		const clonedRun = clone(run);
-		currentRun.value = clonedRun;
+function _seekToArbitraryRun(runOrOrder) {
+	let run;
+	let order;
+	if (typeof runOrOrder === 'number') {
+		order = runOrOrder;
+		run = findRunByOrder(order);
+	} else if (typeof runOrOrder === 'object') {
+		run = runOrOrder;
+		order = run.order;
+	}
 
-		// `order` is always `index+1`. So, if there is another run in the schedule after this one, add it as `nextRun`.
-		if (scheduleRep.value[clonedRun.order]) {
-			nextRun.value = clone(scheduleRep.value[clonedRun.order]);
+	if (!run) {
+		throw new Error('Could not find run at specified order.');
+	}
+
+	if (nextRunRep.value && order === nextRunRep.value.order) {
+		_seekToNextRun();
+	} else {
+		currentRunRep.value = clone(run);
+
+		const nextRunOrder = order + 1;
+		const nextRun = scheduleRep.value.find(item => item.type === 'run' && item.order === nextRunOrder);
+		if (nextRun) {
+			nextRunRep.value = clone(nextRun);
 		} else {
-			nextRun.value = {};
+			nextRunRep.value = {};
 		}
 
 		checklist.reset();
@@ -340,29 +351,187 @@ function _seekToArbitraryRun(run) {
  * @param {Array} scheduleJSON - The raw schedule array from the Tracker.
  * @returns {Array} - A formatted schedule.
  */
-function calcFormattedSchedule(formattedRunners, scheduleJSON) {
-	return scheduleJSON.map((run, index) => {
-		const runners = run.fields.runners.slice(0, 4).map(runnerId => {
-			return {
-				name: formattedRunners[runnerId].name,
-				stream: formattedRunners[runnerId].stream
-			};
-		});
 
+function calcFormattedSchedule({rawRuns, formattedRunners, formattedAds, formattedInterviews}) {
+	const flatSchedule = [];
+
+	// NOTE: We *probably* don't have to do this sort step,
+	// but UraniumAnchor said he wasn't 100% positive that sorting
+	// was guaranteed from the API, so we do this just to be safe.
+
+	// Sort runs by order.
+	rawRuns = rawRuns.sort((a, b) =>  a.fields.order - b.fields.order);
+
+	// Sort ads and interviews by order, then suborder.
+	const formattedAdsAndInterviews = formattedAds.concat(formattedInterviews).sort(suborderSort);
+
+	let lastIndex = 0;
+	rawRuns.forEach(run => {
+		run = formatRun(run, formattedRunners);
+		flatSchedule.push(run);
+
+		formattedAdsAndInterviews.slice(lastIndex).some((item, index) => {
+			if (item.order > run.order) {
+				return true;
+			}
+
+			lastIndex = index;
+
+			// This theoretically should never be hit?
+			if (item.order < run.order) {
+				return false;
+			}
+
+			flatSchedule.push(item);
+			return false;
+		});
+	});
+
+	const schedule = [];
+
+	let adBreak;
+	flatSchedule.forEach((item, index) => {
+		if (item.type === 'ad') {
+			if (!adBreak) {
+				adBreak = {
+					type: 'adBreak',
+					ads: []
+				};
+			}
+
+			adBreak.ads.push(item);
+
+			const nextItem = flatSchedule[index + 1];
+			if (nextItem.type === 'ad') {
+				return;
+			}
+
+			schedule.push(adBreak);
+			adBreak = null;
+			return;
+		}
+
+		schedule.push(item);
+	});
+
+	return schedule;
+}
+
+/**
+ * Formats a raw run object from the GDQ Tracker API into a slimmed-down and hydrated version for our use.
+ * @param {Object} run - A raw run object from the GDQ Tracker API.
+ * @param {Object} formattedRunners - The formatted array of all runners, used to hydrate the run's runners.
+ * @returns {Object} - The formatted run object.
+ */
+function formatRun(run, formattedRunners) {
+	const runners = run.fields.runners.slice(0, 4).map(runnerId => {
 		return {
-			name: run.fields.display_name || 'Unknown',
-			longName: run.fields.name || 'Unknown',
-			console: run.fields.console || 'Unknown',
-			commentators: run.fields.commentators || 'Unknown',
-			category: run.fields.category || 'Any%',
-			setupTime: run.fields.setup_time,
-			order: index + 1,
-			estimate: run.fields.run_time || 'Unknown',
-			releaseYear: run.fields.release_year || '',
-			runners,
-			notes: run.fields.tech_notes || '',
-			coop: run.fields.coop || false,
-			pk: run.pk
+			name: formattedRunners[runnerId].name,
+			stream: formattedRunners[runnerId].stream
 		};
+	});
+
+	return {
+		name: run.fields.display_name || 'Unknown',
+		longName: run.fields.name || 'Unknown',
+		console: run.fields.console || 'Unknown',
+		commentators: run.fields.commentators || 'Unknown',
+		category: run.fields.category || 'Any%',
+		setupTime: run.fields.setup_time,
+		order: run.fields.order,
+		estimate: run.fields.run_time || 'Unknown',
+		releaseYear: run.fields.release_year || '',
+		runners,
+		notes: run.fields.tech_notes || '',
+		coop: run.fields.coop || false,
+		id: run.pk,
+		pk: run.pk,
+		type: 'run'
+	};
+}
+
+/**
+ * Formats a raw ad object from the GDQ Tracker API into a slimmed-down version for our use.
+ * @param {Object} ad - A raw ad object from the GDQ Tracker API.
+ * @returns {Object} - The formatted ad object.
+ */
+function formatAd(ad) {
+	return {
+		id: ad.pk,
+		name: ad.fields.ad_name,
+		adType: ad.fields.ad_type,
+		filename: ad.fields.filename,
+		length: ad.fields.length,
+		order: ad.fields.order,
+		suborder: ad.fields.suborder,
+		sponsorName: ad.fields.sponsor_name,
+		type: 'ad',
+	};
+}
+
+/**
+ * Formats a raw interview object from the GDQ Tracker API into a slimmed-down version for our use.
+ * @param {Object} interview - A raw interview object from the GDQ Tracker API.
+ * @returns {Object} - The formatted interview object.
+ */
+function formatInterview(interview) {
+	return {
+		id: interview.pk,
+		interviewees: splitString(interview.fields.interviewees),
+		interviewers: splitString(interview.fields.interviewers),
+		length: interview.fields.length,
+		order: interview.fields.order,
+		subject: interview.fields.subject,
+		suborder: interview.fields.suborder,
+		type: 'interview'
+	};
+}
+
+/**
+ * Splits a comma-separated string into an array of strings, trimming whitespace.
+ * @param {string} str - The string to split.
+ * @return {Array<string>} - The split string.
+ */
+function splitString(str) {
+	return str.split(',')
+		.map(part => part.trim())
+		.filter(part => part);
+}
+
+/**
+ * Sorts objects by their `order` property, then by their `suborder` property.
+ * @param {object} a
+ * @param {object} b
+ * @returns {number}
+ */
+function suborderSort(a, b) {
+	const orderDiff = a.order - b.order;
+
+	if (orderDiff !== 0) {
+		return orderDiff;
+	}
+
+	return a.suborder - b.suborder;
+}
+
+/**
+ * Searches scheduleRep for a run with the given `order`.
+ * @param {number} order
+ * @returns {object|undefined}
+ */
+function findRunByOrder(order) {
+	return scheduleRep.value.find(item => {
+		return item.type === 'run' && item.order === order;
+	})
+}
+
+/**
+ * Searches scheduleRep for a run with the given `pk` (or `id`).
+ * @param {number} pk
+ * @returns {object|undefined}
+ */
+function findRunByPk(pk) {
+	return scheduleRep.value.find(item => {
+		return item.type === 'run' && item.id === pk;
 	});
 }
