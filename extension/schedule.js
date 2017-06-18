@@ -273,7 +273,7 @@ function update() {
 function _seekToPreviousRun() {
 	const prevRun = scheduleRep.value.slice(0).reverse().find(item => {
 		if (item.type !== 'run') {
-			return;
+			return false;
 		}
 
 		return item.order < currentRunRep.value.order;
@@ -294,7 +294,7 @@ function _seekToPreviousRun() {
 function _seekToNextRun() {
 	const newNextRun = scheduleRep.value.find(item => {
 		if (item.type !== 'run') {
-			return;
+			return false;
 		}
 
 		return item.order > nextRunRep.value.order;
@@ -360,7 +360,7 @@ function calcFormattedSchedule({rawRuns, formattedRunners, formattedAds, formatt
 	// was guaranteed from the API, so we do this just to be safe.
 
 	// Sort runs by order.
-	rawRuns = rawRuns.sort((a, b) =>  a.fields.order - b.fields.order);
+	rawRuns = rawRuns.sort((a, b) => a.fields.order - b.fields.order);
 
 	// Sort ads and interviews by order, then suborder.
 	const formattedAdsAndInterviews = formattedAds.concat(formattedInterviews).sort(suborderSort);
@@ -465,7 +465,7 @@ function formatAd(ad) {
 		order: ad.fields.order,
 		suborder: ad.fields.suborder,
 		sponsorName: ad.fields.sponsor_name,
-		type: 'ad',
+		type: 'ad'
 	};
 }
 
@@ -500,9 +500,9 @@ function splitString(str) {
 
 /**
  * Sorts objects by their `order` property, then by their `suborder` property.
- * @param {object} a
- * @param {object} b
- * @returns {number}
+ * @param {object} a - The first item in the current sort operation.
+ * @param {object} b - The second item in the current sort operation.
+ * @returns {number} - A number expressing which of these two items comes first in the sort.
  */
 function suborderSort(a, b) {
 	const orderDiff = a.order - b.order;
@@ -516,19 +516,19 @@ function suborderSort(a, b) {
 
 /**
  * Searches scheduleRep for a run with the given `order`.
- * @param {number} order
- * @returns {object|undefined}
+ * @param {number} order - The order of the run to find.
+ * @returns {object|undefined} - The found run, or undefined if not found.
  */
 function findRunByOrder(order) {
 	return scheduleRep.value.find(item => {
 		return item.type === 'run' && item.order === order;
-	})
+	});
 }
 
 /**
  * Searches scheduleRep for a run with the given `pk` (or `id`).
- * @param {number} pk
- * @returns {object|undefined}
+ * @param {number} pk - The id or pk of the run to find.
+ * @returns {object|undefined} - The found run, or undefined if not found.
  */
 function findRunByPk(pk) {
 	return scheduleRep.value.find(item => {

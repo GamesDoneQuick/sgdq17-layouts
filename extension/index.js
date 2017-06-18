@@ -1,6 +1,6 @@
 'use strict';
 
-/// Packages
+// Packages
 const cheerio = require('cheerio');
 const request = require('request-promise').defaults({jar: true}); // <= Automatically saves and re-uses cookies.
 
