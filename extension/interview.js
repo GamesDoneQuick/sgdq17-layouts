@@ -27,8 +27,8 @@ nodecg.Replicant('interview:names', {defaultValue: []});
 
 lowerthirdShowing.on('change', newVal => {
 	if (!newVal) {
-		clearRight(pulseIntervalMap, lowerthirdShowing);
-		clearRight(pulseTimeoutMap, lowerthirdShowing);
+		clearTimerFromMap(lowerthirdShowing, pulseIntervalMap);
+		clearTimerFromMap(lowerthirdShowing, pulseTimeoutMap);
 		lowerthirdPulseTimeRemaining.value = 0;
 	}
 });
@@ -46,8 +46,8 @@ questionShowing.on('change', newVal => {
 	if (newVal) {
 		lowerthirdShowing.value = false;
 	} else {
-		clearRight(pulseIntervalMap, questionShowing);
-		clearRight(pulseTimeoutMap, questionShowing);
+		clearTimerFromMap(questionShowing, pulseIntervalMap);
+		clearTimerFromMap(questionShowing, pulseTimeoutMap);
 		questionPulseTimeRemaining.value = 0;
 	}
 });
@@ -168,8 +168,8 @@ function pulse(showingRep, pulseTimeRemainingRep, duration) {
 
 	showingRep.value = true;
 	pulseTimeRemainingRep.value = duration;
-	clearRight(pulseIntervalMap, showingRep);
-	clearRight(pulseTimeoutMap, showingRep);
+	clearTimerFromMap(showingRep, pulseIntervalMap);
+	clearTimerFromMap(showingRep, pulseTimeoutMap);
 
 	// Count down lowerthirdPulseTimeRemaining
 	pulseIntervalMap.set(showingRep, setInterval(() => {
@@ -177,7 +177,7 @@ function pulse(showingRep, pulseTimeRemainingRep, duration) {
 		if (pulseTimeRemainingRep.value > 0) {
 			pulseTimeRemainingRep.value--;
 		} else {
-			clearRight(pulseIntervalMap, showingRep);
+			clearTimerFromMap(showingRep, pulseIntervalMap);
 			pulseTimeRemainingRep.value = 0;
 		}
 	}, 1000));
@@ -185,13 +185,13 @@ function pulse(showingRep, pulseTimeRemainingRep, duration) {
 	// End pulse after "duration" seconds
 	pulseTimeoutMap.set(showingRep, setTimeout(() => {
 		console.log('TIMEOUT END!');
-		clearRight(pulseIntervalMap, showingRep);
+		clearTimerFromMap(showingRep, pulseIntervalMap);
 		pulseTimeRemainingRep.value = 0;
 		showingRep.value = false;
 	}, duration * 1000));
 }
 
-function clearRight(map, key) {
+function clearTimerFromMap(key, map) {
 	clearInterval(map.get(key));
 	clearTimeout(map.get(key));
 	map.delete(key);
