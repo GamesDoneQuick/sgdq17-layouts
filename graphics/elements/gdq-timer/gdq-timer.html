@@ -9,12 +9,12 @@
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				border-top: 1px solid black;
+				border-top: 1px solid #7d808f;
+				border-bottom: 1px solid #5f2e5a;
 				box-sizing: border-box;
 				font-size: 46px;
-				background: url("img/bg.png") center repeat-y,
-							linear-gradient(to right, #20011f 0%,#370135 13.5%,#9c4d99 50%,#370135 86.5%,#20011f 100%);
-				background-blend-mode: overlay, normal;
+				background-color: #0d122f;
+				box-shadow: 0 -2px 8px -1px black, 0 2px 8px -1px black;
 				font-weight: 700;
 				font-variant-numeric: tabular-nums;
 				font-feature-settings: "tnum";
@@ -22,13 +22,11 @@
 			}
 
 			:host([paused]) {
-				background: url("img/bg.png") center repeat-y,
-							linear-gradient(to right, #212121 0%,#353535 13.5%,#9d9d9d 50%,#353535 86.5%,#212121 100%);
+				background: linear-gradient(to right, #212121 0%,#353535 13.5%,#9d9d9d 50%,#353535 86.5%,#212121 100%);
 			}
 
 			:host([finished]) {
-				background: url("img/bg.png") center repeat-y,
-							linear-gradient(to right, #012006 0%,#013705 13.5%,#2ab641 50%,#013705 86.5%,#012006 100%);
+				background: linear-gradient(to right, #012006 0%,#013705 13.5%,#2ab641 50%,#013705 86.5%,#012006 100%);
 			}
 
 			#startFlash {
