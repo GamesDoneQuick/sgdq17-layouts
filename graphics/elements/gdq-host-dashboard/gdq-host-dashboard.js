@@ -161,9 +161,12 @@
 			if (this.saveTheAnimalsTotal.raw > this.killTheAnimalsTotal.raw) {
 				this.$['metroid-save'].setAttribute('ahead', 'true');
 				this.$['metroid-kill'].removeAttribute('ahead');
-			} else {
+			} else if (this.saveTheAnimalsTotal.raw < this.killTheAnimalsTotal.raw) {
 				this.$['metroid-save'].removeAttribute('ahead');
 				this.$['metroid-kill'].setAttribute('ahead', 'true');
+			} else {
+				this.$['metroid-save'].removeAttribute('ahead');
+				this.$['metroid-kill'].removeAttribute('ahead');
 			}
 		}
 
