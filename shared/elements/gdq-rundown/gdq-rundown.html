@@ -67,7 +67,7 @@
 		<div id="label">Rundown</div>
 
 		<div id="currentItems">
-			<template is="dom-repeat" items="[[currentItems]]">
+			<template is="dom-repeat" items="[[currentItems]]" mutable-data>
 				<gdq-rundown-item item="[[item]]" current></gdq-rundown-item>
 			</template>
 		</div>
@@ -75,7 +75,7 @@
 		<div id="divider"></div>
 
 		<div id="remainderItems">
-			<template is="dom-repeat" items="[[remainderItems]]">
+			<template is="dom-repeat" items="[[remainderItems]]" mutable-data>
 				<gdq-rundown-item item="[[item]]"></gdq-rundown-item>
 			</template>
 		</div>

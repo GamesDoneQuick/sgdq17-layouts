@@ -11,50 +11,15 @@ const nodecg = require('./util/nodecg-api-context').get();
 const {calcOriginalValues, mergeChangesFromTracker} = require('./lib/diff-run');
 
 const POLL_INTERVAL = 60 * 1000;
+let adBreakIdCounter = 0;
 let updateInterval;
 
 const checklist = require('./checklist');
-const currentRunRep = nodecg.Replicant('currentRun', {defaultValue: {}});
-const nextRunRep = nodecg.Replicant('nextRun', {defaultValue: {}});
+const currentRunRep = nodecg.Replicant('currentRun');
+const nextRunRep = nodecg.Replicant('nextRun');
 const runnersRep = nodecg.Replicant('runners', {defaultValue: [], persistent: false});
 const runOrderMap = nodecg.Replicant('runOrderMap', {defaultValue: {}, persistent: false});
 const scheduleRep = nodecg.Replicant('schedule', {defaultValue: [], persistent: false});
-
-// If the appropriate config params are present,
-// automatically update the Twitch game and title when currentRun changes.
-if (nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.titleTemplate) {
-	nodecg.log.info('Automatic stream title updating enabled.');
-	let lastLongName;
-	currentRunRep.on('change', newVal => {
-		if (newVal.longName === lastLongName) {
-			return;
-		}
-
-		nodecg.log.info('Updating Twitch title and game to', newVal.longName);
-		lastLongName = newVal.longName;
-		request({
-			method: 'put',
-			uri: `https://api.twitch.tv/kraken/channels/${nodecg.bundleConfig.twitch.channelId}`,
-			headers: {
-				Accept: 'application/vnd.twitchtv.v5+json',
-				Authorization: `OAuth ${nodecg.bundleConfig.twitch.oauthToken}`,
-				'Content-Type': 'application/json'
-			},
-			body: {
-				channel: {
-					// eslint-disable-next-line no-template-curly-in-string
-					status: nodecg.bundleConfig.twitch.titleTemplate.replace('${gameName}', newVal.longName),
-					game: newVal.longName
-				}
-			},
-			json: true
-		}).then(() => {
-			nodecg.log.info('Successfully updated Twitch title and game to', newVal.longName);
-		}).catch(err => {
-			nodecg.log.error('Failed updating Twitch title and game:\n\t', err);
-		});
-	});
-}
 
 update();
 
@@ -402,7 +367,8 @@ function calcFormattedSchedule({rawRuns, formattedRunners, formattedAds, formatt
 			if (!adBreak) {
 				adBreak = {
 					type: 'adBreak',
-					ads: []
+					ads: [],
+					id: adBreakIdCounter++
 				};
 			}
 
@@ -468,7 +434,7 @@ function formatAd(ad) {
 		name: ad.fields.ad_name,
 		adType: ad.fields.ad_type,
 		filename: ad.fields.filename,
-		length: ad.fields.length,
+		duration: ad.fields.length,
 		order: ad.fields.order,
 		suborder: ad.fields.suborder,
 		sponsorName: ad.fields.sponsor_name,
@@ -486,7 +452,7 @@ function formatInterview(interview) {
 		id: interview.pk,
 		interviewees: splitString(interview.fields.interviewees),
 		interviewers: splitString(interview.fields.interviewers),
-		length: interview.fields.length,
+		duration: interview.fields.length,
 		order: interview.fields.order,
 		subject: interview.fields.subject,
 		suborder: interview.fields.suborder,

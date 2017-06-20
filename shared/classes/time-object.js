@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * TimeObject class.
  * @property {Number} raw
@@ -69,7 +67,7 @@ class TimeObject {
 	}
 
 	/**
-	 * Formats an HMS object into a string ([hh:]mm:ss);
+	 * Formats an HMS object into a string ([hh:]mm:ss).
 	 * @param {{h: number, m: number, s: number}} hms - The HMS object to format.
 	 * @returns {string} - The formatted time string.
 	 */
@@ -81,6 +79,16 @@ class TimeObject {
 
 		str += `${(hms.m < 10 ? `0${hms.m}` : hms.m)}:${(hms.s < 10 ? `0${hms.s}` : hms.s)}`;
 		return str;
+	}
+
+	/**
+	 * Formats a number of seconds into a string ([hh:]mm:ss).
+	 * @param {number} seconds - The number of seconds to format.
+	 * @returns {string} - The formatted time sting.
+	 */
+	static formatSeconds(seconds) {
+		const hms = TimeObject.secondsToHMS(seconds);
+		return TimeObject.formatHMS(hms);
 	}
 
 	/**
@@ -119,4 +127,6 @@ class TimeObject {
 	}
 }
 
-module.exports = TimeObject;
+if (typeof module === 'object' && typeof module.exports === 'object') {
+	module.exports = TimeObject;
+}

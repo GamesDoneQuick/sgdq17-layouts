@@ -2,7 +2,7 @@
 
 // Ours
 const nodecg = require('./util/nodecg-api-context').get();
-const TimeObject = require('./classes/time-object');
+const TimeObject = require('../shared/classes/time-object');
 
 let interval;
 const currentRun = nodecg.Replicant('currentRun');

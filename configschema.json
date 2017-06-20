@@ -160,6 +160,31 @@
 		"donationSocketUrl": {
 			"type": "string"
 		},
+		"casparcg": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"host": {
+					"type": "string",
+					"default": "localhost",
+					"required": true
+				},
+				"port": {
+					"type": "number",
+					"default": 5250,
+					"required": true
+				},
+				"lockSecret": {
+					"type": "string",
+					"required": true
+				},
+				"localOscPort": {
+					"type": "number",
+					"default": 6250,
+					"required": true
+				}
+			}
+		},
 		"required": ["tracker"]
 	}
 }

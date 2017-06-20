@@ -1,5 +1,6 @@
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="gdq-adbreak.html">
 <link rel="import" href="gdq-host-dashboard-styles.html">
 
 <dom-module id="gdq-host-dashboard-ads">
@@ -12,26 +13,36 @@
 				@apply --layout-vertical;
 			}
 
-			paper-button {
-				height: 64px;
+			#list {
+				padding: 14px;
+				@apply --layout-vertical;
 			}
 
-			#start {
-				--paper-button: {
-					background-color: #5BA664;
-				}
+			.interview {
+				font-size: 30px;
+				font-weight: bold;
+				text-transform: uppercase;
+				background-color: #C88787;
+				height: 46px;
+				margin: 26px 0;
+				@apply --layout-horizontal;
+				@apply --layout-center-center;
 			}
 		</style>
 
-		<div class="header" style="background-color: #CED4FF;">Ad Breaks & Sponsors</div>
+		<div class="header" style="background-color: #CED4FF;">Sponsor Ad Breaks</div>
 
-		<div class="layout vertical" style="padding: 14px;">
-			<paper-button id="start" raised>Start Break</paper-button>
+		<div id="list">
+			<template is="dom-repeat" items="[[content]]" mutable-data>
+				<template is="dom-if" if="[[equal(item.type, 'adBreak')]]">
+					<gdq-adbreak ad-break="[[item]]"></gdq-adbreak>
+				</template>
+
+				<template is="dom-if" if="[[equal(item.type, 'interview')]]">
+					<div class="interview">Interview</div>
+				</template>
+			</template>
 		</div>
-
-		<template is="dom-repeat" items="[[ads]]" as="ad">
-			<gdq-host-dashboard-ad></gdq-host-dashboard-ad>
-		</template>
 	</template>
 
 	<script src="gdq-host-dashboard-ads.js"></script>

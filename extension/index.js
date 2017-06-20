@@ -18,6 +18,8 @@ module.exports = function (nodecg) {
 		nodecg.log.warn('WARNING! useMockData is true, you will not receive real data from the tracker!');
 	}
 
+	// Be careful when re-ordering these.
+	// Some of them depend on Replicants initialized in others.
 	require('./obs');
 	require('./prizes');
 	require('./bids');
@@ -25,6 +27,8 @@ module.exports = function (nodecg) {
 	require('./timekeeping');
 	require('./nowplaying');
 	require('./countdown');
+	require('./intermissions');
+	require('./caspar');
 
 	// Fetch the login page, and run the response body through cheerio
 	// so we can extract the CSRF token from the hidden input field.
@@ -53,6 +57,13 @@ module.exports = function (nodecg) {
 		nodecg.log.error('Error authenticating with tracker!\n', err);
 	});
 
+	// If the appropriate config params are present,
+	// automatically update the Twitch game and title when currentRun changes.
+	if (nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.titleTemplate) {
+		nodecg.log.info('Automatic Twitch stream title updating enabled.');
+		require('./twitch-title-updater');
+	}
+
 	if (nodecg.bundleConfig.twitter.userId) {
 		require('./twitter');
 	} else {
@@ -61,7 +72,7 @@ module.exports = function (nodecg) {
 	}
 
 	if (nodecg.bundleConfig.osc.address) {
-		require('./osc');
+		require('./mixer');
 	} else {
 		nodecg.log.warn('"osc" is not defined in cfg/sgdq17-layouts.json! ' +
 			'Behringer X32 OSC integration will be disabled.');

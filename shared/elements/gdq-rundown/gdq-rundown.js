@@ -2,6 +2,7 @@
 	'use strict';
 
 	const NUM_RUNS_TO_SHOW_IN_RUNDOWN = 4;
+	const currentIntermission = nodecg.Replicant('currentIntermission');
 	const currentRun = nodecg.Replicant('currentRun');
 	const schedule = nodecg.Replicant('schedule');
 	const stopwatch = nodecg.Replicant('stopwatch');
@@ -22,6 +23,7 @@
 		ready() {
 			super.ready();
 			this._updateScheduleSlice = this._updateScheduleSlice.bind(this);
+			currentIntermission.on('change', this._updateScheduleSlice);
 			currentRun.on('change', this._updateScheduleSlice);
 			schedule.on('change', this._updateScheduleSlice);
 			stopwatch.on('change', (newVal, oldVal) => {
@@ -34,54 +36,23 @@
 		_updateScheduleSlice() {
 			if (currentRun.status !== 'declared' ||
 				schedule.status !== 'declared' ||
-				stopwatch.status !== 'declared') {
+				stopwatch.status !== 'declared' ||
+				currentIntermission.status !== 'declared') {
 				return;
 			}
 
-			const currentItems = [currentRun.value];
-
-			// If the timer hasn't started yet, show the previous run's extra content as "current".
-			// Else, show the current run's extra content as "current".
-			if (stopwatch.value.state === 'stopped' && stopwatch.value.raw <= 0) {
-				let foundCurrentRun = false;
-				schedule.value.slice(0).reverse().some(item => {
-					if (item.id === currentRun.value.id) {
-						foundCurrentRun = true;
-						return false;
-					}
-
-					if (foundCurrentRun) {
-						if (item.type === 'run') {
-							return true;
-						}
-
-						currentItems.unshift(item);
-					}
-
-					return false;
-				});
+			let currentItems = [currentRun.value];
+			if (currentIntermission.value.preOrPost === 'pre') {
+				currentItems = currentIntermission.value.content.concat(currentItems);
 			} else {
-				let foundCurrentRun = false;
-				schedule.value.some(item => {
-					if (item.id === currentRun.value.id) {
-						foundCurrentRun = true;
-						return false;
-					}
-
-					if (foundCurrentRun) {
-						if (item.type === 'run') {
-							return true;
-						}
-
-						currentItems.push(item);
-					}
-
-					return false;
-				});
+				currentItems = currentItems.concat(currentIntermission.value.content);
 			}
 
 			// Start after whatever the last item was in currentItems.
-			const startIndex = schedule.value.findIndex(item => item.id === currentItems[currentItems.length - 1].id) + 1;
+			const lastCurrentItem = currentItems[currentItems.length - 1];
+			const startIndex = schedule.value.findIndex(item => {
+				return item.id === lastCurrentItem.id && item.type === lastCurrentItem.type;
+			}) + 1;
 			let numFoundRuns = 0;
 			let endIndex = startIndex;
 			let lastRunOrder = currentRun.value.order;

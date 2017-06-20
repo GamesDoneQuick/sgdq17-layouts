@@ -1,0 +1,55 @@
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="gdq-adbreak-ad.html">
+
+<dom-module id="gdq-adbreak">
+	<template>
+		<style>
+			:host {
+				display: block;
+				@apply --layout-vertical;
+				@apply --layout-center;
+			}
+
+			#start,
+			#complete {
+				--paper-button: {
+					background-color: #5BA664;
+					color: white;
+				}
+			}
+
+			paper-button {
+				height: 64px;
+				width: 369px;
+				margin-left: 0;
+				margin-right: 0;
+			}
+
+			gdq-adbreak-ad {
+				@apply --layout-self-stretch;
+			}
+		</style>
+
+
+		<paper-button
+			id="start"
+			disabled="[[!adBreak.state.canStart]]"
+			on-tap="start"
+			raised>Start Break</paper-button>
+
+		<template is="dom-repeat" items="[[adBreak.ads]]" as="ad" mutable-data>
+			<gdq-adbreak-ad ad-break="[[adBreak]]" ad="[[ad]]"></gdq-adbreak-ad>
+		</template>
+
+		<paper-button
+			id="complete"
+			disabled="[[!adBreak.state.canComplete]]"
+			hidden="[[_calcCompleteButtonHidden(adBreak)]]"
+			on-tap="complete"
+			raised>Finish Break</paper-button>
+	</template>
+
+	<script src="gdq-adbreak.js"></script>
+</dom-module>

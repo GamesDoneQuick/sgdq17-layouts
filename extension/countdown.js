@@ -4,7 +4,7 @@ let timer = null;
 
 // Ours
 const nodecg = require('./util/nodecg-api-context').get();
-const TimeObject = require('./classes/time-object');
+const TimeObject = require('../shared/classes/time-object');
 
 const time = nodecg.Replicant('countdown', {defaultValue: new TimeObject(600), persistent: false});
 const running = nodecg.Replicant('countdownRunning', {defaultValue: false, persistent: false});

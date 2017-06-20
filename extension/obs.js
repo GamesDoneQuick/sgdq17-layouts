@@ -94,6 +94,12 @@ module.exports = {
 		}); */
 	},
 
+	setCurrentScene(sceneName) {
+		return streamingOBS.setCurrentScene({
+			'scene-name': sceneName
+		});
+	},
+
 	async cycleRecordings() {
 		nodecg.log.info('Cycling recordings...');
 
