@@ -11,6 +11,7 @@
 <link rel="import" href="../../../shared/elements/gdq-rundown/gdq-rundown.html">
 <link rel="import" href="gdq-host-dashboard-ads.html">
 <link rel="import" href="gdq-host-dashboard-bid.html">
+<link rel="import" href="gdq-host-dashboard-twitch-ads.html">
 
 <dom-module id="gdq-host-dashboard">
 	<template>
@@ -222,6 +223,11 @@
 				grid-row: 2 / 4;
 			}
 
+			#twitch {
+				grid-column: 4;
+				grid-row: 1;
+			}
+
 			#schedule {
 				grid-column: 4;
 				grid-row: 2;
@@ -371,6 +377,8 @@
 			</div>
 
 			<gdq-host-dashboard-ads id="ads" class="material"></gdq-host-dashboard-ads>
+
+			<gdq-host-dashboard-twitch-ads id="twitch" class="material"></gdq-host-dashboard-twitch-ads>
 
 			<div id="schedule" class="material">
 				<div id="checklistStatus"></div>

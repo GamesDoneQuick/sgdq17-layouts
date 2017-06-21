@@ -87,6 +87,11 @@
 					"type": "string",
 					"description": "The template used to set the title of the stream whenever the current run changes.",
 					"required": true
+				},
+				"clientId": {
+					"type": "string",
+					"description": "The Client ID of the Twitch API application to use when sending API requests.",
+					"required": true
 				}
 			}
 		},

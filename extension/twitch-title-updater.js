@@ -1,10 +1,10 @@
 // Packages
-const request = require('request-promise').defaults({jar: true}); // <= Automatically saves and re-uses cookies.
+const request = require('request-promise');
 
 // Ours
-const nodecg = require('./util/nodecg-api-context');
-const log = new nodecg.Logger(`${nodecg.bundleName}:twitch`);
+const nodecg = require('./util/nodecg-api-context').get();
 
+const log = new nodecg.Logger(`${nodecg.bundleName}:twitch`);
 const currentRun = nodecg.Replicant('currentRun');
 let lastLongName;
 
@@ -21,6 +21,7 @@ currentRun.on('change', newVal => {
 		headers: {
 			Accept: 'application/vnd.twitchtv.v5+json',
 			Authorization: `OAuth ${nodecg.bundleConfig.twitch.oauthToken}`,
+			'Client-ID': nodecg.bundleConfig.twitch.clientId,
 			'Content-Type': 'application/json'
 		},
 		body: {

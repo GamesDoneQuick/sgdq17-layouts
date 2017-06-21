@@ -57,11 +57,15 @@ module.exports = function (nodecg) {
 		nodecg.log.error('Error authenticating with tracker!\n', err);
 	});
 
-	// If the appropriate config params are present,
-	// automatically update the Twitch game and title when currentRun changes.
-	if (nodecg.bundleConfig.twitch && nodecg.bundleConfig.twitch.titleTemplate) {
-		nodecg.log.info('Automatic Twitch stream title updating enabled.');
-		require('./twitch-title-updater');
+	if (nodecg.bundleConfig.twitch) {
+		require('./twitch-ads');
+
+		// If the appropriate config params are present,
+		// automatically update the Twitch game and title when currentRun changes.
+		if (nodecg.bundleConfig.twitch.titleTemplate) {
+			nodecg.log.info('Automatic Twitch stream title updating enabled.');
+			require('./twitch-title-updater');
+		}
 	}
 
 	if (nodecg.bundleConfig.twitter.userId) {
