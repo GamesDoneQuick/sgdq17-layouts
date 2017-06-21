@@ -46,10 +46,13 @@ nodecg.listenFor('twitch:playAd', duration => {
 		body: {duration},
 		json: true
 	}).then(res => {
-		console.log(res);
 		resetTimeSinceTicker();
 		resetTimeLeftTicker(duration + 15);
-		log.info('Successfully started %d second Twitch Ad.', duration);
+		if (res.Length === duration) {
+			log.info('Successfully started %d second Twitch Ad.', res.Length);
+		} else {
+			log.info('Successfully started %d second Twitch Ad, but we requested %d seconds.', res.Length, duration);
+		}
 	}).catch(err => {
 		log.error('Failed to start %d second Twitch Ad:\n\t', duration, err);
 	});
