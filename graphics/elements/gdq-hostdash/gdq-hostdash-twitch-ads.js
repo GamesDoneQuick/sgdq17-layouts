@@ -4,7 +4,7 @@
 
 	class GdqHostDashboardTwitchAds extends Polymer.Element {
 		static get is() {
-			return 'gdq-host-dashboard-twitch-ads';
+			return 'gdq-hostdash-twitch-ads';
 		}
 
 		static get properties() {

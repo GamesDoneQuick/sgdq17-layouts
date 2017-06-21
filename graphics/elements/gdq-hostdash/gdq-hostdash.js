@@ -4,16 +4,14 @@
 	const METROID_BID_ID = 5744;
 	const EVENT_START_TIMESTAMP = 1499013000000;
 	const total = nodecg.Replicant('total');
-	const currentPrizes = nodecg.Replicant('currentPrizes');
 	const allBids = nodecg.Replicant('allBids');
 	const checklistComplete = nodecg.Replicant('checklistComplete');
 	const stopwatch = nodecg.Replicant('stopwatch');
 	const currentRun = nodecg.Replicant('currentRun');
-	const runOrderMap = nodecg.Replicant('runOrderMap');
 
 	class GdqHostDashboard extends Polymer.MutableData(Polymer.Element) {
 		static get is() {
-			return 'gdq-host-dashboard';
+			return 'gdq-hostdash';
 		}
 
 		static get properties() {
@@ -29,12 +27,6 @@
 				},
 				total: {
 					type: String
-				},
-				prizes: {
-					type: Array
-				},
-				relevantBids: {
-					type: Array
 				},
 				metroidBid: {
 					type: Object,
@@ -68,12 +60,7 @@
 				this.total = newVal.formatted;
 			});
 
-			currentPrizes.on('change', newVal => {
-				this.prizes = newVal;
-			});
-
 			allBids.on('change', newVal => {
-				this.recalcRelevantBids();
 				const metroidBid = newVal.find(bid => bid.id === METROID_BID_ID);
 				this.metroidBid = metroidBid ? metroidBid : null;
 			});
@@ -91,47 +78,12 @@
 			currentRun.on('change', newVal => {
 				this.$['currentRun-name'].innerHTML = newVal.name.replace('\\n', '<br/>').trim();
 				this.runners = newVal.runners;
-				this.recalcRelevantBids();
 			});
 
 			stopwatch.on('change', newVal => {
 				this.stopwatchState = newVal.state;
 				this.stopwatchTime = newVal.formatted;
 				this.stopwatchResults = newVal.results;
-			});
-
-			runOrderMap.on('change', () => {
-				this.recalcRelevantBids();
-			});
-
-			nodecg.listenFor('bids:updating', () => {
-				this.$['bids-cooldown'].indeterminate = true;
-			});
-
-			nodecg.listenFor('bids:updated', () => {
-				const $cooldown = this.$['bids-cooldown'];
-				$cooldown.indeterminate = false;
-				$cooldown.classList.remove('transiting');
-				$cooldown.value = 100;
-
-				Polymer.RenderStatus.afterNextRender(this, () => {
-					$cooldown.classList.add('transiting');
-					$cooldown.value = 0;
-				});
-			});
-		}
-
-		recalcRelevantBids() {
-			if (allBids.status !== 'declared' ||
-				currentRun.status !== 'declared' ||
-				runOrderMap.status !== 'declared') {
-				return;
-			}
-
-			this.relevantBids = allBids.value.filter(bid => {
-				return runOrderMap.value[bid.speedrun] >= currentRun.value.order;
-			}).sort((a, b) => {
-				return runOrderMap.value[a.speedrun] - runOrderMap.value[b.speedrun];
 			});
 		}
 
@@ -265,21 +217,6 @@
 			}
 
 			throw new Error(`Unexpected calcAheadText first argument: "${saveOrKill}". Acceptable values are "save" and "kill".`);
-		}
-
-		calcBids(bids, bidFilterString) {
-			if (!bids) {
-				return;
-			}
-
-			const regexp = new RegExp(bidFilterString, 'i');
-			return bids.filter(bid => {
-				if (!bidFilterString) {
-					return true;
-				}
-
-				return regexp.test(bid.description);
-			});
 		}
 
 		calcRunnerName(runners, index) {

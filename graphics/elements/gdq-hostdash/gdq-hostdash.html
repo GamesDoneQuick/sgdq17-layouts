@@ -9,13 +9,15 @@
 <link rel="import" href="../../../bower_components/polymer/lib/mixins/mutable-data.html">
 <link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../../shared/elements/gdq-rundown/gdq-rundown.html">
-<link rel="import" href="gdq-host-dashboard-ads.html">
-<link rel="import" href="gdq-host-dashboard-bid.html">
-<link rel="import" href="gdq-host-dashboard-twitch-ads.html">
+<link rel="import" href="gdq-hostdash-ads.html">
+<link rel="import" href="gdq-hostdash-bids.html">
+<link rel="import" href="gdq-hostdash-prizes.html">
+<link rel="import" href="gdq-hostdash-styles.html">
+<link rel="import" href="gdq-hostdash-twitch-ads.html">
 
-<dom-module id="gdq-host-dashboard">
+<dom-module id="gdq-hostdash">
 	<template>
-		<style include="iron-flex iron-flex-alignment">
+		<style include="gdq-hostdash-styles iron-flex iron-flex-alignment">
 			:host {
 				position: absolute;
 				top: 0;
@@ -29,15 +31,6 @@
 				padding: 24px 34px 50px 34px;
 				box-sizing: border-box;
 				@apply --layout-vertical;
-			}
-
-			::-webkit-scrollbar {
-				width: 12px;
-			}
-
-			::-webkit-scrollbar-thumb {
-				border-radius: 6px;
-				background-color: #707070;
 			}
 
 			#header {
@@ -68,50 +61,10 @@
 				@apply --layout-center-center;
 			}
 
-			.header {
-				margin-top: 11px;
-				height: 54px;
-				background-color: rgba(215, 215, 215, 0.55);
-				font-size: 24px;
-				font-weight: 700;
-				text-transform: uppercase;
-				@apply --layout-vertical;
-				@apply --layout-center-center;
-			}
-
 			#prizes {
 				grid-column: 1;
 				grid-row: 2 / 4;
 				flex-grow: 1;
-				@apply --layout-flex;
-			}
-
-			#prizes-list {
-				height: 721px;
-				padding: 0 14px;
-				margin-top: 13px;
-				margin-right: 11px;
-			}
-
-			.prize {
-				padding-bottom: 10px;
-				font-size: 36px;
-				font-weight: 400;
-				line-height: 43px;
-			}
-
-			.prize .material {
-				padding: 19px;
-				border: 1px solid #d2d2d2;
-			}
-
-			.prize:first-of-type {
-				padding-top: 4px;
-			}
-
-			.material {
-				background-color: white;
-				@apply --shadow-elevation-2dp;
 			}
 
 			#metroid {
@@ -170,52 +123,6 @@
 				grid-column: 2;
 				grid-row: 2 / 4;
 				box-sizing: border-box;
-			}
-
-			#bids-cooldown {
-				width: 100%;
-				box-sizing: border-box;
-				--paper-progress-active-color: #8560a8;
-				--paper-progress-transition-timing-function: linear;
-				--paper-progress-transition-duration: 60s;
-				--paper-progress-indeterminate-cycle-duration: 2.5s;
-				--paper-progress-height: 11px;
-				--paper-progress-container-color: white;
-			}
-
-			#bids-filter {
-				padding-left: 12px;
-				padding-right: 24px;
-
-				--paper-input-container-input: {
-					font-weight: 400;
-				};
-
-				--paper-input-container-label: {
-					font-weight: 400;
-				};
-
-				--paper-input-container-label-focus: {
-					color: #8560a8
-				};
-
-				--paper-input-container-underline: {
-					position: relative;
-					top: 2px;
-					border-bottom: 3px solid #8560a8;
-				};
-
-				--paper-input-container-underline-focus: {
-					top: 2px;
-					border-bottom: 3px solid #C693F2;
-				}
-			}
-
-			#bids-list {
-				height: 635px;
-				padding: 0 14px;
-				margin-top: 13px;
-				margin-right: 11px;
 			}
 
 			#ads {
@@ -319,19 +226,7 @@
 		<div id="gridWrapper">
 			<div id="total" class="material">[[total]]</div>
 
-			<div id="prizes" class="material">
-				<div class="header">PRIZES CURRENTLY AVAILABLE</div>
-				<iron-list id="prizes-list" items="[[prizes]]" as="prize">
-					<template>
-						<div class="prize">
-							<div class="material">
-								<div id="prize-[[prize.id]]">[[prize.description]]</div>
-								<div>[[prize.minimumbid]]</div>
-							</div>
-						</div>
-					</template>
-				</iron-list>
-			</div>
+			<gdq-hostdash-prizes id="prizes" class="material"></gdq-hostdash-prizes>
 
 			<div id="metroid">
 				<div id="metroid-state">[[calcMetroidStateText(metroidBid.state)]]</div>
@@ -358,27 +253,9 @@
 				</div>
 			</div>
 
-			<div id="bids" class="material">
-				<paper-progress id="bids-cooldown" indeterminate></paper-progress>
-
-				<div class="header" style="margin-top: 0;">Incentive & Bid Wars</div>
-
-				<paper-input
-					id="bids-filter"
-					label="Filter"
-					placeholder="Type in filter here"
-					value="{{bidFilterString}}">
-				</paper-input>
-				<iron-list id="bids-list" items="[[calcBids(relevantBids, bidFilterString)]]" as="bid" filter="bidsFilter">
-					<template>
-						<gdq-host-dashboard-bid bid="[[bid]]"></gdq-host-dashboard-bid>
-					</template>
-				</iron-list>
-			</div>
-
-			<gdq-host-dashboard-ads id="ads" class="material"></gdq-host-dashboard-ads>
-
-			<gdq-host-dashboard-twitch-ads id="twitch" class="material"></gdq-host-dashboard-twitch-ads>
+			<gdq-hostdash-bids id="bids" class="material"></gdq-hostdash-bids>
+			<gdq-hostdash-ads id="ads" class="material"></gdq-hostdash-ads>
+			<gdq-hostdash-twitch-ads id="twitch" class="material"></gdq-hostdash-twitch-ads>
 
 			<div id="schedule" class="material">
 				<div id="checklistStatus"></div>
@@ -407,5 +284,5 @@
 		</div>
 	</template>
 
-	<script src="gdq-host-dashboard.js"></script>
+	<script src="gdq-hostdash.js"></script>
 </dom-module>

@@ -5,7 +5,7 @@
 
 	class GdqHostDashboardAds extends Polymer.MutableData(Polymer.Element) {
 		static get is() {
-			return 'gdq-host-dashboard-ads';
+			return 'gdq-hostdash-ads';
 		}
 
 		static get properties() {
