@@ -15,8 +15,8 @@
 	 */
 	function loadImage(target, src) {
 		return new Promise((resolve, reject) => {
-			if (target.constructor.name !== 'iron-image') {
-				reject(new Error(`Must provide an iron-image element, you provided a "${target.constructor.name}".`));
+			if (target.tagName !== 'IRON-IMAGE') {
+				reject(new Error(`Must provide an iron-image element, you provided a "${target.tagName}".`));
 				return;
 			}
 

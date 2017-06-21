@@ -336,6 +336,7 @@
 							this.$['challenge-bar-fill-label-text'].innerText =
 								rawTotalTweenProxy.rawTotal.toLocaleString('en-US', {
 									maximumFractionDigits: 0,
+									minimumFractionDigits: 0,
 									style: 'currency',
 									currency: 'USD'
 								});
