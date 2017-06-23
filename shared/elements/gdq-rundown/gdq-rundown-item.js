@@ -23,6 +23,7 @@ class GdqRundownItem extends Polymer.Element {
 
 	_itemChanged(item) {
 		this._setItemType(item ? item.type : '');
+		this.$.right.innerHTML = '';
 		switch (item.type) {
 			case 'run':
 				this.name = item.name;
@@ -30,7 +31,6 @@ class GdqRundownItem extends Polymer.Element {
 				break;
 			case 'adBreak':
 				this.name = 'Ad Break';
-				this.$.right.innerHTML = '';
 				item.ads.forEach(ad => {
 					const span = document.createElement('span');
 					span.textContent = `${ad.adType} - ${ad.filename}`;
@@ -39,6 +39,19 @@ class GdqRundownItem extends Polymer.Element {
 				break;
 			case 'interview':
 				this.name = `INTERVIEW - ${item.subject}`;
+				item.interviewers.forEach(interviewer => {
+					const span = document.createElement('span');
+					span.textContent = `${interviewer}, `;
+					span.classList.add('interviewer');
+					this.$.right.appendChild(span);
+				});
+				item.interviewees.forEach(interviewees => {
+					const span = document.createElement('span');
+					span.textContent = `${interviewees}, `;
+					this.$.right.appendChild(span);
+				});
+				this.$.right.lastChild.textContent =
+					this.$.right.lastChild.textContent.substr(0, this.$.right.lastChild.textContent.length - 2);
 				break;
 			default:
 				throw new Error(`'Unexpected content type: ${item.type}`);

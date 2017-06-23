@@ -64,9 +64,20 @@
 				font-size: 14px;
 				font-style: italic;
 				margin-left: 36px;
+				text-align: right;
 				@apply --layout-flex-none;
 				@apply --layout-vertical;
 				@apply --layout-end;
+			}
+
+			.interviewer {
+				font-weight: bold;
+				color: #A90000;
+			}
+
+			:host([item-type="interview"]) #right {
+				display: block;
+				max-width: 190px;
 			}
 		</style>
 
