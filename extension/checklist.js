@@ -8,33 +8,10 @@ const clone = require('clone');
 const nodecg = require('./util/nodecg-api-context').get();
 const obs = require('./obs');
 
-// Create defaults array
-const checklistDefault = {
-	extraContent: [
-		{name: 'Check for Advertisement', complete: false},
-		{name: 'Check for Interview', complete: false}
-	],
-	techStationDuties: [
-		{name: 'Reset Timer', complete: false},
-		{name: 'Check Tech Notes', complete: false},
-		{name: 'Stream Layout', complete: false},
-		{name: 'Runner Info/Position', complete: false},
-		{name: 'Camera', complete: false}
-	],
-	stageTechDuties: [
-		{name: 'TVs have Video', complete: false},
-		{name: 'Steam Notifications Off', complete: false}
-	],
-	audioEngineerDuties: [
-		{name: 'Cue Break Music', complete: false},
-		{name: 'Runner Game Audio', complete: false},
-		{name: 'Commentator Mics', complete: false},
-		{name: 'Stream Audio', complete: false}
-	]
-};
-
-// Instantiate replicant with defaults object, which will load if no persisted data is present.
-const checklist = nodecg.Replicant('checklist', {defaultValue: checklistDefault});
+// To edit the list of checklist items, edit the "default" value of schemas/checklist.json.
+// Any changes you make will be fully picked up and integrated next time NodeCG starts.
+const checklist = nodecg.Replicant('checklist');
+const checklistDefault = checklist.schema.default;
 
 // Reconcile differences between persisted value and what we expect the checklistDefault to be.
 const persistedValue = checklist.value;
@@ -61,7 +38,7 @@ if (!equals(persistedValue, checklistDefault)) {
 	checklist.value = mergedChecklist;
 }
 
-const checklistComplete = nodecg.Replicant('checklistComplete', {defaultValue: false});
+const checklistComplete = nodecg.Replicant('checklistComplete');
 checklist.on('change', newVal => {
 	let foundIncompleteTask = false;
 
