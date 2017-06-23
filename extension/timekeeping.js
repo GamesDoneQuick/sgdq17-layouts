@@ -5,6 +5,7 @@ const nodecg = require('./util/nodecg-api-context').get();
 const TimeObject = require('../shared/classes/time-object');
 
 let interval;
+const checklistComplete = nodecg.Replicant('checklistComplete');
 const currentRun = nodecg.Replicant('currentRun');
 const stopwatch = nodecg.Replicant('stopwatch', {
 	defaultValue: (function () {
@@ -72,6 +73,14 @@ if (nodecg.bundleConfig.footpedal.enabled) {
 		}
 
 		if (stopwatch.value.state === 'running') {
+			// If this is a race, don't let the pedal finish the timer.
+			if (currentRun.value.runners.length > 1 && !currentRun.value.coop) {
+				nodecg.log.warn('Footpedal was hit to finish the timer, but this is a race so no action will be taken.');
+				return;
+			}
+
+			nodecg.log.info('Footpedal hit, finishing timer.');
+
 			// Finish all runners.
 			currentRun.value.runners.forEach((runner, index) => {
 				if (!runner) {
@@ -81,6 +90,12 @@ if (nodecg.bundleConfig.footpedal.enabled) {
 				completeRunner({index, forfeit: false});
 			});
 		} else {
+			if (!checklistComplete.value) {
+				nodecg.log.warn('Footpedal was hit to start the timer, but the checklist is not complete so no action will be taken.');
+				return;
+			}
+
+			nodecg.log.info('Footpedal hit, starting timer.');
 			start();
 
 			// Resume all runners.
