@@ -127,7 +127,12 @@
 						el.innerHTML = bid.options[index].description || bid.options[index].name;
 					});
 					qsa('.choice-row-amount').forEach((el, index) => {
-						el.innerHTML = bid.options[index].total;
+						// Don't show cents if the value of this option is $100,000 or more.
+						if (bid.options[index].rawTotal >= 100000) {
+							el.innerHTML = bid.options[index].total.split('.')[0];
+						} else {
+							el.innerHTML = bid.options[index].total;
+						}
 					});
 				});
 			}
