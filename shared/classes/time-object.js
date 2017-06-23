@@ -63,6 +63,7 @@ class TimeObject {
 		t.seconds = hms.s;
 		t.formatted = TimeObject.formatHMS(hms);
 		t.raw = seconds;
+		t.timestamp = Date.now();
 		return t;
 	}
 
