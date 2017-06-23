@@ -106,10 +106,10 @@
 				this.tl.set(this.$['tug-bar-left'], {clearProps: 'width'});
 				this.tl.call(() => {
 					this.$['tug-bar-center-label'].style.borderColor = 'white';
-					this.$$('#tug-left .tug-option-total').innerHTML = bid.options[0].total;
-					this.$$('#tug-right .tug-option-total').innerHTML = bid.options[1].total;
-					this.$$('#tug-left .tug-option-desc').innerHTML = bid.options[0].description;
-					this.$$('#tug-right .tug-option-desc').innerHTML = bid.options[1].description;
+					this.shadowRoot.querySelector('#tug-left .tug-option-total').innerHTML = bid.options[0].total;
+					this.shadowRoot.querySelector('#tug-right .tug-option-total').innerHTML = bid.options[1].total;
+					this.shadowRoot.querySelector('#tug-left .tug-option-desc').innerHTML = bid.options[0].description;
+					this.shadowRoot.querySelector('#tug-right .tug-option-desc').innerHTML = bid.options[1].description;
 					this.$['tug-bar-center-label-leftarrow'].style.display = 'none';
 					this.$['tug-bar-center-label-rightarrow'].style.display = 'none';
 					this.$['tug-bar-center-label-delta'].innerHTML = '$0';
@@ -216,19 +216,19 @@
 			switch (bid.type) {
 				case 'choice-binary': {
 					this.tl.call(() => {
-						this._typeAnim(this.$$('#tug-left .tug-option-desc'));
+						this._typeAnim(this.shadowRoot.querySelector('#tug-left .tug-option-desc'));
 					}, null, null, `+=${TYPE_INTERVAL}`);
 
 					this.tl.call(() => {
-						this._typeAnim(this.$$('#tug-left .tug-option-total'));
+						this._typeAnim(this.shadowRoot.querySelector('#tug-left .tug-option-total'));
 					}, null, null, `+=${TYPE_INTERVAL}`);
 
 					this.tl.call(() => {
-						this._typeAnim(this.$$('#tug-right .tug-option-total'));
+						this._typeAnim(this.shadowRoot.querySelector('#tug-right .tug-option-total'));
 					}, null, null, `+=${TYPE_INTERVAL}`);
 
 					this.tl.call(() => {
-						this._typeAnim(this.$$('#tug-right .tug-option-desc'));
+						this._typeAnim(this.shadowRoot.querySelector('#tug-right .tug-option-desc'));
 					}, null, null, `+=${TYPE_INTERVAL}`);
 
 					const maxPips = CHALLENGE_BAR_WIDTH / BIG_PIP_WIDTH;
