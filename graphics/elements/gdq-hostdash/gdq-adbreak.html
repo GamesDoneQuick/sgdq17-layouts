@@ -10,6 +10,7 @@
 				display: block;
 				@apply --layout-vertical;
 				@apply --layout-center;
+				@apply --layout-flex-none;
 			}
 
 			#start,
@@ -17,7 +18,7 @@
 				--paper-button: {
 					background-color: #5BA664;
 					color: white;
-				}
+				};
 			}
 
 			paper-button {
@@ -25,10 +26,12 @@
 				width: 369px;
 				margin-left: 0;
 				margin-right: 0;
+				@apply --layout-flex-none;
 			}
 
 			gdq-adbreak-ad {
 				@apply --layout-self-stretch;
+				@apply --layout-flex-none;
 			}
 		</style>
 
