@@ -94,8 +94,10 @@ function calcOriginalValues(run, original) {
  * @returns {Object} - The merged run.
  */
 function mergeChangesFromTracker(run, unmodifiedRun) {
-	// Immediately clone the run, we want to at least try to make this a functional method...
+	// Immediately clone everything, because we can return either and the diffing code
+	// relies on currentRun and nextRun never being the same object as what is in the schedule replicant.
 	run = clone(run);
+	unmodifiedRun = clone(unmodifiedRun);
 
 	if (!run.originalValues) {
 		return unmodifiedRun;

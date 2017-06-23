@@ -98,6 +98,10 @@ nodecg.listenFor('modifyRun', (data, cb) => {
 	if (run) {
 		const original = findRunByPk(run.pk);
 		if (original) {
+			if (run === original) {
+				nodecg.log.error('[schedule:modifyRun] run and original are same object!');
+				return;
+			}
 			assign(run, data);
 			run.originalValues = calcOriginalValues(run, original);
 		} else {
