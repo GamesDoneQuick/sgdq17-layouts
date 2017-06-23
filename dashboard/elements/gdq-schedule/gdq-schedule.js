@@ -94,20 +94,17 @@
 				this.$.fetchLatestSchedule.removeAttribute('disabled');
 
 				if (err) {
-					console.error(err.message);
-					this.$.toast.text = 'Error updating schedule. Check console.';
-					this.$.toast.show();
+					nodecg.log.warn(err.message);
+					this.$.toast.show('Error updating schedule. Check console.');
 					return;
 				}
 
 				if (updated) {
-					console.info(`[${nodecg.bundleName}] Schedule successfully updated`);
-					this.$.toast.text = 'Successfully updated schedule.';
-					this.$.toast.show();
+					nodecg.log.info('Schedule successfully updated');
+					this.$.toast.show('Successfully updated schedule.');
 				} else {
-					console.info(`[${nodecg.bundleName}] Schedule unchanged, not updated`);
-					this.$.toast.text = 'Schedule unchanged, not updated.';
-					this.$.toast.show();
+					nodecg.log.info('Schedule unchanged, not updated');
+					this.$.toast.show('Schedule unchanged, not updated.');
 				}
 			});
 		}
