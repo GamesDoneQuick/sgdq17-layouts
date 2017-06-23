@@ -73,6 +73,21 @@ nodecg.listenFor('setCurrentRunByOrder', (order, cb) => {
 });
 
 nodecg.listenFor('modifyRun', (data, cb) => {
+	// We lose any properties that have an explicit value of `undefined` in the serialization process.
+	// We need those properties to still exist so our diffing code can work as expected.
+	// A property not existing is not the same thing as a property existing but having a value of undefined.
+	data.runners = data.runners.map(runner => {
+		if (!{}.hasOwnProperty.call(runner, 'name')) {
+			runner.name = undefined;
+		}
+
+		if (!{}.hasOwnProperty.call(runner, 'stream')) {
+			runner.stream = undefined;
+		}
+
+		return runner;
+	});
+
 	let run;
 	if (currentRunRep.value.pk === data.pk) {
 		run = currentRunRep.value;
