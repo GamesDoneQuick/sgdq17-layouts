@@ -4,6 +4,7 @@ const path = require('path');
 
 // Packages
 const clone = require('clone');
+const debounce = require('lodash.debounce');
 const schemaDefaults = require('json-schema-defaults');
 
 // Ours
@@ -20,23 +21,23 @@ const stopwatch = nodecg.Replicant('stopwatch');
 const schemasPath = path.resolve(__dirname, '../schemas/');
 const adBreakSchema = JSON.parse(fs.readFileSync(path.join(schemasPath, 'types/adBreak.json')));
 const adSchema = JSON.parse(fs.readFileSync(path.join(schemasPath, 'types/ad.json')));
+const debouncedUpdateCurrentIntermissionContent = debounce(_updateCurrentIntermissionContent, 10);
+const debouncedUpdateCurrentIntermissionState = debounce(_updateCurrentIntermissionContent, 10);
 
 currentRun.on('change', (newVal, oldVal) => {
 	if (!oldVal || newVal.order !== oldVal.order) {
-		_updateCurrentIntermissionContent();
+		debouncedUpdateCurrentIntermissionContent();
 	}
 });
 stopwatch.on('change', (newVal, oldVal) => {
-	if (!oldVal ||
-		(newVal.state !== oldVal.state && newVal.state === 'stopped') ||
-		newVal.raw < oldVal.raw) {
-		return _updateCurrentIntermissionContent();
+	if (!oldVal || (hasRunStarted() ? 'post' : 'pre') !== currentIntermission.value.preOrPost) {
+		return debouncedUpdateCurrentIntermissionContent();
 	} else if (newVal.state !== oldVal.state) {
-		_updateCurrentIntermissionState();
+		debouncedUpdateCurrentIntermissionState();
 	}
 });
 caspar.replicants.files.on('change', () => {
-	_updateCurrentIntermissionState();
+	debouncedUpdateCurrentIntermissionState();
 });
 
 let currentAdBreak = null;

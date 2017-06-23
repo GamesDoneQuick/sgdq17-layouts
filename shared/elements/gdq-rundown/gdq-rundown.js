@@ -22,15 +22,26 @@
 
 		ready() {
 			super.ready();
+			this._debounceUpdateScheduleSlice = this._debounceUpdateScheduleSlice.bind(this);
 			this._updateScheduleSlice = this._updateScheduleSlice.bind(this);
-			currentIntermission.on('change', this._updateScheduleSlice);
-			currentRun.on('change', this._updateScheduleSlice);
-			schedule.on('change', this._updateScheduleSlice);
+
+			currentIntermission.on('change', this._debounceUpdateScheduleSlice);
+			currentRun.on('change', this._debounceUpdateScheduleSlice);
+			schedule.on('change', this._debounceUpdateScheduleSlice);
 			stopwatch.on('change', (newVal, oldVal) => {
+				console.log(newVal.state, oldVal ? oldVal.state : 'none');
 				if (!oldVal || newVal.state !== oldVal.state || newVal.raw < oldVal.raw) {
-					return this._updateScheduleSlice();
+					return this._debounceUpdateScheduleSlice();
 				}
 			});
+		}
+
+		_debounceUpdateScheduleSlice() {
+			this._updateScheduleSliceDebouncer = Polymer.Debouncer.debounce(
+				this._updateScheduleSliceDebouncer,
+				Polymer.Async.timeOut.after(10),
+				this._updateScheduleSlice
+			);
 		}
 
 		_updateScheduleSlice() {
