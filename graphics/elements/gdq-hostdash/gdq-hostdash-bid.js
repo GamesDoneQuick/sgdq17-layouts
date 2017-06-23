@@ -46,7 +46,7 @@ class GdqHostDashboardBid extends Polymer.MutableData(Polymer.Element) {
 			return '';
 		}
 
-		let percent = Math.floor(option.rawTotal / bid.options[0].rawTotal);
+		let percent = option.rawTotal / bid.options[0].rawTotal;
 		percent = Math.max(percent, 0); // Clamp to min 0
 		percent = Math.min(percent, 1); // Clamp to max 1
 		if (Number.isNaN(percent)) {
