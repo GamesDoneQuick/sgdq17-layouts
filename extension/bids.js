@@ -163,8 +163,8 @@ function handleResponse(error, response, body, deferred, opts) {
 			}
 
 			bid.options = bid.options.sort((a, b) => {
-				const aTotal = numeral(a.total).value();
-				const bTotal = numeral(b.total).value();
+				const aTotal = a.rawTotal;
+				const bTotal = b.rawTotal;
 				if (aTotal > bTotal) {
 					return -1;
 				}
