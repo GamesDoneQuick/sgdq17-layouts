@@ -13,15 +13,6 @@
 				@apply --layout-flex-none;
 			}
 
-			:host([failed]) #material {
-				/* override [closed] style */
-				background-color: #ffe2e2!important;
-			}
-
-			:host([closed]) #material {
-				background-color: #cfffcf;
-			}
-
 			:host(:first-of-type) {
 				padding-top: 4px;
 			}
@@ -35,9 +26,14 @@
 			}
 
 			.option {
-				font-weight: 600;
+				font-weight: 400;
 				font-size: 18px;
 				margin-top: 14px;
+			}
+
+			/* Bold the name of the winning option. */
+			.option[data-index="0"] {
+				font-weight: 600;
 			}
 
 			.option-name {
@@ -68,6 +64,7 @@
 				height: 100%;
 				background-color: #8560a8;
 				transform: scaleX(0);
+				transform-origin: left;
 			}
 
 			.additionalOptions {
@@ -75,6 +72,15 @@
 				margin-top: 8px;
 				margin-bottom: -4px;
 				text-align: right;
+			}
+
+			:host([closed]) #material {
+				background-color: #cfffcf;
+			}
+
+			:host([failed]) #material {
+				/* override [closed] style */
+				background-color: #ffe2e2;
 			}
 		</style>
 
@@ -87,7 +93,7 @@
 
 			<template is="dom-if" if="[[!bidIsChallenge(bid)]]">
 				<template is="dom-repeat" items="[[limitOptions(bid.options)]]" as="option">
-					<div class="option">
+					<div class="option" data-index$="[[index]]">
 						<div class="layout horizontal justified">
 							<div class="option-name" title="[[option.name]]">[[option.name]]</div>
 							<div class="option-total">[[option.total]]</div>
