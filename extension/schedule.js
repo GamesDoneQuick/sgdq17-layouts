@@ -218,16 +218,26 @@ function update() {
 		} else {
 			const currentRunAsInSchedule = findRunByPk(currentRunRep.value.pk);
 
+			// If our current nextRun replicant value not match the actual next run in the schedule anymore,
+			// throw away our current nextRun and replace it with the new next run in the schedule.
+			// This can only happen for two reasons:
+			//     1) The nextRun was deleted from the schedule.
+			//     2) A new run was added between currentRun and nextRun.
+			const newNextRun = _findRunAfter(currentRunRep.value);
+			if (newNextRun.pk !== nextRunRep.value.pk) {
+				nextRunRep.value = clone(newNextRun);
+			}
+
 			/* If currentRun was found in the schedule, merge any changes from the schedule into currentRun.
 			 * Else if currentRun has been removed from the schedule (determined by its `pk`),
 			 * set currentRun to whatever run now has currentRun's `order` value.
 			 * If that fails, set currentRun to the final run in the schedule.
 			 */
 			if (currentRunAsInSchedule) {
-				[currentRunRep, nextRunRep].forEach(activeRun => {
-					if (activeRun.value && activeRun.value.pk) {
-						const runFromSchedule = findRunByPk(activeRun.value.pk);
-						activeRun.value = mergeChangesFromTracker(activeRun.value, runFromSchedule);
+				[currentRunRep, nextRunRep].forEach(activeRunReplicant => {
+					if (activeRunReplicant.value && activeRunReplicant.value.pk) {
+						const runFromSchedule = findRunByPk(activeRunReplicant.value.pk);
+						activeRunReplicant.value = mergeChangesFromTracker(activeRunReplicant.value, runFromSchedule);
 					}
 				});
 			} else {
@@ -279,17 +289,28 @@ function _seekToPreviousRun() {
  * @returns {undefined}
  */
 function _seekToNextRun() {
-	const newNextRun = scheduleRep.value.find(item => {
+	const newNextRun = _findRunAfter(nextRunRep.value);
+	currentRunRep.value = clone(nextRunRep.value);
+	nextRunRep.value = clone(newNextRun);
+	checklist.reset();
+}
+
+/**
+ * Finds the first run that comes after a given run.
+ * Will return undefined if this is the last run in the schedule.
+ * @param {Object|Number} runOrOrder - Either a run order or a run object to set as the new currentRun.
+ * @returns {Object|undefined} - The next run. If this is the last run, then undefined.
+ * @private
+ */
+function _findRunAfter(runOrOrder) {
+	const run = _resolveRunOrOrder(runOrOrder);
+	return scheduleRep.value.find(item => {
 		if (item.type !== 'run') {
 			return false;
 		}
 
-		return item.order > nextRunRep.value.order;
+		return item.order > run.order;
 	});
-
-	currentRunRep.value = clone(nextRunRep.value);
-	nextRunRep.value = clone(newNextRun);
-	checklist.reset();
 }
 
 /**
@@ -301,26 +322,13 @@ function _seekToNextRun() {
  * @returns {undefined}
  */
 function _seekToArbitraryRun(runOrOrder) {
-	let run;
-	let order;
-	if (typeof runOrOrder === 'number') {
-		order = runOrOrder;
-		run = findRunByOrder(order);
-	} else if (typeof runOrOrder === 'object') {
-		run = runOrOrder;
-		order = run.order;
-	}
-
-	if (!run) {
-		throw new Error('Could not find run at specified order.');
-	}
-
-	if (nextRunRep.value && order === nextRunRep.value.order) {
+	const run = _resolveRunOrOrder(runOrOrder);
+	if (nextRunRep.value && run.order === nextRunRep.value.order) {
 		_seekToNextRun();
 	} else {
 		currentRunRep.value = clone(run);
 
-		const nextRunOrder = order + 1;
+		const nextRunOrder = run.order + 1;
 		const nextRun = scheduleRep.value.find(item => item.type === 'run' && item.order === nextRunOrder);
 		if (nextRun) {
 			nextRunRep.value = clone(nextRun);
@@ -500,6 +508,27 @@ function suborderSort(a, b) {
 	}
 
 	return a.suborder - b.suborder;
+}
+
+/**
+ * Disambiguates a variable that could either be a run object or a numeric run order.
+ * @param {Object|Number} runOrOrder - Either a run order or a run object to set as the new currentRun.
+ * @returns {Object} - The resolved run object.
+ * @private
+ */
+function _resolveRunOrOrder(runOrOrder) {
+	let run;
+	if (typeof runOrOrder === 'number') {
+		run = findRunByOrder(runOrOrder);
+	} else if (typeof runOrOrder === 'object') {
+		run = runOrOrder;
+	}
+
+	if (!run) {
+		throw new Error(`Could not find run at specified order "${runOrOrder}".`);
+	}
+
+	return run;
 }
 
 /**
