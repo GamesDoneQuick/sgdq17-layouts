@@ -4,7 +4,7 @@
 	const total = nodecg.Replicant('total');
 	const currentRun = nodecg.Replicant('currentRun');
 	const nextRun = nodecg.Replicant('nextRun');
-	const currentScene = nodecg.Replicant('currentScene');
+	const currentLayout = nodecg.Replicant('gdq:currentLayout');
 	const questionTweets = nodecg.Replicant('interview:questionTweets');
 	const questionSortMap = nodecg.Replicant('interview:questionSortMap');
 
@@ -102,7 +102,7 @@
 			total.on('change', this.totalChanged.bind(this));
 
 			this.updateUpNextDisplay = this.updateUpNextDisplay.bind(this);
-			currentScene.on('change', this.updateUpNextDisplay);
+			currentLayout.on('change', this.updateUpNextDisplay);
 			currentRun.on('change', this.updateUpNextDisplay);
 			nextRun.on('change', this.updateUpNextDisplay);
 
@@ -149,7 +149,7 @@
 		updateUpNextDisplay() {
 			let upNextRun = nextRun.value;
 
-			if (currentScene.value === 'break' || currentScene.value === 'interview') {
+			if (currentLayout.value === 'break' || currentLayout.value === 'interview') {
 				upNextRun = currentRun.value;
 			}
 

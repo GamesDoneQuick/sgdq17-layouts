@@ -7,7 +7,7 @@
 	const displayDuration = nodecg.bundleConfig.displayDuration;
 	const currentBids = nodecg.Replicant('currentBids');
 	const currentPrizes = nodecg.Replicant('currentPrizes');
-	const currentScene = nodecg.Replicant('currentScene');
+	const currentLayout = nodecg.Replicant('gdq:currentLayout');
 
 	class GdqOmnibar extends Polymer.Element {
 		static get is() {
@@ -275,7 +275,7 @@
 		showUpNext() {
 			let upNextRun = nextRun.value;
 
-			if (currentScene.value === 'break' || currentScene.value === 'interview') {
+			if (currentLayout.value === 'break' || currentLayout.value === 'interview') {
 				upNextRun = currentRun.value;
 			}
 
@@ -292,7 +292,7 @@
 						 * after window.nextRun has been set to null. In that case, we immediately clear the
 						 * timeline and bail out to showing bids again.
 						 */
-						const upNextRun = (currentScene.value === 'break' || currentScene.value === 'interview') ?
+						const upNextRun = (currentLayout.value === 'break' || currentLayout.value === 'interview') ?
 							currentRun.value : nextRun.value;
 						if (upNextRun) {
 							let concatenatedRunners;
