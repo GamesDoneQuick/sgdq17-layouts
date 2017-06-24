@@ -13,8 +13,10 @@ const tweets = nodecg.Replicant('tweets', {defaultValue: []});
 let userStream;
 
 // Clear queue of tweets when currentRun changes
-nodecg.Replicant('currentRun').on('change', () => {
-	tweets.value = [];
+nodecg.Replicant('currentRun').on('change', (newVal, oldVal) => {
+	if (oldVal && newVal.pk !== oldVal.pk) {
+		tweets.value = [];
+	}
 });
 
 buildUserStream();
