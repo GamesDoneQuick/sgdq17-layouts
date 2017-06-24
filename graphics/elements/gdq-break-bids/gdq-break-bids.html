@@ -29,6 +29,7 @@
 
 				@apply --layout-horizontal;
 				@apply --layout-center-center;
+				@apply --layout-flex-none;
 			}
 
 			#runName-content {
@@ -47,6 +48,7 @@
 
 				@apply --layout-horizontal;
 				@apply --layout-center-center;
+				@apply --layout-flex-none;
 			}
 
 			:host(:not([bid-type="challenge"])) #bidDescription-content .line:nth-child(n+2) {
@@ -205,27 +207,26 @@
 
 			#choice {
 				flex-grow: 1;
+				overflow: hidden;
 				@apply --layout-vertical;
-				@apply --layout-center-justified;
 			}
 
 			.choice-row {
-				height: 57px;
 				padding-left: 27px;
 				padding-right: 23px;
+				padding-top: 13px;
 				align-items: flex-end;
 				justify-content: space-between;
+				will-change: transform;
 				@apply --layout-horizontal;
+				@apply --layout-flex-none;
 			}
 
 			.choice-row-label {
 				color: transparent;
-				font-size: 28px;
+				font-size: 24px;
 				font-weight: 700;
-				line-height: 32px;
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
+				line-height: 26px;
 				max-width: 220px;
 			}
 

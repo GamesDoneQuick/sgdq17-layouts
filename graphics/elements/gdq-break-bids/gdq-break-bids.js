@@ -115,23 +115,24 @@
 					this.$['tug-bar-center-label-delta'].innerHTML = '$0';
 				});
 			} else if (bid.type === 'choice-many') {
-				this.tl.call(() => {
-					const qsa = selector => {
-						return Array.from(this.$.choice.querySelectorAll(selector));
-					};
+				const qsa = selector => {
+					return Array.from(this.$.choice.querySelectorAll(selector));
+				};
 
+				this.tl.set(qsa('.choice-row'), {y: 0});
+				this.tl.call(() => {
 					qsa('.choice-row-meter-fill').forEach(el => {
 						el.style.width = 0;
 					});
 					qsa('.choice-row-label').forEach((el, index) => {
-						el.innerHTML = bid.options[index].description || bid.options[index].name;
+						el.textContent = bid.options[index].description || bid.options[index].name;
 					});
 					qsa('.choice-row-amount').forEach((el, index) => {
 						// Don't show cents if the value of this option is $100,000 or more.
 						if (bid.options[index].rawTotal >= 100000) {
-							el.innerHTML = bid.options[index].total.split('.')[0];
+							el.textContent = bid.options[index].total.split('.')[0];
 						} else {
-							el.innerHTML = bid.options[index].total;
+							el.textContent = bid.options[index].total;
 						}
 					});
 				});
@@ -305,6 +306,25 @@
 							},
 							ease: Linear.easeNone
 						}, index === 0 ? 'barFills' : `barFills+=${CHOICE_PIP_INTERVAL * 2 * index}`);
+					});
+
+					this.tl.call(() => {
+						const scrollHeight = this.$.choice.scrollHeight;
+						const clientHeight = this.$.choice.clientHeight;
+						const diff = scrollHeight - clientHeight;
+						if (diff > 0) {
+							const timePerPixel = 0.035;
+							this.tl.pause();
+							TweenLite.to(this.shadowRoot.querySelectorAll('.choice-row'), diff * timePerPixel, {
+								y: -diff,
+								ease: Linear.easeNone,
+								delay: 1.5,
+								onComplete() {
+									this.tl.resume();
+								},
+								callbackScope: this
+							});
+						}
 					});
 
 					break;
