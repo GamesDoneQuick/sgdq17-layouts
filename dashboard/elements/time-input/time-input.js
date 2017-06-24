@@ -1,44 +1,46 @@
-class TimeInput extends Polymer.mixinBehaviors([Polymer.IronValidatableBehavior], Polymer.Element) {
-	static get is() {
-		return 'time-input';
-	}
+Polymer({
+	is: 'time-input',
 
-	static get properties() {
-		return {
-			value: {
-				notify: true,
-				type: String
-			},
+	properties: {
+		invalid: {
+			reflectToAttribute: true,
+			type: Boolean,
+			value: false
+		},
 
-			_minutes: {
-				type: Number
-			},
+		value: {
+			notify: true,
+			type: String
+		},
 
-			_seconds: {
-				type: Number
-			},
+		_minutes: {
+			type: Number
+		},
 
-			validator: {
-				type: String,
-				value: 'time-validator'
-			}
-		};
-	}
+		_seconds: {
+			type: Number
+		},
 
-	static get observers() {
-		return [
-			'_computeValue(_minutes,_seconds)'
-		];
-	}
+		validator: {
+			type: String,
+			value: 'time-validator'
+		}
+	},
+
+	behaviors: [
+		Polymer.IronValidatableBehavior
+	],
+
+	observers: [
+		'_computeValue(_minutes,_seconds)'
+	],
 
 	setMS(m, s) {
 		this._minutes = m < 10 ? `0${m}` : m;
 		this._seconds = s < 10 ? `0${s}` : s;
-	}
+	},
 
 	_computeValue(minutes, seconds) {
 		this.value = `${minutes}:${seconds}`;
 	}
-}
-
-customElements.define(TimeInput.is, TimeInput);
+});

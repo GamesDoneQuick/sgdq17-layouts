@@ -11,28 +11,39 @@
 				display: inline-block;
 			}
 
-			input[is="iron-input"] {
+			iron-input {
+				min-width: 1px;
+				@apply --layout-flex;
+			}
+
+			iron-input input {
 				font: inherit;
 				outline: none;
 				box-shadow: none;
 				border: none;
-				flex-grow: 1;
 				text-align: center;
+				width: 100%;
 				@apply --time-input-style;
 			}
 
-			.container {
-				@apply --layout-horizontal;
+			#container {
 				align-items: baseline;
+				@apply --layout-horizontal;
 			}
 		</style>
 
 		<time-validator></time-validator>
 
-		<div class="container">
-			<input is="iron-input" maxlength="2" bind-value="{{_minutes}}" size="2" aria-label="Minutes">
+		<div id="container">
+			<iron-input bind-value="{{_minutes}}">
+				<input maxlength="2" size="2" aria-label="Minutes">
+			</iron-input>
+
 			<span>:</span>
-			<input is="iron-input" maxlength="2" bind-value="{{_seconds}}" size="2" aria-label="Seconds">
+
+			<iron-input bind-value="{{_seconds}}">
+				<input maxlength="2" size="2" aria-label="Seconds">
+			</iron-input>
 		</div>
 	</template>
 

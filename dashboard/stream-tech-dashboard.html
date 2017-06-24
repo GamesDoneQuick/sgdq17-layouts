@@ -6,6 +6,7 @@
 	<script src="../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
 	<link rel="import" href="../shared/elements/gdq-rundown/gdq-rundown.html">
 	<link rel="import" href="elements/gdq-checklist/gdq-checklist.html">
+	<link rel="import" href="elements/gdq-countdown/gdq-countdown.html">
 	<link rel="import" href="elements/gdq-schedule/gdq-schedule.html">
 	<link rel="import" href="elements/gdq-timekeeper/gdq-timekeeper.html">
 	<link rel="import" href="elements/gdq-total/gdq-total.html">
@@ -52,6 +53,11 @@
 				margin-bottom: 20px;
 			}
 
+			gdq-countdown {
+				margin-top: 14px;
+				@apply --layout-flex-none;
+			}
+
 			gdq-twitter-controls {
 				@apply --layout-flex-none;
 			}
@@ -74,6 +80,7 @@
 		<div id="centerColumn" class="column">
 			<gdq-total></gdq-total>
 			<gdq-schedule class="bordered"></gdq-schedule>
+			<gdq-countdown class="bordered"></gdq-countdown>
 		</div>
 
 		<div id="rightColumn" class="column">
