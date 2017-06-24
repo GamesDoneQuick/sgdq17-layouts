@@ -1,9 +1,9 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../shared/elements/gdq-time-ago/gdq-time-ago.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../shared/elements/gdq-time-ago/gdq-time-ago.html">
 
 <dom-module id="tweet-item">
 	<template>
@@ -50,6 +50,7 @@
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
+				text-decoration: none;
 			}
 
 			#profileLink:hover {
@@ -91,7 +92,7 @@
 			}
 
 			#accept {
-				color: var(--nodecg-success-color);
+				color: #5BA664;
 			}
 
 			#accept:hover {
@@ -100,7 +101,7 @@
 			}
 
 			#reject {
-				color: var(--nodecg-danger-color);
+				color: #C9513E;
 			}
 
 			#reject:hover {
@@ -142,10 +143,16 @@
 			</div>
 
 			<div id="controls">
-				<paper-icon-button id="accept" on-click="accept" icon="check"
-								   title="Accept and show"></paper-icon-button>
-				<paper-icon-button id="reject" on-click="reject" icon="clear"
-								   title="Reject and discard"></paper-icon-button>
+				<paper-icon-button
+					id="accept"
+					on-tap="accept"
+					icon="check"
+					title="Accept and show"></paper-icon-button>
+				<paper-icon-button
+					id="reject"
+					on-tap="reject"
+					icon="clear"
+					title="Reject and discard"></paper-icon-button>
 			</div>
 		</div>
 

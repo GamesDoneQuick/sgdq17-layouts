@@ -5,11 +5,11 @@
 	<title>Stream Tech Dashboard</title>
 	<script src="../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
 	<link rel="import" href="../shared/elements/gdq-rundown/gdq-rundown.html">
-	<link rel="import" href="elements/gdq-ads/gdq-ads.html">
 	<link rel="import" href="elements/gdq-checklist/gdq-checklist.html">
 	<link rel="import" href="elements/gdq-schedule/gdq-schedule.html">
 	<link rel="import" href="elements/gdq-timekeeper/gdq-timekeeper.html">
 	<link rel="import" href="elements/gdq-total/gdq-total.html">
+	<link rel="import" href="elements/gdq-twitter-controls/gdq-twitter-controls.html">
 
 	<custom-style>
 		<style>
@@ -52,8 +52,14 @@
 				margin-bottom: 20px;
 			}
 
+			gdq-twitter-controls {
+				@apply --layout-flex-none;
+			}
+
 			gdq-rundown {
+				margin-top: 14px;
 				height: 424px;
+				@apply --layout-flex;
 			}
 		</style>
 	</custom-style>
@@ -71,7 +77,7 @@
 		</div>
 
 		<div id="rightColumn" class="column">
-			<gdq-ads></gdq-ads>
+			<gdq-twitter-controls class="bordered"></gdq-twitter-controls>
 			<gdq-rundown class="bordered"></gdq-rundown>
 		</div>
 	</div>

@@ -47,25 +47,11 @@
     "compatibleRange": "0.9.0-beta",
     "dashboardPanels": [
       {
-        "name": "fullbleed controls",
-        "title": "SGDQ 2017",
-        "file": "fullbleed-controls.html",
+        "name": "Stream Tech Dashboard",
+        "title": "Stream Tech Dashboard",
+        "file": "stream-tech-dashboard.html",
         "headerColor": "#2d4e8a",
         "fullbleed": true
-      },
-      {
-        "name": "twitter",
-        "title": "Twitter",
-        "width": 4,
-        "headerColor": "#55acee",
-        "file": "twitter.html"
-      },
-      {
-        "name": "countdown",
-        "title": "Countdn",
-        "width": 1,
-        "file": "countdown.html",
-        "headerColor": "#2d4e8a"
       },
       {
         "name": "obs",
