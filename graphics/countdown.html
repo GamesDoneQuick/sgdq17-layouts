@@ -6,61 +6,63 @@
 	<link rel="stylesheet" href="style/layout.css">
 	<link rel="stylesheet" href="style/font/small-pixel-7.css">
 	<link rel="stylesheet" href="style/font/SF%20Pixelate.css">
-	<!-- TODO: change this to bower_components route, less confusing -->
 	<script src="../bower_components/gsap/src/minified/TweenMax.min.js"></script>
-	<style is="custom-style">
-		body {
-			font-family: 'SF Pixelate', sans-serif;
-			letter-spacing: -0.025em;
-		}
 
-		#container {
-			height: 720px;
-		}
+	<custom-style>
+		<style>
+			body {
+				font-family: 'SF Pixelate', sans-serif;
+				letter-spacing: -0.025em;
+			}
 
-		#logo {
-			position: absolute;
-			top: 0;
-			left: 388px;
-			transform: scale(0.75);
-			z-index: 1;
-		}
+			#container {
+				height: 720px;
+			}
 
-		#loop {
-			position: absolute;
-			top: 308px;
-			left: 280px;
-		}
+			#logo {
+				position: absolute;
+				top: 0;
+				left: 388px;
+				transform: scale(0.75);
+				z-index: 1;
+			}
 
-		#nowPlaying {
-			color: white;
-			font-size: 23px;
-			width: 764px;
-			bottom: 4px;
-			left: 258px;
-			opacity: 0;
-		}
+			#loop {
+				position: absolute;
+				top: 308px;
+				left: 280px;
+			}
 
-		#countdown {
-			font-size: 90px;
-			font-family: 'small-pixel-7', sans-serif;
-			color: #00ff00;
-			left: 509px;
-			top: 337px;
-			width: 264px;
-			letter-spacing: 0.075em;
-			display: flex;
-			justify-content: center;
-		}
+			#nowPlaying {
+				color: white;
+				font-size: 23px;
+				width: 764px;
+				bottom: 4px;
+				left: 258px;
+				opacity: 0;
+			}
 
-		#countdown,
-		#nowPlaying {
-			text-align: center;
-			white-space: nowrap;
-			position: absolute;
-			transform-origin: left;
-		}
-	</style>
+			#countdown {
+				font-size: 90px;
+				font-family: 'small-pixel-7', sans-serif;
+				color: #00ff00;
+				left: 509px;
+				top: 337px;
+				width: 264px;
+				letter-spacing: 0.075em;
+				display: flex;
+				justify-content: center;
+			}
+
+			#countdown,
+			#nowPlaying {
+				text-align: center;
+				white-space: nowrap;
+				position: absolute;
+				transform-origin: left;
+			}
+		</style>
+	</custom-style>
 </head>
 <body>
 <div id="container">
