@@ -195,8 +195,9 @@
 			}, null, null, '+=0.1');
 
 			this.tl.call(() => {
-				this.$['prize-minbid'].innerHTML =
-					`Minimum&nbsp;bid:&nbsp;<div id="prize-minbid-amount">${prize.minimumbid}</div>`;
+				this.$['prize-minbid'].innerHTML = prize.sumdonations ?
+					`<div id="prize-minbid-amount">${prize.minimumbid}</div>&#x2005;in&#x2005;Total&#x2005;Donations` :
+					`<div id="prize-minbid-amount">${prize.minimumbid}</div>&#x2005;Single&#x2005;Donation`;
 				this._typeAnim(this.$['prize-minbid']);
 			}, null, null, '+=0.1');
 
