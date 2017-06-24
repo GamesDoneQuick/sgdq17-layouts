@@ -228,7 +228,7 @@ function update() {
 			//     1) The nextRun was deleted from the schedule.
 			//     2) A new run was added between currentRun and nextRun.
 			const newNextRun = _findRunAfter(currentRunRep.value);
-			if (newNextRun.pk !== nextRunRep.value.pk) {
+			if (!newNextRun || !nextRunRep.value || newNextRun.pk !== nextRunRep.value.pk) {
 				nextRunRep.value = clone(newNextRun);
 			}
 
