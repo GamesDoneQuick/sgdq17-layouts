@@ -31,8 +31,11 @@
 
 		connectedCallback() {
 			super.connectedCallback();
-			this._sponsors = document.querySelector('gdq-sponsors');
 			nodecg.listenFor('showTweet', this.showTweet.bind(this));
+			Polymer.RenderStatus.afterNextRender(this, () => {
+				this._sponsors = document.querySelector('gdq-sponsors') ||
+					document.querySelector('layout-app').shadowRoot.querySelector('gdq-sponsors');
+			});
 		}
 
 		showTweet(tweet) {
