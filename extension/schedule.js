@@ -246,7 +246,7 @@ function update() {
 				});
 			} else {
 				try {
-					_seekToArbitraryRun(currentRunRep.value.order - 1);
+					_seekToArbitraryRun(Math.max(currentRunRep.value.order - 1, 1));
 				} catch (e) {
 					if (e.message === 'Could not find run at specified order.') {
 						const lastRunInSchedule = formattedSchedule.slice(0).reverse().find(item => item.type === 'run');
