@@ -43,7 +43,7 @@ setInterval(updateBitsTotal, BITS_TOTAL_UPDATE_INTERVAL);
 function updateBitsTotal() {
 	request({
 		method: 'get',
-		uri: `https://api.twitch.tv/kraken/channels/${nodecg.bundleConfig.twitch.channelId}?event=sgdq2017`,
+		uri: `https://api.twitch.tv/bits/channels/${nodecg.bundleConfig.twitch.channelId}?event=sgdq2017`,
 		headers: {
 			Accept: 'application/vnd.twitchtv.v5+json',
 			Authorization: `OAuth ${nodecg.bundleConfig.twitch.oauthToken}`,
@@ -52,7 +52,13 @@ function updateBitsTotal() {
 		},
 		json: true
 	}).then(res => {
-		bitsTotal.value = res.total;
+		const total = res.total;
+		if (typeof res.total !== 'number' || Number.isNaN(total)) {
+			log.error('Total was an unexpected value:', res);
+			return;
+		}
+
+		bitsTotal.value = total;
 	}).catch(err => {
 		log.error('Failed to update bits total:\n\t', err);
 	});
