@@ -5,6 +5,7 @@ const TwitchPubSub = require('twitchps');
 // Ours
 const nodecg = require('./util/nodecg-api-context').get();
 
+const BITS_OFFSET = nodecg.bundleConfig.twitch.bitsOffset;
 const BITS_TOTAL_UPDATE_INTERVAL = 10 * 1000;
 const log = new nodecg.Logger(`${nodecg.bundleName}:twitch-bits`);
 const bitsTotal = nodecg.Replicant('bits:total');
@@ -12,7 +13,7 @@ const bitsTotal = nodecg.Replicant('bits:total');
 // Optional reconnect, debug options (Defaults: reconnect: true, debug: false)
 // var ps = new TwitchPS({init_topics: init_topics});
 const pubsub = new TwitchPubSub({
-	init_topics: [{ // eslint-disable-line camelcase 
+	init_topics: [{ // eslint-disable-line camelcase
 		topic: `channel-bits-events-v1.${nodecg.bundleConfig.twitch.channelId}`,
 		token: nodecg.bundleConfig.twitch.oauthToken
 	}],
@@ -58,7 +59,7 @@ function updateBitsTotal() {
 			return;
 		}
 
-		bitsTotal.value = total;
+		bitsTotal.value = total - BITS_OFFSET;
 	}).catch(err => {
 		log.error('Failed to update bits total:\n\t', err);
 	});

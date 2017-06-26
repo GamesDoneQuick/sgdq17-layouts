@@ -96,6 +96,12 @@
 					"type": "string",
 					"description": "The Client ID of the Twitch API application to use when sending API requests.",
 					"required": true
+				},
+				"bitsOffset": {
+					"type": "number",
+					"description": "The amount of bits to subtract from the total shown.",
+					"required": true,
+					"default": 0
 				}
 			}
 		},
