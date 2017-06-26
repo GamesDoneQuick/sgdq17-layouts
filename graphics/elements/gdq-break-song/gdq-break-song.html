@@ -1,0 +1,62 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="gdq-break-song">
+	<template>
+		<style>
+			:host {
+				display: block;
+				position: absolute;
+				width: 508px;
+				height: 188px;
+				color: #ffffff;
+				font-family: "SF Pixelate", sans-serif;
+			}
+
+			#nowplaying {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				padding: 0 42px;
+				box-sizing: border-box;
+				@apply --layout-horizontal;
+				@apply --layout-center-center;
+			}
+
+			#nowplaying-text {
+				text-align: center;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				font-weight: 700;
+				margin: 0 12px;
+				@apply --layout-vertical;
+				@apply --layout-flex;
+			}
+
+			#nowplaying-game {
+				font-size: 24px;
+				will-change: transform;
+			}
+
+			#nowplaying-title {
+				font-size: 18px;
+				will-change: transform;
+			}
+
+			.scroller {
+				display: inline-block;
+			}
+		</style>
+
+		<div id="nowplaying">
+			<img src="[[importPath]]/img/music-note.png">
+			<div id="nowplaying-text">
+				<div id="nowplaying-game"></div>
+				<div id="nowplaying-title"></div>
+			</div>
+		</div>
+
+	</template>
+
+	<script src="gdq-break-song.js"></script>
+</dom-module>

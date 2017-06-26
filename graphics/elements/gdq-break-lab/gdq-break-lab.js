@@ -7,6 +7,8 @@
 	const TWEET_DISPLAY_DURATION = 9;
 	const EMPTY_OBJ = {};
 	const nowPlaying = nodecg.Replicant('nowPlaying');
+	const bits = nodecg.Replicant('bits:total');
+
 
 	class GdqBreakLab extends Polymer.Element {
 		static get is() {
@@ -15,13 +17,6 @@
 
 		static get properties() {
 			return {
-				nowPlayingTL: {
-					type: TimelineLite,
-					value() {
-						return new TimelineLite({autoRemoveChildren: true});
-					},
-					readOnly: true
-				},
 				tweetTL: {
 					type: TimelineLite,
 					value() {
@@ -34,8 +29,63 @@
 
 		ready() {
 			super.ready();
-			nowPlaying.on('change', this._nowPlayingChanged.bind(this));
 			nodecg.listenFor('showTweet', this.showTweet.bind(this));
+			nodecg.listenFor('cheer', this.newCheer.bind(this));
+			bits.on('change', this.bitsChanged.bind(this));
+		}
+
+		bitsChanged(newVal) {
+			this.bits = newVal;
+		}
+
+		testCheer(min, max) {
+			const test = this.randomIntFromInterval(min, max);
+			this.newCheer({bits_used: test});
+		}
+
+		newCheer(cheer) {
+			const tl = new TimelineLite({autoRemoveChildren: true});
+			const cheerDiv = document.createElement('div');
+			cheerDiv.classList.add('cheer');
+			let vid;
+			switch (true) {
+				case (cheer.bits_used < 100):
+					cheerDiv.innerHTML = '<video src="' + this.importPath + 'vid/chGrey.webm" autoplay>';
+					break;
+				case (cheer.bits_used < 1000):
+					cheerDiv.innerHTML = '<video src="' + this.importPath + 'vid/chPurple.webm" autoplay>';
+					break;
+				case (cheer.bits_used < 5000):
+					cheerDiv.innerHTML = '<video src="' + this.importPath + 'vid/chGreen.webm" autoplay>';
+					break;
+				case (cheer.bits_used < 10000):
+					cheerDiv.innerHTML = '<video src="' + this.importPath + 'vid/chBlue.webm" autoplay>';
+					break;
+				case (cheer.bits_used < 100000):
+					cheerDiv.innerHTML = '<video src="' + this.importPath + 'vid/chRed.webm" autoplay>';
+					break;
+				default:
+
+			}
+
+			cheerDiv.style.left = this.randomIntFromInterval(0, 450) + 'px';
+			cheerDiv.style.top = this.randomIntFromInterval(15, 35) + 'px';
+
+			tl.add('enter');
+
+			tl.call(() => {
+				this.$.fireworks.appendChild(cheerDiv);
+			}, null, null, 'enter');
+
+			tl.call(() => {
+				this.$.fireworks.removeChild(cheerDiv);
+			}, null, null, 'enter+=2');
+
+		}
+
+		randomIntFromInterval(min,max)
+		{
+			return Math.floor(Math.random()*(max-min+1)+min);
 		}
 
 		showTweet(tweet) {
@@ -112,57 +162,6 @@
 
 			// Padding
 			tl.to(EMPTY_OBJ, 0.1, EMPTY_OBJ);
-		}
-
-		_nowPlayingChanged(newVal) {
-			const nowPlayingTL = this.nowPlayingTL;
-
-			nowPlayingTL.to(this.$['nowplaying-text'], NP_FADE_DURATION, {
-				opacity: 0,
-				ease: Power1.easeIn,
-				onComplete() {
-					TweenMax.killTweensOf(this.$['nowplaying-game']);
-					TweenMax.killTweensOf(this.$['nowplaying-title']);
-					TweenLite.set([
-						this.$['nowplaying-game'],
-						this.$['nowplaying-title']
-					], {x: 0});
-
-					[{
-						element: this.$['nowplaying-game'],
-						scrollMultiplier: 1,
-						newContent: newVal.game
-					}, {
-						element: this.$['nowplaying-title'],
-						scrollMultiplier: 1.2,
-						newContent: newVal.title
-					}].forEach(({element, scrollMultiplier, newContent}) => {
-						element.innerHTML = newContent || '?';
-						if (element.scrollWidth > element.clientWidth) {
-							element.innerHTML =
-								`<div class="scroller">${newContent}&nbsp;&nbsp;&nbsp;&nbsp;</div>` +
-								`<div class="scroller">${newContent}&nbsp;&nbsp;&nbsp;&nbsp;</div>`;
-							Polymer.flush();
-							this.async(() => {
-								const scrollerWidth = element.querySelector('.scroller').scrollWidth;
-								const duration = scrollerWidth * scrollMultiplier;
-								TweenMax.to(element, duration, {
-									ease: Linear.easeNone,
-									x: -scrollerWidth,
-									useFrames: true,
-									repeat: -1
-								});
-							}, 10);
-						}
-					});
-				},
-				onCompleteScope: this
-			});
-
-			nowPlayingTL.to(this.$['nowplaying-text'], NP_FADE_DURATION, {
-				opacity: 1,
-				ease: Power1.easeOut
-			});
 		}
 	}
 
