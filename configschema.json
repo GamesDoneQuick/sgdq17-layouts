@@ -14,7 +14,7 @@
 			"default": 10
 		},
 		"osc": {
-			"type": "object",
+			"type": ["object", "null"],
 			"properties": {
 				"address": {
 					"type": "string",
@@ -37,7 +37,8 @@
 					"maxItems": 4
 				}
 			},
-			"required": ["address", "gameAudioChannels"]
+			"required": ["address", "gameAudioChannels"],
+			"default": null
 		},
 		"twitter": {
 			"type": "object",
@@ -75,41 +76,37 @@
 			"default": false
 		},
 		"twitch": {
+			"type": "object",
 			"additionalProperties": false,
 			"properties": {
 				"channelId": {
 					"type": "string",
-					"description": "The ID (not name!) of the Twitch channel to operate on.",
-					"required": true
+					"description": "The ID (not name!) of the Twitch channel to operate on."
 				},
 				"oauthToken": {
 					"type": "string",
-					"description": "The OAuth token to use to make API requests.",
-					"required": true
+					"description": "The OAuth token to use to make API requests."
 				},
 				"titleTemplate": {
 					"type": "string",
-					"description": "The template used to set the title of the stream whenever the current run changes.",
-					"required": true
+					"description": "The template used to set the title of the stream whenever the current run changes."
 				},
 				"clientId": {
 					"type": "string",
-					"description": "The Client ID of the Twitch API application to use when sending API requests.",
-					"required": true
+					"description": "The Client ID of the Twitch API application to use when sending API requests."
 				},
 				"bitsOffset": {
 					"type": "number",
 					"description": "The amount of bits to subtract from the total shown.",
-					"required": true,
 					"default": 0
 				},
 				"debug": {
 					"type": "boolean",
 					"description": "If true, enables additional debug logging for some Twitch systems.",
-					"required": true,
 					"default": false
 				}
-			}
+			},
+			"required": ["channelId", "oauthToken", "clientId", "bitsOffset", "debug"]
 		},
 		"footpedal": {
 			"type": "object",
@@ -187,25 +184,23 @@
 			"properties": {
 				"host": {
 					"type": "string",
-					"default": "localhost",
-					"required": true
+					"default": "localhost"
 				},
 				"port": {
 					"type": "number",
-					"default": 5250,
-					"required": true
+					"default": 5250
 				},
 				"lockSecret": {
-					"type": "string",
-					"required": true
+					"type": "string"
 				},
 				"localOscPort": {
 					"type": "number",
-					"default": 6250,
-					"required": true
+					"default": 6250
 				}
-			}
-		},
-		"required": ["tracker"]
-	}
+			},
+			"required": ["host", "port", "lockSecret", "localOscPort"]
+		}
+	},
+
+	"required": ["tracker"]
 }

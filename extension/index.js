@@ -58,7 +58,7 @@ module.exports = function (nodecg) {
 			'Twitter integration will be disabled.');
 	}
 
-	if (nodecg.bundleConfig.osc.address) {
+	if (nodecg.bundleConfig.osc && nodecg.bundleConfig.osc.address) {
 		require('./mixer');
 	} else {
 		nodecg.log.warn('"osc" is not defined in cfg/sgdq17-layouts.json! ' +
