@@ -42,6 +42,10 @@
 		"twitter": {
 			"type": "object",
 			"properties": {
+				"enabled": {
+					"type": "boolean",
+					"default": true
+				},
 				"userId": {
 					"type": "string",
 					"description": "The numeric userid of the Twitter account that owns these API keys. http://mytwitterid.com/"
