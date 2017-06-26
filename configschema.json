@@ -41,7 +41,7 @@
 			"default": null
 		},
 		"twitter": {
-			"type": "object",
+			"type": ["object", "null"],
 			"properties": {
 				"enabled": {
 					"type": "boolean",
@@ -68,7 +68,8 @@
 					"default": false
 				}
 			},
-			"required": ["userId", "consumerKey", "consumerSecret", "accessTokenKey", "accessTokenSecret"]
+			"required": ["userId", "consumerKey", "consumerSecret", "accessTokenKey", "accessTokenSecret"],
+			"default": null
 		},
 		"enableTimerSerial": {
 			"type": "boolean",
