@@ -12,10 +12,10 @@ const bitsTotal = nodecg.Replicant('bits:total');
 // Optional reconnect, debug options (Defaults: reconnect: true, debug: false)
 // var ps = new TwitchPS({init_topics: init_topics});
 const pubsub = new TwitchPubSub({
-	init_topics: { // eslint-disable-line camelcase
+	init_topics: [{ // eslint-disable-line camelcase 
 		topic: `channel-bits-events-v1.${nodecg.bundleConfig.twitch.channelId}`,
 		token: nodecg.bundleConfig.twitch.oauthToken
-	},
+	}],
 	reconnect: true,
 	debug: true
 });
