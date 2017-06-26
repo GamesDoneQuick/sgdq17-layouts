@@ -102,6 +102,12 @@
 					"description": "The amount of bits to subtract from the total shown.",
 					"required": true,
 					"default": 0
+				},
+				"debug": {
+					"type": "boolean",
+					"description": "If true, enables additional debug logging for some Twitch systems.",
+					"required": true,
+					"default": false
 				}
 			}
 		},

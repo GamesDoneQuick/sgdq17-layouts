@@ -5,6 +5,7 @@ const TwitchPubSub = require('twitchps');
 // Ours
 const nodecg = require('./util/nodecg-api-context').get();
 
+const DEBUG = nodecg.bundleConfig.twitch.debug;
 const BITS_OFFSET = nodecg.bundleConfig.twitch.bitsOffset;
 const BITS_TOTAL_UPDATE_INTERVAL = 10 * 1000;
 const log = new nodecg.Logger(`${nodecg.bundleName}:twitch-bits`);
@@ -18,7 +19,7 @@ const pubsub = new TwitchPubSub({
 		token: nodecg.bundleConfig.twitch.oauthToken
 	}],
 	reconnect: true,
-	debug: true
+	debug: DEBUG
 });
 
 pubsub.on('connected', () => {
@@ -34,7 +35,11 @@ pubsub.on('reconnect', () => {
 });
 
 pubsub.on('bits', cheer => {
-	log.debug('Received cheer:', cheer);
+	if (DEBUG) {
+		log.info('Received cheer:', cheer);
+	} else {
+		log.debug('Received cheer:', cheer);
+	}
 	nodecg.sendMessage('cheer', cheer);
 });
 
