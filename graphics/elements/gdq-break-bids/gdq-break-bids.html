@@ -78,6 +78,13 @@
 				margin: 0 17px;
 			}
 
+			#challenge-goal-bitsIcon {
+				position: relative;
+				top: 8px;
+				margin-right: -2px;
+				margin-left: -6px;
+			}
+
 			#challenge-bar {
 				width: 372px;
 				height: 33px;
@@ -104,8 +111,9 @@
 				color: #b0f080;
 				font-size: 30px;
 				font-weight: 700;
-
 				line-height: 34px;
+				@apply --layout-horizontal;
+				@apply --layout-center;
 			}
 
 			#tug {
@@ -283,6 +291,19 @@
 			.mirrored {
 				transform: scaleX(-1);
 			}
+
+			:host([bits-challenge]) #challenge-goal .character {
+				background-image: linear-gradient(
+					180deg,
+					#d5a0e8 0%,
+					#ffffff 16%,
+					#d5a0e8 33%,
+					#cb50f8 55%,
+					#ac18f8 76%,
+					#8510e0 91%,
+					#8510e0 100%
+				);
+			}
 		</style>
 
 		<div id="runName">
@@ -298,9 +319,9 @@
 		<iron-pages id="body" attr-for-selected="data-bid-type" selected="[[bidType]]">
 			<div id="challenge" data-bid-type="challenge">
 				<div class="layout horizontal center-center">
-					<img src="[[importPath]]img/challenge_leftarrow.png">
+					<img id="challenge-leftarrow" src="[[importPath]]img/challenge_leftarrow.png">
 					<div id="challenge-goal"></div>
-					<img src="[[importPath]]img/challenge_rightarrow.png">
+					<img id="challenge-rightarrow" src="[[importPath]]img/challenge_rightarrow.png">
 				</div>
 
 				<div class="layout horizontal center-center">

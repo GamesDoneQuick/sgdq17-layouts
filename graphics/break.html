@@ -154,6 +154,7 @@
 			}
 
 			#screen-donateURL {
+				color: transparent;
 				display: flex;
 				justify-content: center;
 				align-items: center;
@@ -162,6 +163,10 @@
 				font-size: 19px;
 				font-weight: 400;
 				font-family: "SF Pixelate";
+			}
+
+			#screen-donateURL .character {
+				color: white;
 			}
 
 			#screenHeader {
@@ -189,6 +194,7 @@
 				background: url("img/break/screen_transition.png");
 				animation: screenTransition 500ms steps(6) infinite;
 				transition: opacity 333ms ease-in-out;
+				pointer-events: none;
 			}
 
 			@keyframes screenTransition {
