@@ -64,7 +64,7 @@ if (nodecg.bundleConfig.footpedal.enabled) {
 	setInterval(gamepad.processEvents, 16);
 	// Scan for new gamepads as a slower rate
 	// TODO: this breaks USB audio devices lmao
-	// setInterval(gamepad.detectDevices, 500);
+	setInterval(gamepad.detectDevices, 1000);
 
 	// Listen for buttonId down event from our target gamepad.
 	gamepad.on('down', (id, num) => {
