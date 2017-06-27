@@ -58,7 +58,7 @@
 								`<div class="scroller">${newContent}&nbsp;&nbsp;&nbsp;&nbsp;</div>` +
 								`<div class="scroller">${newContent}&nbsp;&nbsp;&nbsp;&nbsp;</div>`;
 							Polymer.flush();
-							this.async(() => {
+							setTimeout(() => {
 								const scrollerWidth = element.querySelector('.scroller').scrollWidth;
 								const duration = scrollerWidth * scrollMultiplier;
 								TweenMax.to(element, duration, {

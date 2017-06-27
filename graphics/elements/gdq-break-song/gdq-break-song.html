@@ -7,28 +7,32 @@
 				display: block;
 				position: absolute;
 				width: 508px;
-				height: 188px;
+				height: 70px;
+				top: 334px;
+				left: 30px;
 				color: #ffffff;
 				font-family: "SF Pixelate", sans-serif;
+				background-color: rgba(0, 0, 0, 0.5);
+				z-index: -19;
 			}
 
 			#nowplaying {
 				position: absolute;
 				width: 100%;
 				height: 100%;
-				padding: 0 42px;
+				padding: 0 30px;
 				box-sizing: border-box;
 				@apply --layout-horizontal;
 				@apply --layout-center-center;
 			}
 
 			#nowplaying-text {
-				text-align: center;
+				text-align: right;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
 				font-weight: 700;
-				margin: 0 12px;
+				margin-left: 12px;
 				@apply --layout-vertical;
 				@apply --layout-flex;
 			}
