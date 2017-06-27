@@ -290,7 +290,7 @@
 
 			this.setMainContent(tl, elements);
 
-			tl.add(this.showLabel('CHALLENGES', '20px', {
+			tl.add(this.showLabel('CHALLENGES', '24px', {
 				startColor: '#7fbac1',
 				endColor: '#33838a'
 			}), '+=0.03');
