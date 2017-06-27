@@ -2,8 +2,9 @@
 <link rel="import" href="../../../bower_components/nodecg-toast/nodecg-toast.html">
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="gdq-totals-total.html">
 
-<dom-module id="gdq-total">
+<dom-module id="gdq-totals">
 	<template>
 		<style include="iron-flex iron-flex-alignment">
 			:host {
@@ -19,40 +20,45 @@
 				margin-bottom: 4px;
 				pointer-events: none;
 				user-select: none;
+				white-space: nowrap;
 			}
 
-			#total {
-				width: 380px;
-				height: 64px;
-				border: 1px solid black;
-				border-radius: 5px;
-				box-sizing: border-box;
-				font-size: 48px;
-				line-height: 1;
-				background-color: white;
-				@apply --layout-horizontal;
-				@apply --layout-center-center;
+			#cashTotal {
+				margin-right: 13px;
+				@apply --layout-flex-1;
 			}
 
-			#edit {
-				margin-right: 0;
-				--paper-button: {
-					background-color: #A50074;
-					color: white;
-				}
+			#bitsTotal {
+				margin-left: 13px;
+				@apply --layout-flex-1;
+			}
+
+			#toggle {
+				@apply --layout-vertical;
+				@apply --layout-center;
+				@apply --layout-flex-none;
+				margin-left: -14px;
+				margin-right: 24px;
 			}
 		</style>
 
-		<div class="layout vertical center" style="margin-left: -14px;">
+		<div id="toggle">
 			<div id="toggleLabel">Auto Update</div>
 			<paper-toggle-button
 				on-change="_handleAutoUpdateToggleChange"
 				checked="[[autoUpdateTotal]]"></paper-toggle-button>
 		</div>
 
-		<nodecg-toast id="toast"></nodecg-toast>
-		<div id="total">[[total]]</div>
-		<paper-button id="edit" on-tap="edit" raised>Edit</paper-button>
+		<gdq-totals-total
+			id="cashTotal"
+			value="[[cashTotal]]"
+			currency="cash"
+			on-edit="editCashTotal"></gdq-totals-total>
+		<gdq-totals-total
+			id="bitsTotal"
+			value="[[bitsTotal]]"
+			currency="bits"
+			on-edit="editBitsTotal"></gdq-totals-total>
 
 		<paper-dialog id="editDialog" with-backdrop>
 			<h2>Edit Donation Total</h2>
@@ -62,7 +68,9 @@
 				<paper-button dialog-dismiss autofocus>Cancel</paper-button>
 			</div>
 		</paper-dialog>
+
+		<nodecg-toast id="toast"></nodecg-toast>
 	</template>
 
-	<script src="gdq-total.js"></script>
+	<script src="gdq-totals.js"></script>
 </dom-module>

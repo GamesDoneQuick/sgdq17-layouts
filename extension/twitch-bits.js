@@ -9,7 +9,14 @@ const DEBUG = nodecg.bundleConfig.twitch.debug;
 const BITS_OFFSET = nodecg.bundleConfig.twitch.bitsOffset;
 const BITS_TOTAL_UPDATE_INTERVAL = 10 * 1000;
 const log = new nodecg.Logger(`${nodecg.bundleName}:twitch-bits`);
+const autoUpdateTotal = nodecg.Replicant('autoUpdateTotal');
 const bitsTotal = nodecg.Replicant('bits:total');
+
+autoUpdateTotal.on('change', newVal => {
+	if (newVal) {
+		updateBitsTotal();
+	}
+});
 
 // Optional reconnect, debug options (Defaults: reconnect: true, debug: false)
 // var ps = new TwitchPS({init_topics: init_topics});
@@ -58,6 +65,10 @@ function updateBitsTotal() {
 		},
 		json: true
 	}).then(res => {
+		if (!autoUpdateTotal.value) {
+			return;
+		}
+
 		const total = res.total;
 		if (typeof res.total !== 'number' || Number.isNaN(total)) {
 			log.error('Total was an unexpected value:', res);

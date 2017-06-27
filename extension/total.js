@@ -9,14 +9,10 @@ const request = require('request');
 const formatDollars = require('../util/format-dollars');
 const nodecg = require('./util/nodecg-api-context').get();
 
-const total = nodecg.Replicant('total', {
-	defaultValue: {
-		raw: 0,
-		formatted: '$0'
-	}
-});
+const autoUpdateTotal = nodecg.Replicant('autoUpdateTotal');
+const bitsTotal = nodecg.Replicant('bits:total');
+const total = nodecg.Replicant('total');
 
-const autoUpdateTotal = nodecg.Replicant('autoUpdateTotal', {defaultValue: true});
 autoUpdateTotal.on('change', newVal => {
 	if (newVal) {
 		nodecg.log.info('Automatic updating of donation total enabled');
@@ -79,11 +75,17 @@ if (nodecg.bundleConfig && nodecg.bundleConfig.donationSocketUrl) {
 		'\n\tand that donation notifications will not be displayed as a result. The total also will not update.');
 }
 
-nodecg.listenFor('setTotal', raw => {
-	total.value = {
-		raw: parseFloat(raw),
-		formatted: formatDollars(raw, {cents: false})
-	};
+nodecg.listenFor('setTotal', ({type, newValue}) => {
+	if (type === 'cash') {
+		total.value = {
+			raw: parseFloat(newValue),
+			formatted: formatDollars(newValue, {cents: false})
+		};
+	} else if (type === 'bits') {
+		bitsTotal.value = parseInt(newValue, 10);
+	} else {
+		nodecg.log.error('Unexpected "type" sent to setTotal: "%s"', type);
+	}
 });
 
 // Dashboard can invoke manual updates
