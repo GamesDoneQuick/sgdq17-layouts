@@ -1,5 +1,4 @@
 node_modules
 bower_components
 coverage
-/shared/imports/SplitText.min.js
-/graphics/elements/sortable-list
+/shared/lib
