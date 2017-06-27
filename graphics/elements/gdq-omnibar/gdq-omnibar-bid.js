@@ -14,8 +14,7 @@ class GdqOmnibarBid extends Polymer.Element {
 	enter() {
 		const enterTL = new TimelineLite({
 			onStart() {
-				if (this.bid.id === 5788 || // Green Hill Zone Blindfolded
-					this.bid.id === 5831) { // Blindfolded Majora
+				if (this.bid.isBitsChallenge) {
 					this.$.background.startColor = '#7e31b2';
 					this.$.background.endColor = '#4a196b';
 					this.$.totalAndDelta.style.justifyContent = 'flex-start';

@@ -106,19 +106,16 @@
 		 * @returns {undefined}
 		 */
 		showBid(bid, index, bidsArray) {
-			// Green Hill Zone Blindfolded or Blindfolded Majora? Then this is a bits challenge.
-			const isBitsChallenge = Boolean(bid.id === 5788 || bid.id === 5831);
-
 			// Tiny timekiller to fix things breaking. Seriously, do not remove this.
 			this.tl.to({}, 0.03, {
 				onComplete() {
 					this.replaceBottomText(
-						isBitsChallenge ?
+						bid.isBitsChallenge ?
 							'Use&nbsp;Twitch&nbsp;chat&nbsp;to&nbsp;contribute&nbsp;Bits!' : '' +
 							'gamesdonequick.com/donate'
 					);
 
-					this.bitsChallenge = isBitsChallenge;
+					this.bitsChallenge = bid.isBitsChallenge;
 					this.$['challenge-leftarrow'].src =
 						`${this.importPath}img/${this.bitsChallenge ? 'bits_' : ''}challenge_leftarrow.png`;
 					this.$['challenge-rightarrow'].src =
@@ -131,10 +128,10 @@
 			if (bid.type === 'challenge') {
 				this.tl.set(this.$['challenge-bar-fill'], {width: 0});
 				this.tl.call(() => {
-					this.$['challenge-goal'].innerHTML = isBitsChallenge ?
+					this.$['challenge-goal'].innerHTML = bid.isBitsChallenge ?
 						`<img id="challenge-goal-bitsIcon" width="44" src="img/bitsicon.png">${bid.goal.replace('$', '')}` :
 						bid.goal;
-					this.$['challenge-bar-fill-label-text'].innerHTML = isBitsChallenge ?
+					this.$['challenge-bar-fill-label-text'].innerHTML = bid.isBitsChallenge ?
 						'<img id="challenge-bar-fill-label-text-bitsIcon" width="26" src="img/bitsicon.png">0' :
 						'$0';
 				});
@@ -398,7 +395,7 @@
 								maximumFractionDigits: 0,
 								minimumFractionDigits: 0
 							});
-							this.$['challenge-bar-fill-label-text'].innerHTML = isBitsChallenge ?
+							this.$['challenge-bar-fill-label-text'].innerHTML = bid.isBitsChallenge ?
 								`<img id="challenge-bar-fill-label-text-bitsIcon" width="26" src="img/bitsicon.png">${formattedTotal}` :
 								`$${formattedTotal}`;
 						},

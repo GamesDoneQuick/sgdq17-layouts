@@ -95,7 +95,10 @@ function handleResponse(error, response, body, deferred, opts) {
 					state: bid.fields.state,
 					speedrun: bid.fields.speedrun__name,
 					speedrunEndtime: Date.parse(bid.fields.speedrun__endtime),
-					public: bid.fields.public
+					public: bid.fields.public,
+
+					// Green Hill Zone Blindfolded or Blindfolded Majora? Then this is a bits challenge.
+					isBitsChallenge: Boolean(bid.pk === 5788 || bid.pk === 5831)
 				};
 
 				// If this parent bid is not a target, that means it is a donation war that has options.
