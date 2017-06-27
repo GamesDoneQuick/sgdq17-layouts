@@ -18,6 +18,7 @@ const CURRENT_BIDS_URL = nodecg.bundleConfig.useMockData ?
 	'https://gamesdonequick.com/tracker/search/?type=allbids&feed=current&event=20';
 const currentBids = nodecg.Replicant('currentBids', {defaultValue: []});
 const allBids = nodecg.Replicant('allBids', {defaultValue: []});
+const bitsTotal = nodecg.Replicant('bits:total');
 
 // Get latest bid data every POLL_INTERVAL milliseconds
 nodecg.log.info('Polling bids every %d seconds...', POLL_INTERVAL / 1000);
@@ -79,7 +80,8 @@ function handleResponse(error, response, body, deferred, opts) {
 		// options.
 		const parentBidsById = {};
 		const childBids = [];
-		bids.forEach(bid => {
+		let bitsIncentiveTotalOffset = 0;
+		bids.sort(sortBidsByPk).forEach(bid => {
 			// If this bid is an option for a donation war, add it to childBids array.
 			// Else, add it to the parentBidsById object.
 			if (bid.fields.parent) {
@@ -95,7 +97,10 @@ function handleResponse(error, response, body, deferred, opts) {
 					state: bid.fields.state,
 					speedrun: bid.fields.speedrun__name,
 					speedrunEndtime: Date.parse(bid.fields.speedrun__endtime),
-					public: bid.fields.public
+					public: bid.fields.public,
+
+					// Green Hill Zone Blindfolded or Blindfolded Majora? Then this is a bits challenge.
+					isBitsChallenge: Boolean(bid.pk === 5788 || bid.pk === 5831)
 				};
 
 				// If this parent bid is not a target, that means it is a donation war that has options.
@@ -108,6 +113,15 @@ function handleResponse(error, response, body, deferred, opts) {
 					formattedParentBid.goal = numeral(bid.fields.goal).format('$0,0[.]00');
 					formattedParentBid.rawGoal = parseFloat(bid.fields.goal);
 					formattedParentBid.goalMet = bid.fields.total >= bid.fields.goal;
+				}
+
+				if (formattedParentBid.isBitsChallenge) {
+					formattedParentBid.rawTotal = Math.min(bitsTotal.value - bitsIncentiveTotalOffset, formattedParentBid.rawGoal);
+					formattedParentBid.total = numeral(formattedParentBid.rawTotal).format('0,0');
+					formattedParentBid.goalMet = formattedParentBid.rawTotal >= formattedParentBid.goal;
+					if (formattedParentBid.goalMet) {
+						bitsIncentiveTotalOffset += formattedParentBid.rawGoal;
+					}
 				}
 
 				parentBidsById[bid.pk] = formattedParentBid;
@@ -198,4 +212,8 @@ function handleResponse(error, response, body, deferred, opts) {
 		nodecg.log.error(msg);
 		deferred.reject(msg);
 	}
+}
+
+function sortBidsByPk(a, b) {
+	return a.pk - b.pk;
 }

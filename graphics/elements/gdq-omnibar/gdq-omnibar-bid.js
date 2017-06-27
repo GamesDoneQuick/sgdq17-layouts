@@ -14,13 +14,12 @@ class GdqOmnibarBid extends Polymer.Element {
 	enter() {
 		const enterTL = new TimelineLite({
 			onStart() {
-				if (this.bid.id === 5788 || // Green Hill Zone Blindfolded
-					this.bid.id === 5831) { // Blindfolded Majora
+				if (this.bid.isBitsChallenge) {
 					this.$.background.startColor = '#7e31b2';
 					this.$.background.endColor = '#4a196b';
 					this.$.totalAndDelta.style.justifyContent = 'flex-start';
 					this.$.bitsIcon.removeAttribute('hidden');
-					this.$.total.text = this.bid.total.replace('$', '');
+					this.$.total.text = this.bid.total.replace('$', ''); // Shouldn't be necessary, but just to be safe.
 					this.$.total.startColor = '#e4ffff';
 					this.$.total.endColor = '#94d9d0';
 				}
