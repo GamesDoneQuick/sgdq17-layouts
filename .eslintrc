@@ -6,7 +6,8 @@
 				"Polymer",
 				"Polymer.GestureEventListeners",
 				"Polymer.MutableData",
-				"nodecg.Replicant"
+				"nodecg.Replicant",
+				"SteppedGradientMixin"
 			]
 		}],
 		"valid-jsdoc": ["error"],

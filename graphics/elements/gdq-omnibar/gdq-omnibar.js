@@ -1,427 +1,386 @@
 (function () {
 	'use strict';
 
-	const total = nodecg.Replicant('total');
-	const currentRun = nodecg.Replicant('currentRun');
-	const nextRun = nodecg.Replicant('nextRun');
-	const displayDuration = nodecg.bundleConfig.displayDuration;
 	const currentBids = nodecg.Replicant('currentBids');
-	const currentPrizes = nodecg.Replicant('currentPrizes');
 	const currentLayout = nodecg.Replicant('gdq:currentLayout');
+	const currentPrizes = nodecg.Replicant('currentPrizes');
+	const currentRun = nodecg.Replicant('currentRun');
+	const displayDuration = nodecg.bundleConfig.displayDuration;
+	const nextRun = nodecg.Replicant('nextRun');
+	const schedule = nodecg.Replicant('schedule');
+	let contentEnterCounter = 0;
+	let contentExitCounter = 0;
 
 	class GdqOmnibar extends Polymer.Element {
 		static get is() {
 			return 'gdq-omnibar';
 		}
 
-		static get properties() {
-			return {
-				state: {
-					type: Object,
-					value() {
-						return {
-							totalShowing: true,
-							labelShowing: false
-						};
-					}
-				},
-				lastShownGrandPrize: {
-					type: Object
-				},
-				_latestMainLine1: {
-					type: Object,
-					value() {
-						return {};
-					}
-				},
-				_latestMainLine2: {
-					type: Object,
-					value() {
-						return {};
-					}
-				}
-			};
-		}
-
 		ready() {
 			super.ready();
 
-			this.tl = new TimelineLite({autoRemoveChildren: true});
+			const replicants = [
+				currentBids,
+				currentLayout,
+				currentPrizes,
+				currentRun,
+				nextRun,
+				schedule
+			];
 
-			// Play the shine animation every 2 minutes.
-			setInterval(() => {
-				this.$.gdqLogo.classList.add('animate');
+			let numDeclared = 0;
+			replicants.forEach(replicant => {
+				replicant.once('change', () => {
+					numDeclared++;
 
-				setTimeout(() => {
-					this.$.gdqLogo.classList.remove('animate');
-				}, 1000);
-			}, 120 * 1000);
-
-			this.$.totalTextAmount.rawValue = 0;
-			total.on('change', this.totalChanged.bind(this));
-
-			// CTA is the first thing we show, so we use this to start our loop
-			this.showCTA();
-		}
-
-		totalChanged(newVal) {
-			if (!this._totalInitialized) {
-				this._totalInitialized = true;
-				this.$.totalTextAmount.rawValue = newVal.raw;
-				this.$.totalTextAmount.textContent = newVal.raw.toLocaleString('en-US', {
-					maximumFractionDigits: 0
-				});
-				return;
-			}
-
-			const TIME_PER_DOLLAR = 0.03;
-			const delta = newVal.raw - this.$.totalTextAmount.rawValue;
-			const duration = Math.min(delta * TIME_PER_DOLLAR, 3);
-			let strLen = this.$.totalTextAmount.textContent.length;
-			TweenLite.to(this.$.totalTextAmount, duration, {
-				rawValue: newVal.raw,
-				ease: Power2.easeOut,
-				onUpdate: function () {
-					this.$.totalTextAmount.textContent = this.$.totalTextAmount.rawValue.toLocaleString('en-US', {
-						maximumFractionDigits: 0
-					});
-
-					if (this.$.totalTextAmount.textContent.length !== strLen) {
-						this.fitMainText();
-						strLen = this.$.totalTextAmount.textContent.length;
+					// Start the loop once all replicants are declared;
+					if (numDeclared >= replicants.length) {
+						Polymer.RenderStatus.beforeNextRender(this, this.run);
 					}
-				}.bind(this)
+				});
 			});
 		}
 
-		fitMainText() {
-			const maxWidth = this.$.main.clientWidth;
-			[this.$.mainLine1, this.$.mainLine2].forEach(element => {
-				const elementWidth = element.clientWidth;
-				if (elementWidth > maxWidth) {
-					TweenLite.set(element, {scaleX: maxWidth / elementWidth});
+		run() {
+			const self = this;
+			const parts = [
+				this.showCTA,
+				this.showUpNext,
+				this.showChallenges,
+				this.showChoices,
+				this.showCurrentPrizes
+			];
+
+			function processNextPart() {
+				if (parts.length > 0) {
+					const part = parts.shift().bind(self);
+					promisifyTimeline(part())
+						.then(processNextPart)
+						.catch(error => {
+							nodecg.log.error('Error when running main loop:', error);
+						});
 				} else {
-					TweenLite.set(element, {scaleX: 1});
+					self.run();
 				}
+			}
+
+			function promisifyTimeline(tl) {
+				return new Promise(resolve => {
+					tl.call(resolve, null, null, '+=0.03');
+				});
+			}
+
+			processNextPart();
+		}
+
+		showCTA() {
+			const tl = new TimelineLite();
+
+			tl.set(this.$.cta, {y: '100%'});
+
+			tl.to(this.$.cta, 0.55, {
+				y: '0%',
+				ease: Power2.easeOut
+			}, '+=1');
+
+			tl.to(this.$.cta, 0.8, {
+				y: '-100%',
+				ease: Power2.easeInOut
+			}, `+=${displayDuration}`);
+
+			tl.to(this.$.cta, 0.55, {
+				y: '-200%',
+				ease: Power2.easeIn
+			}, `+=${displayDuration}`);
+
+			return tl;
+		}
+
+		showLabel(...args) {
+			return TweenLite.to({}, 0.334, {
+				onStart() {
+					this.$.label.show(...args);
+				},
+				callbackScope: this
 			});
 		}
 
-		/**
-		 * Creates an animation timeline for showing the label.
-		 * @param {String} text - The text to show.
-		 * @param {String} size - The font size to use.
-		 * @returns {TimelineLite} - An animation timeline.
-		 */
-		showLabel(text, size) {
-			const tmpTL = new TimelineLite();
-			if (this.state.labelShowing) {
-				tmpTL.to(this.$.labelText, 0.25, {
-					opacity: 0,
-					ease: Power1.easeInOut,
-					onComplete: function () {
-						this.$.labelText.textContent = text;
-						this.$.labelText.style.fontSize = size;
-					}.bind(this)
-				});
-
-				tmpTL.to(this.$.labelText, 0.25, {
-					opacity: 1,
-					ease: Power1.easeInOut
-				});
-			} else {
-				tmpTL.staggerTo([
-					[this.$.labelRibbon3, this.$.labelShadow],
-					this.$.labelRibbon2,
-					this.$.labelRibbon1
-				], 1.2, {
-					onStart: function () {
-						this.state.labelShowing = true;
-						this.$.labelText.textContent = text;
-						this.$.labelText.style.fontSize = size;
-					}.bind(this),
-					x: '0%',
-					ease: Elastic.easeOut.config(0.5, 0.5)
-				}, 0.08);
-
-				tmpTL.to(this.$.labelText, 0.25, {
-					opacity: 1,
-					ease: Power1.easeInOut
-				}, '-=0.4');
-			}
-
-			return tmpTL;
+		changeLabelText(...args) {
+			return this.$.label.changeText(...args);
 		}
 
-		/**
-		 * Creates an animation timeline for hiding the label.
-		 * @returns {TimelineLite} - An animation timeline.
-		 */
 		hideLabel() {
-			const tmpTL = new TimelineLite();
-
-			if (this.state.labelShowing) {
-				tmpTL.to(this.$.labelText, 0.25, {
-					opacity: 0,
-					ease: Power1.easeInOut
-				});
-
-				tmpTL.staggerTo([
-					this.$.labelRibbon1,
-					this.$.labelRibbon2,
-					[this.$.labelRibbon3, this.$.labelShadow]
-				], 0.7, {
-					onStart: function () {
-						this.state.labelShowing = false;
-					}.bind(this),
-					x: '-115%',
-					ease: Back.easeIn.config(1.3)
-				}, 0.08, '-=0.1');
-			}
-
-			return tmpTL;
+			return this.$.label.hide();
 		}
 
-		/**
-		 * Creates an animation timeline for showing mainLine1.
-		 * @param {String} text - The text to show.
-		 * @returns {TimelineLite|undefined} - An animation timeline.
-		 */
-		showMainLine1(text) {
-			if (text === this._latestMainLine1.text) {
-				return;
-			}
-
-			this._latestMainLine1.text = text;
-
-			const tmpTL = new TimelineLite();
-
-			if (this.$.mainLine1.textContent) {
-				tmpTL.to(this.$.mainLine1, 0.5, {
-					y: -24,
-					ease: Power2.easeIn
+		setMainContent(tl, elements) {
+			tl.to({}, 0.03, {}); // Safety buffer to avoid issues where GSAP might skip our `call`.
+			tl.call(() => {
+				tl.pause();
+				this.$['main-content'].innerHTML = '';
+				elements.forEach(element => {
+					this.$['main-content'].appendChild(element);
 				});
+				Polymer.flush(); // Might not be necessary, but better safe than sorry.
+				Polymer.RenderStatus.afterNextRender(this, () => {
+					tl.resume(null, false);
+				});
+			});
+		}
 
-				// Delay for a bit
-				tmpTL.to({}, 0.25, {});
-			}
+		showMainContent(tl, elements) {
+			const contentEnterLabel = `contentEnter${contentEnterCounter}`;
+			const afterContentEnterLabel = `afterContentEnter${contentEnterCounter}`;
+			contentEnterCounter++;
 
-			tmpTL.call(() => {
-				this.$.mainLine1.textContent = text;
+			tl.add(contentEnterLabel);
+			tl.call(() => {
+				const contentEnterAnim = new TimelineLite();
+				elements.forEach((element, index) => {
+					contentEnterAnim.add(element.enter(), index * 0.1134);
+				});
+				tl.shiftChildren(contentEnterAnim.duration(), true, tl.getLabelTime(afterContentEnterLabel));
+				tl.add(contentEnterAnim, contentEnterLabel);
+			}, null, null, contentEnterLabel);
+			tl.add(afterContentEnterLabel, '+=0.03');
 
-				if (text) {
-					TweenLite.set(this.$.mainLine1, {x: '-115%', y: '0%'});
-					this.fitMainText();
+			// Display the content cards long enough for people to read.
+			// Scroll the list of cards if necessary to show them all.
+			tl.call(() => {
+				tl.pause();
+
+				const mainWidth = this.$.main.clientWidth;
+				const mainContentWidth = this.$['main-content'].clientWidth;
+				const diff = mainContentWidth - mainWidth;
+				if (diff > 0) {
+					let holdTime = 0;
+					const timePerPixel = 0.024;
+					const totalScrollTime = timePerPixel * diff;
+					if (totalScrollTime < displayDuration) {
+						holdTime = (displayDuration - totalScrollTime) / 2;
+					}
+					holdTime = Math.max(holdTime, 0.35); // Clamp to 0.35 minimum;
+
+					TweenLite.to(this.$['main-content'], totalScrollTime, {
+						x: -diff,
+						ease: Linear.easeNone,
+						delay: holdTime,
+						onComplete() {
+							setTimeout(() => {
+								tl.resume(null, false);
+							}, holdTime * 1000);
+						},
+						callbackScope: this
+					});
+				} else {
+					setTimeout(() => {
+						tl.resume(null, false);
+					}, displayDuration * 1000);
 				}
-			}, null, null, '+=0.01');
-
-			if (text) {
-				tmpTL.to(this.$.mainLine1, 1.2, {
-					x: '0%',
-					ease: Power2.easeOut,
-					autoRound: false
-				});
-			}
-
-			return tmpTL;
+			}, null, null, afterContentEnterLabel);
 		}
 
-		/**
-		 * Creates an animation timeline for showing mainLine2.
-		 * @param {String} text - The text to show.
-		 * @returns {TimelineLite|undefined} - An animation timeline.
-		 */
-		showMainLine2(text) {
-			if (text === this._latestMainLine2.text) {
-				return;
-			}
+		hideMainContent(tl, elements) {
+			const contentExitLabel = `contentExit${contentExitCounter}`;
+			const afterContentExitLabel = `afterContentExit${contentExitCounter}`;
+			contentExitCounter++;
 
-			this._latestMainLine2.text = text;
-
-			const tmpTL = new TimelineLite();
-
-			if (this.$.mainLine2.textContent) {
-				tmpTL.to(this.$.mainLine2, 0.5, {
-					y: 50,
-					ease: Power2.easeIn
+			// Exit the content cards.
+			tl.add(contentExitLabel, '+=0.03');
+			tl.call(() => {
+				const contentExitAnim = new TimelineLite();
+				elements.slice(0).reverse().forEach((element, index) => {
+					contentExitAnim.add(element.exit(), index * 0.1134);
 				});
-
-				// Delay for a bit
-				tmpTL.to({}, 0.25, {});
-			}
-
-			tmpTL.call(() => {
-				this.$.mainLine2.textContent = text;
-
-				if (text) {
-					TweenLite.set(this.$.mainLine2, {x: '-115%', y: '0%'});
-					this.fitMainText();
-				}
-			}, null, null, '+=0.01');
-
-			if (text) {
-				tmpTL.to(this.$.mainLine2, 1.2, {
-					x: '0%',
-					ease: Power2.easeOut
-				});
-			}
-
-			return tmpTL;
+				tl.shiftChildren(contentExitAnim.duration(), true, tl.getLabelTime(afterContentExitLabel));
+				tl.add(contentExitAnim, contentExitLabel);
+			}, null, null, contentExitLabel);
+			tl.add(afterContentExitLabel, '+=0.03');
+			tl.set(this.$['main-content'], {x: 0}, afterContentExitLabel);
 		}
 
-		/**
-		 * Adds an animation to the global timeline for showing the next upcoming speedrun.
-		 * @returns {undefined}
-		 */
 		showUpNext() {
-			let upNextRun = nextRun.value;
+			const tl = new TimelineLite();
 
+			let upNextRun = nextRun.value;
 			if (currentLayout.value === 'break' || currentLayout.value === 'interview') {
 				upNextRun = currentRun.value;
 			}
 
-			if (upNextRun) {
-				this.tl.to({}, 0.3, {
-					onStart: this.showLabel.bind(this),
-					onStartParams: ['UP NEXT', '28px']
-				});
-
-				// GSAP is dumb with `call` sometimes. Putting this in a near-zero duration tween seems to be more reliable.
-				this.tl.to({}, 0.01, {
-					onComplete: function () {
-						/* Depending on how we enter the very end of the schedule, we might end up in this func
-						 * after window.nextRun has been set to null. In that case, we immediately clear the
-						 * timeline and bail out to showing bids again.
-						 */
-						const upNextRun = (currentLayout.value === 'break' || currentLayout.value === 'interview') ?
-							currentRun.value : nextRun.value;
-						if (upNextRun) {
-							let concatenatedRunners;
-							if (upNextRun.runners.length === 1) {
-								concatenatedRunners = upNextRun.runners[0].name;
-							} else {
-								concatenatedRunners = upNextRun.runners.slice(1).reduce((prev, curr, index, array) => {
-									if (index === array.length - 1) {
-										return `${prev} & ${curr.name}`;
-									}
-
-									return `${prev}, ${curr.name}`;
-								}, upNextRun.runners[0].name);
-							}
-
-							this.showMainLine1(concatenatedRunners);
-							this.showMainLine2(`${upNextRun.name.replace('\\n', ' ').trim()} - ${upNextRun.category}`);
-						} else {
-							this.tl.clear();
-
-							this.tl.to({}, 0.3, {
-								onStart: function () {
-									this.showMainLine1('');
-									this.showMainLine2('');
-								}.bind(this),
-								onComplete: this.showCurrentBids.bind(this)
-							});
-						}
-					}.bind(this)
-				});
-
-				// Give it some time to show
-				this.tl.to({}, displayDuration, {});
+			// If we're at the final run, bail out and just skip straight to showing the next item in the rotation.
+			if (!upNextRun) {
+				return tl;
 			}
 
-			this.tl.to({}, 0.3, {
-				onStart: function () {
-					this.showMainLine1('');
-					this.showMainLine2('');
-				}.bind(this),
-				onComplete: this.showCTA.bind(this)
-			});
-		}
-
-		/**
-		 * Adds an animation to the global timeline for showing all current bids.
-		 * @returns {undefined}
-		 */
-		showCurrentBids() {
-			if (currentBids.value.length > 0) {
-				let showedLabel = false;
-
-				// Figure out what bids to display in this batch
-				const bidsToDisplay = [];
-
-				currentBids.value.forEach(bid => {
-					// Don't show closed bids in the automatic rotation.
-					if (bid.state.toLowerCase() === 'closed') {
-						return;
-					}
-
-					// We have at least one bid to show, so show the label
-					if (!showedLabel) {
-						showedLabel = true;
-						this.tl.to({}, 0.3, {
-							onStart: this.showLabel.bind(this),
-							onStartParams: ['DONATION INCENTIVES', '21px']
-						});
-					}
-
-					// If we have already have our three bids determined, we still need to check
-					// if any of the remaining bids are for the same speedrun as the third bid.
-					// This ensures that we are never displaying a partial list of bids for a given speedrun.
-					if (bidsToDisplay.length < 3) {
-						bidsToDisplay.push(bid);
-					} else if (bid.speedrun === bidsToDisplay[bidsToDisplay.length - 1].speedrun) {
-						bidsToDisplay.push(bid);
-					}
-				});
-
-				// Loop over each bid and queue it up on the timeline
-				const showBid = this.showBid.bind(this);
-				bidsToDisplay.forEach(showBid);
-			}
-
-			this.tl.to({}, 0.3, {
-				onStart: function () {
-					this.showMainLine1('');
-					this.showMainLine2('');
-				}.bind(this),
-				onComplete: this.showCurrentPrizes.bind(this)
-			});
-		}
-
-		/**
-		 * Adds an animation to the global timeline for showing a specific bid.
-		 * @param {Object} bid - The bid to display.
-		 * @returns {undefined}
-		 */
-		showBid(bid) {
-			// GSAP is dumb with `call` sometimes. Putting this in a near-zero duration tween seems to be more reliable.
-			this.tl.to({}, 0.01, {
-				onComplete: this.showMainLine1.bind(this),
-				onCompleteParams: [bid.description.replace('||', ' -- ')]
-			});
-
-			// If this is a donation war, show up to three options for it.
-			// Else, it must be a normal incentive, so show its total amount raised and its goal.
-			if (bid.options) {
-				// If there are no options yet, display a message.
-				if (bid.options.length === 0) {
-					this.tl.call(this.showMainLine2, ['Be the first to bid!'], this);
-				} else {
-					bid.options.forEach((option, index) => {
-						if (index > 2) {
-							return;
-						}
-
-						this.tl.call(this.showMainLine2, [
-							`${index + 1}. ${option.description || option.name} - ${option.total}`
-						], this, `+=${0.08 + (index * 4)}`);
-					});
+			const upcomingRuns = [upNextRun];
+			schedule.value.some(item => {
+				if (item.type !== 'run') {
+					return false;
 				}
-			} else {
-				this.tl.call(this.showMainLine2, [`${bid.total} / ${bid.goal}`], this, '+=0.08');
+
+				if (item.order <= upNextRun.order) {
+					return false;
+				}
+
+				upcomingRuns.push(item);
+				return upcomingRuns.length >= 3;
+			});
+
+			const elements = upcomingRuns.map(run => {
+				const element = document.createElement('gdq-omnibar-run');
+				element.run = run;
+				return element;
+			});
+
+			this.setMainContent(tl, elements);
+
+			tl.add(this.showLabel('COMING UP NEXT', '20px', {
+				startColor: '#fffdd4',
+				endColor: '#ffcd00'
+			}), '+=0.03');
+
+			this.showMainContent(tl, elements);
+			this.hideMainContent(tl, elements);
+			tl.add(this.hideLabel(), 'afterContentExit');
+
+			return tl;
+		}
+
+		showChallenges() {
+			const tl = new TimelineLite();
+
+			// If there's no bids whatsoever, bail out.
+			if (currentBids.value.length < 0) {
+				return tl;
 			}
 
-			// Give the bid some time to show
-			this.tl.to({}, displayDuration, {});
+			// Figure out what bids to display in this batch
+			const bidsToDisplay = [];
+			currentBids.value.forEach(bid => {
+				// Don't show closed bids in the automatic rotation.
+				if (bid.state.toLowerCase() === 'closed') {
+					return;
+				}
+
+				// Only show challenges.
+				if (bid.type !== 'challenge') {
+					return;
+				}
+
+				// If we have already have our three bids determined, we still need to check
+				// if any of the remaining bids are for the same speedrun as the third bid.
+				// This ensures that we are never displaying a partial list of bids for a given speedrun.
+				if (bidsToDisplay.length < 3) {
+					bidsToDisplay.push(bid);
+				} else if (bid.speedrun === bidsToDisplay[bidsToDisplay.length - 1].speedrun) {
+					bidsToDisplay.push(bid);
+				}
+			});
+
+			// If there's no challenges to display, bail out.
+			if (bidsToDisplay.length <= 0) {
+				return tl;
+			}
+
+			const elements = bidsToDisplay.map(bid => {
+				const element = document.createElement('gdq-omnibar-bid');
+				element.bid = bid;
+				return element;
+			});
+
+			this.setMainContent(tl, elements);
+
+			tl.add(this.showLabel('CHALLENGES', '20px', {
+				startColor: '#7fbac1',
+				endColor: '#33838a'
+			}), '+=0.03');
+
+			this.showMainContent(tl, elements);
+			this.hideMainContent(tl, elements);
+			tl.add(this.hideLabel(), 'afterContentExit');
+
+			return tl;
+		}
+
+		showChoices() {
+			const tl = new TimelineLite();
+
+			// If there's no bids whatsoever, bail out.
+			if (currentBids.value.length < 0) {
+				return tl;
+			}
+
+			// Figure out what bids to display in this batch
+			const bidsToDisplay = [];
+
+			currentBids.value.forEach(bid => {
+				// Don't show closed bids in the automatic rotation.
+				if (bid.state.toLowerCase() === 'closed') {
+					return;
+				}
+
+				// Only show choices.
+				if (bid.type !== 'choice-binary' && bid.type !== 'choice-many') {
+					return;
+				}
+
+				// If we have already have our three bids determined, we still need to check
+				// if any of the remaining bids are for the same speedrun as the third bid.
+				// This ensures that we are never displaying a partial list of bids for a given speedrun.
+				if (bidsToDisplay.length < 3) {
+					bidsToDisplay.push(bid);
+				} else if (bid.speedrun === bidsToDisplay[bidsToDisplay.length - 1].speedrun) {
+					bidsToDisplay.push(bid);
+				}
+			});
+
+			// If there's no challenges to display, bail out.
+			if (bidsToDisplay.length <= 0) {
+				return tl;
+			}
+
+			// Loop over each bid and queue it up on the timeline
+			bidsToDisplay.forEach((bid, index) => {
+				// Show at most 4 options.
+				const elements = bid.options.slice(0, 4).map((option, index) => {
+					const element = document.createElement('gdq-omnibar-bid');
+					element.bid = option;
+					element.index = index;
+
+					// Options that aren't the first option show their delta to the leader options.
+					if (index > 0) {
+						element.delta = '-' + (bid.options[0].rawTotal - option.rawTotal).toLocaleString('en-US');
+					}
+
+					return element;
+				});
+
+				if (elements.length <= 0) {
+					const placeholder = document.createElement('gdq-omnibar-bid');
+					placeholder.bid = {};
+					elements.push(placeholder);
+				}
+
+				this.setMainContent(tl, elements);
+
+				// First bid shows the label.
+				// Subsequent bids just change the text of the label.
+				if (index === 0) {
+					tl.add(this.showLabel(bid.description.replace('||', ' -- '), '16px', {
+						startColor: '#ae7fc1',
+						endColor: '#71338a'
+					}), '+=0.03');
+				} else {
+					tl.add(this.changeLabelText(bid.description.replace('||', ' -- ')), '+=0.03');
+				}
+
+				this.showMainContent(tl, elements);
+				this.hideMainContent(tl, elements);
+			});
+
+			tl.add(this.hideLabel(), 'afterContentExit');
+
+			return tl;
 		}
 
 		/**
@@ -429,91 +388,42 @@
 		 * @returns {undefined}
 		 */
 		showCurrentPrizes() {
-			const currentGrandPrizes = currentPrizes.value.filter(prize => prize.grand);
-			const currentNormalPrizes = currentPrizes.value.filter(prize => !prize.grand);
+			const tl = new TimelineLite();
 
-			if (currentGrandPrizes.length > 0 || currentNormalPrizes.length > 0) {
-				const prizesToDisplay = currentNormalPrizes.slice(0);
-				this.tl.to({}, 0.3, {
-					onStart: this.showLabel.bind(this),
-					onStartParams: ['PRIZES', '32px']
-				});
-
-				if (currentGrandPrizes.length) {
-					// Figure out what grand prize to show in this batch.
-					const lastShownGrandPrizeIdx = currentGrandPrizes.indexOf(this.lastShownGrandPrize);
-					const nextGrandPrizeIdx = lastShownGrandPrizeIdx >= currentGrandPrizes.length - 1 ?
-						0 : lastShownGrandPrizeIdx + 1;
-					const nextGrandPrize = currentGrandPrizes[nextGrandPrizeIdx];
-
-					if (nextGrandPrize) {
-						prizesToDisplay.unshift(nextGrandPrize);
-						this.lastShownGrandPrize = nextGrandPrize;
-					}
-				}
-
-				// Loop over each prize and queue it up on the timeline
-				const showPrize = this.showPrize.bind(this);
-				prizesToDisplay.forEach(showPrize);
+			// No prizes to show? Bail out.
+			if (currentPrizes.value.length <= 0) {
+				return tl;
 			}
 
-			this.tl.to({}, 0.3, {
-				onStart: function () {
-					this.showMainLine1('');
-					this.showMainLine2('');
-				}.bind(this),
-				onComplete: this.showUpNext.bind(this)
-			});
-		}
+			const specialPrizesToDisplayLast = [];
+			const prizesToDisplay = currentPrizes.value.filter(prize => {
+				if (prize.id === 1668 || // Custom Built Corsair PC
+					prize.id === 1669) { // Eighth Generation Console Bundle
+					specialPrizesToDisplayLast.push(prize);
+					return false;
+				}
 
-		/**
-		 * Adds an animation to the global timeline for showing a specific prize.
-		 * @param {Object} prize - The prize to display.
-		 * @returns {undefined}
-		 */
-		showPrize(prize) {
-			// GSAP is dumb with `call` sometimes. Putting this in a near-zero duration tween seems to be more reliable.
-			this.tl.to({}, 0.01, {
-				onComplete: function () {
-					this.showMainLine1(`Provided by ${prize.provided}`);
+				return true;
+			}).concat(specialPrizesToDisplayLast);
 
-					if (prize.grand) {
-						this.showMainLine2(`Grand Prize: ${prize.description}`);
-					} else {
-						this.showMainLine2(prize.description);
-					}
-				}.bind(this)
+			const elements = prizesToDisplay.map(prize => {
+				const element = document.createElement('gdq-omnibar-prize');
+				element.prize = prize;
+				return element;
 			});
 
-			// Give the prize some time to show
-			this.tl.to({}, displayDuration, {});
-		}
+			this.setMainContent(tl, elements);
 
-		/**
-		 * Adds an animation to the global timeline for showing the call-to-action.
-		 * @returns {undefined}
-		 */
-		showCTA() {
-			this.tl.call(this.hideLabel, null, this, '+=0.01');
+			tl.add(this.showLabel('PRIZES', '32px', {
+				startColor: '#cc7e7e',
+				endColor: '#803030'
+			}), '+=0.03');
 
-			this.tl.set(this.$.cta, {y: '100%'});
+			this.showMainContent(tl, elements);
+			this.hideMainContent(tl, elements);
+			tl.add(this.hideLabel(), 'afterContentExit');
 
-			this.tl.to(this.$.cta, 0.55, {
-				y: '0%',
-				ease: Power2.easeOut
-			}, '+=1');
-
-			this.tl.to(this.$.cta, 0.8, {
-				y: '-100%',
-				ease: Power2.easeInOut
-			}, `+=${displayDuration}`);
-
-			this.tl.to(this.$.cta, 0.55, {
-				y: '-200%',
-				ease: Power2.easeIn
-			}, `+=${displayDuration}`);
-
-			this.tl.call(this.showCurrentBids, null, this, '+=0.3');
+			return tl;
 		}
 	}
 

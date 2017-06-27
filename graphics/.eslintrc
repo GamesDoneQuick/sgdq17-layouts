@@ -16,6 +16,7 @@
 		"Power4": true,
 		"Elastic": true,
 		"Back": true,
+		"Sine": true,
 		"textFit": true,
 		"createjs": true
 	}
