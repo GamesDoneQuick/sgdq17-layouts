@@ -30,7 +30,9 @@ class GdqSteppedGradient extends SteppedGradientMixin(Polymer.Element) {
 	connectedCallback() {
 		super.connectedCallback();
 		if (this.startEntered) {
-			this.enter('above').progress(1);
+			Polymer.RenderStatus.beforeNextRender(this, () => {
+				this.enter('above').progress(1);
+			});
 		}
 	}
 
