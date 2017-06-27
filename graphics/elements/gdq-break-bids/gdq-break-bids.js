@@ -39,7 +39,7 @@
 				},
 				screenHeader: {
 					type: String,
-					value: 'DONATION INCENTIVES',
+					value: 'VIEWER INCENTIVES',
 					readOnly: true
 				}
 			};
