@@ -35,7 +35,8 @@
 		}
 
 		bitsChanged(newVal) {
-			this.bits = newVal;
+			const formattedString = newVal.toLocaleString('en-US');
+			this.bits = formattedString;
 		}
 
 		testCheer(min, max) {
