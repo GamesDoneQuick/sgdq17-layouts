@@ -35,9 +35,9 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "eslint": "^3.12.0",
+    "eslint": "^4.1.1",
     "eslint-config-xo": "^0.18.2",
-    "eslint-plugin-html": "^2.0.3",
+    "eslint-plugin-html": "^3.0.0",
     "istanbul": "^0.4.3",
     "mocha": "^3.4.2"
   },
