@@ -1,10 +1,7 @@
-/* global SplitText */
 (function () {
 	'use strict';
 
-	const TYPE_INTERVAL = 0.03;
 	const NP_FADE_DURATION = 0.334;
-	const EMPTY_OBJ = {};
 	const nowPlaying = nodecg.Replicant('nowPlaying');
 
 	class GdqBreakSong extends Polymer.Element {

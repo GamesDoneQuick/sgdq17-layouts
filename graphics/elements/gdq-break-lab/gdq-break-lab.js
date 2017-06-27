@@ -6,9 +6,7 @@
 	const NP_FADE_DURATION = 0.334;
 	const TWEET_DISPLAY_DURATION = 9;
 	const EMPTY_OBJ = {};
-	const nowPlaying = nodecg.Replicant('nowPlaying');
 	const bits = nodecg.Replicant('bits:total');
-
 
 	class GdqBreakLab extends Polymer.Element {
 		static get is() {
@@ -35,20 +33,18 @@
 		}
 
 		bitsChanged(newVal) {
-			const formattedString = newVal.toLocaleString('en-US');
-			this.bits = formattedString;
+			this.bits = newVal.toLocaleString('en-US');
 		}
 
 		testCheer(min, max) {
 			const test = this.randomIntFromInterval(min, max);
-			this.newCheer({bits_used: test});
+			this.newCheer({bits_used: test}); // eslint-disable-line camelcase
 		}
 
 		newCheer(cheer) {
 			const tl = new TimelineLite({autoRemoveChildren: true});
 			const cheerDiv = document.createElement('div');
 			cheerDiv.classList.add('cheer');
-			let vid;
 			switch (true) {
 				case (cheer.bits_used < 100):
 					cheerDiv.innerHTML = '<video src="' + this.importPath + 'vid/chGrey.webm" autoplay>';
@@ -81,12 +77,10 @@
 			tl.call(() => {
 				this.$.fireworks.removeChild(cheerDiv);
 			}, null, null, 'enter+=2');
-
 		}
 
-		randomIntFromInterval(min,max)
-		{
-			return Math.floor(Math.random()*(max-min+1)+min);
+		randomIntFromInterval(min, max) {
+			return Math.floor((Math.random() * (max - min + 1)) + min);
 		}
 
 		showTweet(tweet) {
