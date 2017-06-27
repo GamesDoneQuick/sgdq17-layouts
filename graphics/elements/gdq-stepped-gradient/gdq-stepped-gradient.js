@@ -99,21 +99,19 @@ class GdqSteppedGradient extends SteppedGradientMixin(Polymer.Element) {
 			return;
 		}
 
-		Polymer.RenderStatus.beforeNextRender(this, () => {
-			this.bands.forEach((band, index) => {
-				const rgb = palette[index];
-				band.style.background = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+		this.bands.forEach((band, index) => {
+			const rgb = palette[index];
+			band.style.background = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
 
-				if (zIndexing === 'backToFront') {
-					band.style.top = `${(index / this.steps) * 100}%`;
-					band.style.zIndex = index;
-				} else if (zIndexing === 'frontToBack') {
-					band.style.top = `${-((this.steps - index - 1) / this.steps) * 100}%`;
-					band.style.zIndex = this.steps - index;
-				} else {
-					throw new Error(`Unexpected value for zIndexing: ${zIndexing}`);
-				}
-			});
+			if (zIndexing === 'backToFront') {
+				band.style.top = `${(index / this.steps) * 100}%`;
+				band.style.zIndex = index;
+			} else if (zIndexing === 'frontToBack') {
+				band.style.top = `${-((this.steps - index - 1) / this.steps) * 100}%`;
+				band.style.zIndex = this.steps - index;
+			} else {
+				throw new Error(`Unexpected value for zIndexing: ${zIndexing}`);
+			}
 		});
 	}
 }
