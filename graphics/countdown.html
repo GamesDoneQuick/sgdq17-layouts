@@ -31,6 +31,7 @@
 				position: absolute;
 				top: 308px;
 				left: 280px;
+				z-index: -10;
 			}
 
 			#nowPlaying {
@@ -66,9 +67,9 @@
 </head>
 <body>
 <div id="container">
-	<img id="background" src="img/backgrounds/countdown_bg.png">
-	<img id="logo" src="img/countdown/countdown_logo.png">
 	<video id="loop" autoplay loop src="img/countdown/countdown_anim_loop.webm"></video>
+	<img src="img/backgrounds/countdown_bg.png">
+	<img id="logo" src="img/countdown/countdown_logo.png">
 	<div id="countdown">
 		<div id="countdownMinutes"></div>
 		<div id="countdownColon">:</div>
