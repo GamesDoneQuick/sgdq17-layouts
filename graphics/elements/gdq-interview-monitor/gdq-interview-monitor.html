@@ -1,6 +1,7 @@
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/polymer/lib/mixins/mutable-data.html">
+<link rel="import" href="../../../bower_components/paper-styles/shadow.html">
 <link rel="import" href="../../../shared/style/gdq-text-styles.html">
 <link rel="import" href="monitor-tweet.html">
 
@@ -20,6 +21,7 @@
 				width: 568px;
 				padding: 14px 16px;
 				@apply --layout-vertical;
+				@apply --shadow-elevation-2dp;
 			}
 
 			#total {
@@ -86,6 +88,10 @@
 			.bg-color-transition {
 				transition: background-color 1600ms cubic-bezier(0.455, 0.03, 0.515, 0.955);
 			}
+
+			[hidden] {
+				display: none !important;
+			}
 		</style>
 
 		<firebase-app
@@ -105,7 +111,7 @@
 			data="{{replies}}">
 		</firebase-document>
 
-		<paper-material id="infoColumn">
+		<div id="infoColumn">
 			<div id="total" class="tabular-nums">
 				$<span id="total-amount"></span>
 			</div>
@@ -118,14 +124,14 @@
 
 			<div id="nextRunName">[[upNextRunName]]</div>
 			<div id="nextRunners"></div>
-		</paper-material>
+		</div>
 
 		<div id="tweetsColumn" class="bg-color-transition">
 			<div id="noQuestions" hidden="[[!noQuestionTweets]]">
 				No Remaining Questions
 			</div>
 
-			<template id="repeat" is="dom-repeat" items="[[questionTweets]]" as="tweet" sort="mapSort">
+			<template id="repeat" is="dom-repeat" items="[[questionTweets]]" as="tweet" sort="mapSort" mutable-data>
 				<monitor-tweet tweet="[[tweet]]"></monitor-tweet>
 			</template>
 		</div>

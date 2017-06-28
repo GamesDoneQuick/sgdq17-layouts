@@ -8,7 +8,7 @@
 	const questionTweets = nodecg.Replicant('interview:questionTweets');
 	const questionSortMap = nodecg.Replicant('interview:questionSortMap');
 
-	class GdqInterviewMonitor extends Polymer.Element {
+	class GdqInterviewMonitor extends Polymer.MutableData(Polymer.Element) {
 		static get is() {
 			return 'gdq-interview-monitor';
 		}
@@ -57,7 +57,7 @@
 			this.$.repeat.render();
 			Polymer.flush();
 
-			const firstMonitorTweet = this.$$('monitor-tweet');
+			const firstMonitorTweet = this.shadowRoot.querySelector('monitor-tweet');
 			if (!firstMonitorTweet) {
 				return;
 			}
@@ -73,16 +73,18 @@
 			super.ready();
 
 			// Fades new question nodes from purple to white when added.
+
 			this._listObserver = new MutationObserver(mutations => {
 				mutations.forEach(mutation => {
 					if (!mutation.addedNodes) {
 						return;
 					}
 
+					const firstChild = this.shadowRoot.querySelector('monitor-tweet');
 					Array.from(mutation.addedNodes).filter(node => {
-						return node.is === 'monitor-tweet';
+						return node.tagName === 'MONITOR-TWEET';
 					}).forEach(node => {
-						const isFirstChild = node === node.parentNode.querySelector('monitor-tweet');
+						const isFirstChild = node === firstChild;
 						if (isFirstChild) {
 							// This is handled by onScreenTweetChanged
 							return;
@@ -112,11 +114,11 @@
 					return;
 				}
 
-				this.questionTweets = newVal.slice(0);
+				this.questionTweets = newVal;
 			});
 
 			questionSortMap.on('change', (newVal, oldVal, operations) => {
-				this._sortMapVal = newVal.slice(0);
+				this._sortMapVal = newVal;
 				this.$.repeat.render();
 
 				if (newVal.length > 0) {
