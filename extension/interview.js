@@ -14,10 +14,12 @@ firebase.initializeApp({
 const database = firebase.database();
 const lowerthirdPulseTimeRemaining = nodecg.Replicant('interview:lowerthirdTimeRemaining', {defaultValue: 0, persistent: false});
 const lowerthirdShowing = nodecg.Replicant('interview:lowerthirdShowing', {defaultValue: false, persistent: false});
+const throwIncoming = nodecg.Replicant('interview:throwIncoming');
 const questionPulseTimeRemaining = nodecg.Replicant('interview:questionTimeRemaining', {defaultValue: 0, persistent: false});
 const questionShowing = nodecg.Replicant('interview:questionShowing', {defaultValue: false, persistent: false});
 const questionSortMap = nodecg.Replicant('interview:questionSortMap');
 const questionTweetsRep = nodecg.Replicant('interview:questionTweets');
+const currentLayout = nodecg.Replicant('gdq:currentLayout');
 const pulseIntervalMap = new Map();
 const pulseTimeoutMap = new Map();
 let _repliesListener;
@@ -30,6 +32,12 @@ lowerthirdShowing.on('change', newVal => {
 		clearTimerFromMap(lowerthirdShowing, pulseIntervalMap);
 		clearTimerFromMap(lowerthirdShowing, pulseTimeoutMap);
 		lowerthirdPulseTimeRemaining.value = 0;
+	}
+});
+
+currentLayout.on('change', newVal => {
+	if (newVal === 'interview') {
+		throwIncoming.value = false;
 	}
 });
 

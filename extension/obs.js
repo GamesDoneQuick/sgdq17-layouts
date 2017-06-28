@@ -13,7 +13,7 @@ const nodecg = require('./util/nodecg-api-context').get();
 
 // We track what _layout_ is active, not necessarily what _scene_ is active.
 // A given layout can be on multiple scenes.
-const currentLayout = nodecg.Replicant('gdq:currentLayout', {defaultValue: ''});
+const currentLayout = nodecg.Replicant('gdq:currentLayout');
 const streamingOBS = new OBSUtility(nodecg, {namespace: 'streamingOBS'});
 const recordingOBS = new OBSUtility(nodecg, {namespace: 'recordingOBS'});
 

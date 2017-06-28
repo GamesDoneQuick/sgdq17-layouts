@@ -7,6 +7,7 @@
 	const currentLayout = nodecg.Replicant('gdq:currentLayout');
 	const questionTweets = nodecg.Replicant('interview:questionTweets');
 	const questionSortMap = nodecg.Replicant('interview:questionSortMap');
+	const throwIncoming = nodecg.Replicant('interview:throwIncoming');
 
 	class GdqInterviewMonitor extends Polymer.MutableData(Polymer.Element) {
 		static get is() {
@@ -27,6 +28,11 @@
 					computed: 'calcOnScreenTweet(questionTweets, _sortMapVal)',
 					observer: 'onScreenTweetChanged',
 					value: null
+				},
+				throwIncoming: {
+					type: Boolean,
+					value: false,
+					reflectToAttribute: true
 				}
 			};
 		}
@@ -98,8 +104,6 @@
 
 			this._listObserver.observe(this.$.tweetsColumn, {childList: true});
 
-			this.tl = new TimelineLite({autoRemoveChildren: true});
-
 			this.$['total-amount'].rawValue = 0;
 			total.on('change', this.totalChanged.bind(this));
 
@@ -124,6 +128,10 @@
 				if (newVal.length > 0) {
 					this._flashBgIfAppropriate(operations);
 				}
+			});
+
+			throwIncoming.on('change', newVal => {
+				this.throwIncoming = newVal;
 			});
 		}
 
