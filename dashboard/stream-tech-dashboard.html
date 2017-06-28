@@ -11,6 +11,7 @@
 	<link rel="import" href="elements/gdq-timekeeper/gdq-timekeeper.html">
 	<link rel="import" href="elements/gdq-totals/gdq-totals.html">
 	<link rel="import" href="elements/gdq-twitter-controls/gdq-twitter-controls.html">
+	<link rel="import" href="elements/gdq-throw/gdq-throw.html">
 
 	<custom-style>
 		<style>
@@ -75,6 +76,11 @@
 				height: 424px;
 				@apply --layout-flex;
 			}
+
+			gdq-throw {
+				margin-top: 15px;
+				padding: 12px 15px;
+			}
 		</style>
 	</custom-style>
 </head>
@@ -84,6 +90,7 @@
 			<div id="leftColumn" class="column">
 				<gdq-timekeeper class="bordered"></gdq-timekeeper>
 				<gdq-checklist class="bordered" style="border-top: 0;"></gdq-checklist>
+				<gdq-throw class="bordered"></gdq-throw>
 			</div>
 
 			<div id="centerColumn" class="column">
