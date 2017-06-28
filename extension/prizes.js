@@ -8,14 +8,11 @@ const request = require('request');
 
 // Ours
 const nodecg = require('./util/nodecg-api-context').get();
+const gdqUrls = require('./urls');
 
 const POLL_INTERVAL = 60 * 1000;
-const PRIZES_URL = nodecg.bundleConfig.useMockData ?
-	'https://dl.dropboxusercontent.com/u/6089084/gdq_mock/allPrizes.json' :
-	'https://gamesdonequick.com/tracker/search/?type=prize&event=20';
-const CURRENT_PRIZES_URL = nodecg.bundleConfig.useMockData ?
-	'https://dl.dropboxusercontent.com/u/6089084/gdq_mock/currentPrizes.json' :
-	'https://gamesdonequick.com/tracker/search/?type=prize&feed=current&event=20';
+const PRIZES_URL = gdqUrls.get('allPrizes');
+const CURRENT_PRIZES_URL = gdqUrls.get('currentPrizes');
 
 const currentPrizes = nodecg.Replicant('currentPrizes', {defaultValue: []});
 const allPrizes = nodecg.Replicant('allPrizes', {defaultValue: []});

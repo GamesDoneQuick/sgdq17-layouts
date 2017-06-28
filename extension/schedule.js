@@ -8,6 +8,7 @@ const request = require('request-promise').defaults({jar: true}); // <= Automati
 
 // Ours
 const nodecg = require('./util/nodecg-api-context').get();
+const gdqUrls = require('./urls');
 const {calcOriginalValues, mergeChangesFromTracker} = require('./lib/diff-run');
 
 const POLL_INTERVAL = 60 * 1000;
@@ -144,38 +145,22 @@ nodecg.listenFor('resetRun', (pk, cb) => {
  */
 function update() {
 	const runnersPromise = request({
-		uri: nodecg.bundleConfig.useMockData ?
-			'https://dl.dropboxusercontent.com/u/6089084/gdq_mock/runners.json' :
-			'https://private.gamesdonequick.com/tracker/search',
-		qs: {
-			type: 'runner',
-			event: 20
-		},
+		uri: gdqUrls.get('runners'),
 		json: true
 	});
 
 	const runsPromise = request({
-		uri: nodecg.bundleConfig.useMockData ?
-			'https://dl.dropboxusercontent.com/u/6089084/gdq_mock/schedule.json' :
-			'https://private.gamesdonequick.com/tracker/search',
-		qs: {
-			type: 'run',
-			event: 20
-		},
+		uri: gdqUrls.get('runs'),
 		json: true
 	});
 
 	const adsPromise = request({
-		uri: nodecg.bundleConfig.useMockData ?
-			'https://dl.dropboxusercontent.com/u/6089084/gdq_mock/ads.json' :
-			'https://private.gamesdonequick.com/tracker/gdq/ads/20/',
+		uri: gdqUrls.get('ads'),
 		json: true
 	});
 
 	const interviewsPromise = request({
-		uri: nodecg.bundleConfig.useMockData ?
-			'https://dl.dropboxusercontent.com/u/6089084/gdq_mock/interviews.json' :
-			'https://private.gamesdonequick.com/tracker/gdq/interviews/20/',
+		uri: gdqUrls.get('interviews'),
 		json: true
 	});
 

@@ -3,6 +3,44 @@
 	"type": "object",
 
 	"properties": {
+		"offline": {
+			"description": "Useful when coding on an airplane.",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"enabled": {
+					"type": "boolean",
+					"default": false
+				},
+				"ads": {
+					"type": "string"
+				},
+				"allBids": {
+					"type": "string"
+				},
+				"allPrizes": {
+					"type": "string"
+				},
+				"currentBids": {
+					"type": "string"
+				},
+				"currentPrizes": {
+					"type": "string"
+				},
+				"interviews": {
+					"type": "string"
+				},
+				"runners": {
+					"type": "string"
+				},
+				"runs": {
+					"type": "string"
+				},
+				"total": {
+					"type": "string"
+				}
+			}
+		},
 		"useMockData": {
 			"type": "boolean",
 			"description": "Whether or not to use mock data instead of the real tracker API. If true, pulls from Lange's Dropbox.",

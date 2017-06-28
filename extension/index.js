@@ -16,7 +16,9 @@ module.exports = function (nodecg) {
 	const loginLog = new nodecg.Logger(`${nodecg.bundleName}:tracker`);
 	let isFirstLogin = true;
 
-	if (nodecg.bundleConfig.useMockData) {
+	if (nodecg.bundleConfig.offline.enabled) {
+		nodecg.log.warn('WARNING! Offline mode is enabled, you will not receive real data from the tracker!');
+	} else if (nodecg.bundleConfig.useMockData) {
 		nodecg.log.warn('WARNING! useMockData is true, you will not receive real data from the tracker!');
 	}
 
@@ -32,12 +34,16 @@ module.exports = function (nodecg) {
 	require('./intermissions');
 	require('./caspar');
 
-	loginToTracker().then(() => {
+	if (nodecg.bundleConfig.offline) {
 		require('./schedule');
-	});
+	} else {
+		loginToTracker().then(() => {
+			require('./schedule');
+		});
 
-	// Tracker logins expire every 2 hours. Re-login every 110 minutes.
-	setInterval(loginToTracker, 110 * 60 * 1000);
+		// Tracker logins expire every 2 hours. Re-login every 110 minutes.
+		setInterval(loginToTracker, 110 * 60 * 1000);
+	}
 
 	if (nodecg.bundleConfig.twitch) {
 		require('./twitch-ads');

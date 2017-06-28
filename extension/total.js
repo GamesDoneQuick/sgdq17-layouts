@@ -1,14 +1,14 @@
 'use strict';
 
-const DONATION_STATS_URL = 'https://gamesdonequick.com/tracker/20?json';
-
 // Packages
 const request = require('request');
 
 // Ours
 const formatDollars = require('../util/format-dollars');
 const nodecg = require('./util/nodecg-api-context').get();
+const gdqUrls = require('./urls');
 
+const DONATION_STATS_URL = gdqUrls.get('total');
 const autoUpdateTotal = nodecg.Replicant('autoUpdateTotal');
 const bitsTotal = nodecg.Replicant('bits:total');
 const total = nodecg.Replicant('total');

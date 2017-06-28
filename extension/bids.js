@@ -129,7 +129,7 @@ function handleResponse(error, response, body, deferred, opts) {
 					formattedParentBid.goalMet = formattedParentBid.rawTotal >= formattedParentBid.rawGoal;
 					bitsIncentiveTotalOffset += formattedParentBid.rawTotal;
 				} else {
-					formattedParentBid.goal = numeral(goal).format('$0,0[.]00');
+					formattedParentBid.goal = numeral(goal).format('$0,0[.] 00');
 					formattedParentBid.rawGoal = goal;
 				}
 			}
