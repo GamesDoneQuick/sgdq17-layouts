@@ -90,7 +90,7 @@ function cycleRecording(obs) {
 module.exports = {
 	resetCropping() {
 		return streamingOBS.send('ResetCropping').catch(error => {
-			log.error('resetCropping error:', error);
+			nodecg.log.error('resetCropping error:', error);
 		});
 	},
 
