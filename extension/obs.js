@@ -89,9 +89,9 @@ function cycleRecording(obs) {
 
 module.exports = {
 	resetCropping() {
-		/* obs.send('ResetCropping').catch(error => {
-			console.log('resetCropping error:', error);
-		}); */
+		return streamingOBS.send('ResetCropping').catch(error => {
+			log.error('resetCropping error:', error);
+		});
 	},
 
 	setCurrentScene(sceneName) {
