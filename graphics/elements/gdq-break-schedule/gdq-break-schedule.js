@@ -54,7 +54,20 @@
 				return;
 			}
 
-			const onDeckRuns = schedule.value.slice(currentRun.value.order, currentRun.value.order + 3);
+			const onDeckRuns = [];
+			schedule.value.some(item => {
+				if (item.type !== 'run') {
+					return false;
+				}
+
+				if (item.order <= currentRun.value.order) {
+					return false;
+				}
+
+				onDeckRuns.push(item);
+				return onDeckRuns.length >= 3;
+			});
+
 			const tl = this.onDeckTL;
 			tl.clear();
 
