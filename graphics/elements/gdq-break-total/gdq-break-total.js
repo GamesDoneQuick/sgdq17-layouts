@@ -75,7 +75,7 @@ class GdqBreakTotal extends Polymer.Element {
 			this.$['total-amount'].rawCents = newCents;
 			this.$['total-amount'].textContent = dollars.toLocaleString('en-US', {
 				maximumFractionDigits: 0
-			});
+			}).replace(/1/ig, '\u00C0');
 			return;
 		}
 
@@ -89,7 +89,7 @@ class GdqBreakTotal extends Polymer.Element {
 				const dollars = this.$['total-amount'].rawCents / 100;
 				this.$['total-amount'].textContent = dollars.toLocaleString('en-US', {
 					maximumFractionDigits: 0
-				});
+				}).replace(/1/ig, '\u00C0');
 			},
 			onUpdateScope: this
 		});
