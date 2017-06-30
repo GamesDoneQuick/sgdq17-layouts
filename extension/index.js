@@ -33,8 +33,9 @@ module.exports = function (nodecg) {
 	require('./caspar');
 
 	loginToTracker().then(() => {
-		require('./schedule').on('permissionDenied', () => {
-			loginToTracker().then(update);
+		const schedule = require('./schedule');
+		schedule.on('permissionDenied', () => {
+			loginToTracker().then(schedule.update);
 		});
 	});
 
