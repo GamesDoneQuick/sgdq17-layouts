@@ -8,6 +8,11 @@
 			"description": "Whether or not to use mock data instead of the real tracker API. If true, pulls from Lange's Dropbox.",
 			"default": false
 		},
+		"displayDuration": {
+			"type": "number",
+			"description": "How long (in seconds) most things show on-screen for.",
+			"default": 10
+		},
 		"osc": {
 			"type": ["object", "null"],
 			"properties": {
