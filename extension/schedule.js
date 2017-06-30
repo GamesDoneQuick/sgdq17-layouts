@@ -4,6 +4,7 @@
 const assign = require('lodash.assign');
 const clone = require('clone');
 const deepEqual = require('deep-equal');
+const EventEmitter = require('events');
 const request = require('request-promise').defaults({jar: true}); // <= Automatically saves and re-uses cookies.
 
 // Ours
@@ -20,6 +21,9 @@ const nextRunRep = nodecg.Replicant('nextRun');
 const runnersRep = nodecg.Replicant('runners', {defaultValue: [], persistent: false});
 const runOrderMap = nodecg.Replicant('runOrderMap', {defaultValue: {}, persistent: false});
 const scheduleRep = nodecg.Replicant('schedule', {defaultValue: [], persistent: false});
+const emitter = new EventEmitter();
+module.exports = emitter;
+module.exports.update = update;
 
 update();
 
@@ -260,7 +264,12 @@ function update() {
 
 		return true;
 	}).catch(err => {
-		nodecg.log.error('[schedule] Failed to update:', err.stack);
+		if (err.code === 403) {
+			nodecg.log.warn('[schedule] Permission denied, refreshing session and trying again...');
+			emitter.emit('permissionDenied');
+		} else {
+			nodecg.log.error('[schedule] Failed to update:', err.stack);
+		}
 	});
 }
 

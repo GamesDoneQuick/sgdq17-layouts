@@ -33,7 +33,9 @@ module.exports = function (nodecg) {
 	require('./caspar');
 
 	loginToTracker().then(() => {
-		require('./schedule');
+		require('./schedule').on('permissionDenied', () => {
+			loginToTracker().then(update);
+		});
 	});
 
 	// Tracker logins expire every 2 hours. Re-login every 110 minutes.
