@@ -50,9 +50,9 @@
 			{"name": "Camera", "complete": false}
 		],
 		"stageTechDuties": [
+			{"name": "Wipe Down Headsets", "complete": false},
 			{"name": "TVs have Video", "complete": false},
-			{"name": "Steam Notifications Off (PC)", "complete": false},
-			{"name": "Wipe Down Headsets", "complete": false}
+			{"name": "Steam Notifications Off (PC)", "complete": false}
 		],
 		"audioEngineerDuties": [
 			{"name": "Cue Break Music", "complete": false},
