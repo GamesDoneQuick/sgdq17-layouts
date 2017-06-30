@@ -14,6 +14,7 @@ const nodecg = require('./util/nodecg-api-context').get();
 // We track what _layout_ is active, not necessarily what _scene_ is active.
 // A given layout can be on multiple scenes.
 const currentLayout = nodecg.Replicant('gdq:currentLayout');
+const autoCycleRecordings = nodecg.Replicant('autoCycleRecordings');
 const streamingOBS = new OBSUtility(nodecg, {namespace: 'streamingOBS'});
 const recordingOBS = new OBSUtility(nodecg, {namespace: 'recordingOBS'});
 
@@ -36,6 +37,10 @@ if (uploadScriptPath) {
 
 	nodecg.log.info('Automatic VOD uploading enabled.');
 }
+
+autoCycleRecordings.on('change', newVal => {
+	nodecg.log.info('Automatic cycling of recordings %s.', newVal ? 'ENABLED' : 'DISABLED');
+});
 
 streamingOBS.replicants.programScene.on('change', newVal => {
 	if (!newVal) {

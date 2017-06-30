@@ -12,6 +12,7 @@ const obs = require('./obs');
 // Any changes you make will be fully picked up and integrated next time NodeCG starts.
 const checklist = nodecg.Replicant('checklist');
 const checklistDefault = checklist.schema.default;
+const autoCycleRecordings = nodecg.Replicant('autoCycleRecordings');
 
 // Reconcile differences between persisted value and what we expect the checklistDefault to be.
 const persistedValue = checklist.value;
@@ -61,9 +62,11 @@ module.exports = {
 	reset() {
 		if (obs.streamingOBSConnected) {
 			obs.resetCropping();
-			obs.cycleRecordings().catch(error => {
-				nodecg.log.error('Failed to cycle recordings:', error);
-			});
+			if (autoCycleRecordings.value) {
+				obs.cycleRecordings().catch(error => {
+					nodecg.log.error('Failed to cycle recordings:', error);
+				});
+			}
 		}
 
 		for (const category in checklist.value) {

@@ -12,9 +12,10 @@
 	<link rel="import" href="elements/gdq-totals/gdq-totals.html">
 	<link rel="import" href="elements/gdq-twitter-controls/gdq-twitter-controls.html">
 	<link rel="import" href="elements/gdq-throw/gdq-throw.html">
+	<link rel="import" href="elements/gdq-recordings/gdq-recordings.html">
 
 	<custom-style>
-		<style>
+		<style include="iron-flex iron-flex-alignment">
 			body {
 				background-color: #f5f5f5;
 				margin: 0;
@@ -90,7 +91,10 @@
 			<div id="leftColumn" class="column">
 				<gdq-timekeeper class="bordered"></gdq-timekeeper>
 				<gdq-checklist class="bordered" style="border-top: 0;"></gdq-checklist>
-				<gdq-throw class="bordered"></gdq-throw>
+				<div class="layout horizontal center justified">
+					<gdq-recordings></gdq-recordings>
+					<gdq-throw class="bordered"></gdq-throw>
+				</div>
 			</div>
 
 			<div id="centerColumn" class="column">
