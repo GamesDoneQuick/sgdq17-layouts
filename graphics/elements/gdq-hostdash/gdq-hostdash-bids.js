@@ -66,7 +66,10 @@
 		recalcRelevantBids() {
 			if (allBids.status !== 'declared' ||
 				currentRun.status !== 'declared' ||
-				runOrderMap.status !== 'declared') {
+				runOrderMap.status !== 'declared' ||
+				!allBids.value ||
+				!runOrderMap.value ||
+				!currentRun.value) {
 				return;
 			}
 
