@@ -30,6 +30,10 @@
 			nodecg.listenFor('showTweet', this.showTweet.bind(this));
 			nodecg.listenFor('cheer', this.newCheer.bind(this));
 			bits.on('change', this.bitsChanged.bind(this));
+
+			Polymer.RenderStatus.beforeNextRender(this, () => {
+				TweenLite.set(this.$['tweet-bg'], { scaleY: 0 });
+			});
 		}
 
 		bitsChanged(newVal) {
@@ -94,16 +98,7 @@
 
 			tl.add('transition');
 
-			tl.to(this.$.nowplaying, NP_FADE_DURATION, {
-				onStart() {
-					this.$['tweet-name-text'].innerText = `@${tweet.user.screen_name}`;
-				},
-				onStartScope: this,
-				opacity: 0,
-				ease: Power1.easeIn
-			}, 'transition');
-
-			tl.to(this.$.bg, NP_FADE_DURATION * 1.5, {
+			tl.to(this.$['tweet-bg'], NP_FADE_DURATION * 1.5, {
 				scaleY: 1,
 				ease: Power2.easeInOut
 			}, 'transition');
@@ -127,6 +122,9 @@
 			}, null, null, 'enter');
 
 			tl.to(this.$['tweet-name'], 0.446, {
+				onStart() {
+					this.$['tweet-name-text'].innerText = `@${tweet.user.screen_name}`;
+				},
 				y: '0%',
 				ease: Power2.easeOut
 			}, 'enter');
@@ -145,13 +143,8 @@
 
 			tl.add('transition-out');
 
-			tl.to(this.$.nowplaying, NP_FADE_DURATION, {
-				opacity: 1,
-				ease: Power1.easeOut
-			}, 'transition-out');
-
-			tl.to(this.$.bg, NP_FADE_DURATION * 1.5, {
-				scaleY: 0.4468,
+			tl.to(this.$['tweet-bg'], NP_FADE_DURATION * 1.5, {
+				scaleY: 0,
 				ease: Power2.easeInOut
 			}, 'transition-out');
 
