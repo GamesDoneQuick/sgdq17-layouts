@@ -55,9 +55,7 @@
 			{"name": "Steam Notifications Off (PC)", "complete": false}
 		],
 		"audioEngineerDuties": [
-			{"name": "Cue Break Music", "complete": false},
 			{"name": "Runner Game Audio", "complete": false},
-			{"name": "Commentator Mics", "complete": false},
 			{"name": "Stream Audio", "complete": false}
 		]
 	}
