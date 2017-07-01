@@ -2,6 +2,8 @@
 
 // Native
 const EventEmitter = require('events');
+const fs = require('fs');
+const format = require('util').format;
 
 // Packages
 const equals = require('deep-equal');
@@ -13,6 +15,7 @@ const debounce = require('lodash.debounce');
 const nodecg = require('./util/nodecg-api-context').get();
 
 const log = new nodecg.Logger(`${nodecg.bundleName}:caspar`);
+const currentRun = nodecg.Replicant('currentRun');
 const files = nodecg.Replicant('caspar:files');
 const connection = new CasparCG({
 	host: nodecg.bundleConfig.casparcg.host,
@@ -76,6 +79,16 @@ let durationFrames = 0;
 let fileMayHaveRestarted = false;
 
 const emitForegroundChanged = debounce(() => {
+	const logStr = format('%s, %s, %s\n',
+		new Date().toISOString(), foregroundFileName, currentRun.value.name);
+
+	log.info('Ad play:', logStr.replace('\n', ''));
+	fs.appendFile('logs/ad_log.csv', logStr, err => {
+		if (err) {
+			nodecg.log.error('[advertisements] Error appending to log:', err.stack);
+		}
+	});
+
 	module.exports.osc.emit('foregroundChanged', foregroundFileName);
 }, 1000 / 60);
 
