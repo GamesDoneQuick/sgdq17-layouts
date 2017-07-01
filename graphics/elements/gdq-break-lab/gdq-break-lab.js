@@ -32,7 +32,7 @@
 			bits.on('change', this.bitsChanged.bind(this));
 
 			Polymer.RenderStatus.beforeNextRender(this, () => {
-				TweenLite.set(this.$['tweet-bg'], { scaleY: 0 });
+				TweenLite.set(this.$['tweet-bg'], {scaleY: 0});
 			});
 		}
 
