@@ -140,6 +140,13 @@
 		}
 
 		_checkButtons() {
+			if (canSeekSchedule.status !== 'declared' ||
+				schedule.status !== 'declared' ||
+				currentRun.status !== 'declared' ||
+				nextRun.status !== 'declared') {
+				return;
+			}
+
 			let shouldDisableNext = false;
 			let shouldDisablePrev = false;
 			let shouldDisableTake = false;
