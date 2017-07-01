@@ -15,6 +15,7 @@ const TimeObject = require('../shared/classes/time-object');
 
 const log = new nodecg.Logger(`${nodecg.bundleName}:intermission`);
 const currentIntermission = nodecg.Replicant('currentIntermission');
+const canSeekSchedule = nodecg.Replicant('canSeekSchedule');
 const currentRun = nodecg.Replicant('currentRun');
 const schedule = nodecg.Replicant('schedule');
 const stopwatch = nodecg.Replicant('stopwatch');
@@ -35,6 +36,7 @@ stopwatch.on('change', (newVal, oldVal) => {
 	} else if (newVal.state !== oldVal.state) {
 		debouncedUpdateCurrentIntermissionState();
 	}
+	checkCanSeek();
 });
 caspar.replicants.files.on('change', () => {
 	debouncedUpdateCurrentIntermissionState();
@@ -54,6 +56,7 @@ nodecg.listenFor('intermissions:startAdBreak', adBreakId => {
 	}
 
 	currentAdBreak = adBreak;
+	checkCanSeek();
 
 	obs.setCurrentScene('Advertisements').then(() => {
 		return playAd(adBreak.ads[0]).then(() => {
@@ -196,6 +199,7 @@ function finishCurrentAdBreak() {
 	obs.setCurrentScene('Break').catch(e => {
 		log.error('Failed to set scene back to "Break" after completing ad break:', e);
 	});
+	checkCanSeek();
 }
 
 caspar.osc.on('frameChanged', (currentFrame, durationFrames) => {
@@ -231,6 +235,7 @@ function _updateCurrentIntermissionContent() {
 	};
 
 	_updateCurrentIntermissionState();
+	checkCanSeek();
 }
 
 /**
@@ -327,4 +332,21 @@ function calcIntermissionContent() {
  */
 function hasRunStarted() {
 	return stopwatch.value.raw > 0 || stopwatch.value.state !== 'stopped';
+}
+
+function checkCanSeek() {
+	// If the timer is running, disallow seeking.
+	if (stopwatch.value.state === 'running') {
+		canSeekSchedule.value = false;
+		return;
+	}
+
+	// If an ad break is in progress, disallow seeking.
+	if (currentAdBreak) {
+		canSeekSchedule.value = false;
+		return;
+	}
+
+	// Else, allow seeking.
+	canSeekSchedule.value = true;
 }

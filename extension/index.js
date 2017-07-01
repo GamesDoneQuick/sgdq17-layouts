@@ -22,11 +22,11 @@ module.exports = function (nodecg) {
 
 	// Be careful when re-ordering these.
 	// Some of them depend on Replicants initialized in others.
+	require('./timekeeping');
 	require('./obs');
 	require('./prizes');
 	require('./bids');
 	require('./total');
-	require('./timekeeping');
 	require('./nowplaying');
 	require('./countdown');
 	require('./intermissions');

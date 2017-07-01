@@ -1,10 +1,10 @@
-
 (function () {
 	'use strict';
 
-	const schedule = nodecg.Replicant('schedule');
+	const canSeekSchedule = nodecg.Replicant('canSeekSchedule');
 	const currentRun = nodecg.Replicant('currentRun');
 	const nextRun = nodecg.Replicant('nextRun');
+	const schedule = nodecg.Replicant('schedule');
 
 	class GdqSchedule extends Polymer.Element {
 		static get is() {
@@ -14,6 +14,10 @@
 		ready() {
 			super.ready();
 
+			canSeekSchedule.on('change', () => {
+				this._checkButtons();
+			});
+
 			schedule.on('change', newVal => {
 				if (!newVal) {
 					return;
@@ -22,6 +26,7 @@
 				this.$.typeahead.items = newVal
 					.filter(item => item.type === 'run')
 					.map(speedrun => speedrun.name);
+				this._checkButtons();
 			});
 
 			currentRun.on('change', newVal => {
@@ -30,26 +35,20 @@
 				}
 
 				this.$.currentRun.setRun(newVal);
-
-				// Disable "prev" button if at start of schedule
-				if (newVal.order <= 1) {
-					this.$.previous.setAttribute('disabled', 'true');
-				} else {
-					this.$.previous.removeAttribute('disabled');
-				}
+				this._checkButtons();
 			});
 
 			nextRun.on('change', newVal => {
 				// Disable "next" button if at end of schedule
 				if (newVal) {
-					this.$.next.removeAttribute('disabled');
-					this.$.editNext.removeAttribute('disabled');
 					this.$.nextRun.setRun(newVal);
+					this.$.editNext.removeAttribute('disabled');
 				} else {
-					this.$.next.setAttribute('disabled', 'true');
-					this.$.editNext.setAttribute('disabled', 'true');
 					this.$.nextRun.setRun({});
+					this.$.editNext.setAttribute('disabled', 'true');
 				}
+
+				this._checkButtons();
 			});
 		}
 
@@ -59,8 +58,6 @@
 		 * @returns {undefined}
 		 */
 		takeTypeahead() {
-			this.$.take.setAttribute('disabled', 'true');
-
 			const nameToFind = this.$.typeahead.value;
 
 			// Find the run based on the name.
@@ -70,8 +67,11 @@
 				}
 
 				if (run.name.toLowerCase() === nameToFind.toLowerCase()) {
+					this._pendingSetCurrentRunByOrderMessageResponse = true;
+					this._checkButtons();
 					nodecg.sendMessage('setCurrentRunByOrder', run.order, () => {
-						this.$.take.removeAttribute('disabled');
+						this._pendingSetCurrentRunByOrderMessageResponse = false;
+						this._checkButtons();
 						this.$.typeahead.value = '';
 						this.$.typeahead._suggestions = [];
 					});
@@ -82,9 +82,7 @@
 			});
 
 			if (!matched) {
-				this.$.take.removeAttribute('disabled');
-				this.$.toast.text = `Could not find speedrun with name "${nameToFind}".`;
-				this.$.toast.show();
+				this.$.toast.show(`Could not find speedrun with name "${nameToFind}".`);
 			}
 		}
 
@@ -110,13 +108,21 @@
 		}
 
 		next() {
-			this.$.next.setAttribute('disabled', 'true');
-			nodecg.sendMessage('nextRun');
+			this._pendingNextRunMessageResponse = true;
+			this._checkButtons();
+			nodecg.sendMessage('nextRun', () => {
+				this._pendingNextRunMessageResponse = false;
+				this._checkButtons();
+			});
 		}
 
 		previous() {
-			this.$.previous.setAttribute('disabled', 'true');
-			nodecg.sendMessage('previousRun');
+			this._pendingPreviousRunMessageResponse = true;
+			this._checkButtons();
+			nodecg.sendMessage('previousRun', () => {
+				this._pendingPreviousRunMessageResponse = false;
+				this._checkButtons();
+			});
 		}
 
 		editCurrent() {
@@ -131,6 +137,57 @@
 			editor.title = `Edit Next Run (#${nextRun.value.order})`;
 			editor.loadRun(nextRun.value);
 			this.$.editDialog.open();
+		}
+
+		_checkButtons() {
+			let shouldDisableNext = false;
+			let shouldDisablePrev = false;
+			let shouldDisableTake = false;
+			if (!canSeekSchedule.value ||
+				this._pendingSetCurrentRunByOrderMessageResponse ||
+				this._pendingPreviousRunMessageResponse ||
+				this._pendingNextRunMessageResponse) {
+				shouldDisableNext = true;
+				shouldDisablePrev = true;
+				shouldDisableTake = true;
+			}
+
+			// Disable nextRun button if there is no next run.
+			if (!nextRun.value) {
+				shouldDisableNext = true;
+			}
+
+			// Disable prevRun button if there is no prev run, or if there is no currentRun.
+			if (currentRun.value) {
+				// If there is any run in the schedule with an earlier order than currentRun,
+				// then there must be a prevRun.
+				const prevRunExists = schedule.value.find(run => {
+					return run.order < currentRun.value.order;
+				});
+				if (!prevRunExists) {
+					shouldDisablePrev = true;
+				}
+			} else {
+				shouldDisablePrev = true;
+			}
+
+			if (shouldDisableNext) {
+				this.$.next.setAttribute('disabled', 'true');
+			} else {
+				this.$.next.removeAttribute('disabled');
+			}
+
+			if (shouldDisablePrev) {
+				this.$.previous.setAttribute('disabled', 'true');
+			} else {
+				this.$.previous.removeAttribute('disabled');
+			}
+
+			if (shouldDisableTake) {
+				this.$.take.setAttribute('disabled', 'true');
+			} else {
+				this.$.take.removeAttribute('disabled');
+			}
 		}
 
 		_typeaheadKeyup(e) {

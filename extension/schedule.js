@@ -16,6 +16,7 @@ let adBreakIdCounter = 0;
 let updateInterval;
 
 const checklist = require('./checklist');
+const canSeekScheduleRep = nodecg.Replicant('canSeekSchedule');
 const currentRunRep = nodecg.Replicant('currentRun');
 const nextRunRep = nodecg.Replicant('nextRun');
 const runnersRep = nodecg.Replicant('runners', {defaultValue: [], persistent: false});
@@ -49,21 +50,32 @@ nodecg.listenFor('updateSchedule', (data, cb) => {
 	});
 });
 
-nodecg.listenFor('nextRun', cb => {
-	_seekToNextRun();
-	if (typeof cb === 'function') {
-		cb();
+nodecg.listenFor('nextRun', (data, cb) => {
+	if (!canSeekScheduleRep.value) {
+		nodecg.log.error('Attempted to seek to nextRun while seeking was forbidden.');
+		return cb();
 	}
+
+	_seekToNextRun();
+	cb();
 });
 
-nodecg.listenFor('previousRun', cb => {
-	_seekToPreviousRun();
-	if (typeof cb === 'function') {
-		cb();
+nodecg.listenFor('previousRun', (data, cb) => {
+	if (!canSeekScheduleRep.value) {
+		nodecg.log.error('Attempted to seek to previousRun while seeking was forbidden.');
+		return cb();
 	}
+
+	_seekToPreviousRun();
+	cb();
 });
 
 nodecg.listenFor('setCurrentRunByOrder', (order, cb) => {
+	if (!canSeekScheduleRep.value) {
+		nodecg.log.error('Attempted to seek to arbitrary run order %s while seeking was forbidden.', order);
+		return cb();
+	}
+
 	try {
 		_seekToArbitraryRun(order);
 	} catch (e) {
@@ -71,9 +83,7 @@ nodecg.listenFor('setCurrentRunByOrder', (order, cb) => {
 		return cb(e);
 	}
 
-	if (typeof cb === 'function') {
-		cb();
-	}
+	cb();
 });
 
 nodecg.listenFor('modifyRun', (data, cb) => {
