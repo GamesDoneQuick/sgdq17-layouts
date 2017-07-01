@@ -4,7 +4,7 @@
 	const FADE_DURATION = 0.66;
 	const FADE_OUT_EASE = Power1.easeIn;
 	const FADE_IN_EASE = Power1.easeOut;
-	const HOLD_DURATION = 20;
+	const HOLD_DURATION = 45;
 
 	class GdqSponsors extends Polymer.Element {
 		static get is() {
