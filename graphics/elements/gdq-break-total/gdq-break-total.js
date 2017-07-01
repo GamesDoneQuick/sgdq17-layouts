@@ -29,17 +29,9 @@ class GdqBreakTotal extends Polymer.Element {
 		});
 	}
 
-	handleDonation({amount, rawAmount, rawNewTotal}) {
-		const amountInCents = Math.round(rawAmount * 100);
+	handleDonation({amount, rawNewTotal}) {
 		const newTotalInCents = Math.round(rawNewTotal * 100);
-		if (this.totalInCents + amountInCents === newTotalInCents) {
-			this.donationText(amount);
-		} else {
-			console.log('off by %s, not playing donationText', (this.totalInCents + amountInCents) - newTotalInCents);
-			console.log('\trawNewTotal: %s, this.totalInCents: %s, rawAmount: %s, added: %s',
-				newTotalInCents, this.totalInCents, amountInCents, this.totalInCents + amountInCents);
-		}
-
+		this.donationText(amount);
 		this.totalInCents = newTotalInCents;
 	}
 
