@@ -52,7 +52,7 @@
 		"stageTechDuties": [
 			{"name": "Wipe Down Headsets", "complete": false},
 			{"name": "TVs have Video", "complete": false},
-			{"name": "Steam Notifications Off (PC)", "complete": false}
+			{"name": "Steam Notifications Off", "complete": false}
 		],
 		"audioEngineerDuties": [
 			{"name": "Runner Game Audio", "complete": false},
