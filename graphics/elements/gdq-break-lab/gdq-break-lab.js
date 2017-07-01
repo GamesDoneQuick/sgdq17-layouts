@@ -125,6 +125,7 @@
 				onStart() {
 					this.$['tweet-name-text'].innerText = `@${tweet.user.screen_name}`;
 				},
+				callbackScope: this,
 				y: '0%',
 				ease: Power2.easeOut
 			}, 'enter');
