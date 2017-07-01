@@ -96,7 +96,9 @@ nodecg.listenFor('intermissions:completeImageAd', adId => {
 	finishAd(currentlyPlayingAd);
 
 	if (nextAd) {
-		playAd(nextAd);
+		playAd(nextAd).catch(e => {
+			log.error('Failed to play ad:', e);
+		});
 	}
 });
 
@@ -142,7 +144,9 @@ caspar.osc.on('foregroundChanged', filename => {
 	let nextAdFilenameNoExt;
 	if (nextAd) {
 		nextAdFilenameNoExt = path.parse(nextAd.filename).name;
-		caspar.loadbgAuto(nextAdFilenameNoExt);
+		caspar.loadbgAuto(nextAdFilenameNoExt).catch(e => {
+			log.error('Failed to play ad:', e);
+		});
 	} else {
 		const frameTime = 1000 / adThatJustStarted.state.fps;
 		setTimeout(() => {

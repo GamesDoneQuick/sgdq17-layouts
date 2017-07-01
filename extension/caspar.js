@@ -17,18 +17,25 @@ const nodecg = require('./util/nodecg-api-context').get();
 const log = new nodecg.Logger(`${nodecg.bundleName}:caspar`);
 const currentRun = nodecg.Replicant('currentRun');
 const files = nodecg.Replicant('caspar:files');
+const connected = nodecg.Replicant('caspar:connected');
 const connection = new CasparCG({
 	host: nodecg.bundleConfig.casparcg.host,
 	port: nodecg.bundleConfig.casparcg.port,
+	autoReconnect: true,
+	autoReconnectInterval: true,
+	autoReconnectAttempts: Infinity,
 	onConnected() {
+		connected.value = true;
 		log.info('Connected.');
 		connection.lock(1, CasparEnum.Lock.ACQUIRE, nodecg.bundleConfig.casparcg.lockSecret).then(() => {
 			log.info('Lock acquired.');
 		}).catch(e => {
 			log.error('Failed to acquire lock:', e);
+			connected.value = false;
 		});
 	},
 	onDisconnected() {
+		connected.value = false;
 		log.warn('Disconnected.');
 	},
 	onLog(str) {
@@ -41,6 +48,7 @@ const connection = new CasparCG({
 
 updateFiles();
 setInterval(updateFiles, 60000);
+setInterval(checkConnection, 1000);
 
 module.exports = {
 	play(filename) {
@@ -145,5 +153,11 @@ function updateFiles() {
 		files.value = reply.response.data;
 	}).catch(e => {
 		log.error('Error updating files:', e);
+	});
+}
+
+function checkConnection() {
+	connection.info().catch(e => {
+		log.error('Error checking connection:', e);
 	});
 }
