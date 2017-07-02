@@ -26,7 +26,7 @@ class GdqRundownItem extends Polymer.Element {
 		this.$.right.innerHTML = '';
 		switch (item.type) {
 			case 'run':
-				this.name = item.name;
+				this.name = item.name.replace(/\\n/g, ' ');
 				this.$.right.innerHTML = item.category;
 				break;
 			case 'adBreak':
