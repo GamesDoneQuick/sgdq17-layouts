@@ -228,7 +228,6 @@ caspar.osc.on('frameChanged', (currentFrame, durationFrames) => {
 
 function playAd(ad) {
 	const adFilenameNoExt = path.parse(ad.filename).name;
-	caspar.resetState();
 	return caspar.play(adFilenameNoExt).then(() => {
 		ad.state.started = true;
 		ad.state.canStart = false;

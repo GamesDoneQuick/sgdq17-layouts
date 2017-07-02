@@ -75,7 +75,6 @@ module.exports = {
 	stop() {
 		return connection.stop(1).then(resetState);
 	},
-	resetState,
 	replicants: {
 		files
 	},
