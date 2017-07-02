@@ -72,7 +72,7 @@
 			"default": null
 		},
 		"twitch": {
-			"type": "object",
+			"type": ["object", "null"],
 			"additionalProperties": false,
 			"properties": {
 				"channelId": {
@@ -102,7 +102,8 @@
 					"default": false
 				}
 			},
-			"required": ["channelId", "oauthToken", "clientId", "bitsOffset", "debug"]
+			"required": ["channelId", "oauthToken", "clientId", "bitsOffset", "debug"],
+			"default": null
 		},
 		"footpedal": {
 			"type": "object",
@@ -118,7 +119,7 @@
 			}
 		},
 		"firebase": {
-			"type": "object",
+			"type": ["object", "null"],
 			"description": "Credentials used to log into Firebase, which is what hosts Lightning Round.",
 			"properties": {
 				"type": {
@@ -153,10 +154,11 @@
 				}
 			},
 			"required": ["project_id", "private_key", "client_email"],
-			"additionalProperties": false
+			"additionalProperties": false,
+			"default": null
 		},
 		"tracker": {
-			"type": "object",
+			"type": ["object", "null"],
 			"properties": {
 				"username": {
 					"type": "string"
@@ -166,7 +168,8 @@
 				}
 			},
 			"description": "Login information for the private areas of the tracker API.",
-			"required": ["username", "password"]
+			"required": ["username", "password"],
+			"default": null
 		},
 		"youtubeUploadScriptPath": {
 			"type": "string"
@@ -187,7 +190,8 @@
 					"default": 5250
 				},
 				"lockSecret": {
-					"type": "string"
+					"type": "string",
+					"default": "defaultLockSecret"
 				},
 				"localOscPort": {
 					"type": "number",
