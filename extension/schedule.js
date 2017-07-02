@@ -273,8 +273,8 @@ function update() {
 		}
 
 		return true;
-	}).catch(err => {
-		if (err.code === 403) {
+	}).catch(({error, response} = {}) => {
+		if (error && (error.statusCode === 403 || error.code === 403)) {
 			nodecg.log.warn('[schedule] Permission denied, refreshing session and trying again...');
 			emitter.emit('permissionDenied');
 		} else {

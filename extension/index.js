@@ -39,8 +39,8 @@ module.exports = function (nodecg) {
 		});
 	});
 
-	// Tracker logins expire every 2 hours. Re-login every 110 minutes.
-	setInterval(loginToTracker, 110 * 60 * 1000);
+	// Tracker logins expire every 2 hours. Re-login every 90 minutes.
+	setInterval(loginToTracker, 90 * 60 * 1000);
 
 	if (nodecg.bundleConfig.twitch) {
 		require('./twitch-ads');
