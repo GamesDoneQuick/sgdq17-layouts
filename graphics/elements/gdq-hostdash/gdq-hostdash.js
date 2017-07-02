@@ -3,7 +3,6 @@
 
 	const METROID_BID_ID = 5744;
 	const EVENT_START_TIMESTAMP = 1499013000000;
-	const total = nodecg.Replicant('total');
 	const allBids = nodecg.Replicant('allBids');
 	const checklistComplete = nodecg.Replicant('checklistComplete');
 	const stopwatch = nodecg.Replicant('stopwatch');
@@ -23,9 +22,6 @@
 					type: Object
 				},
 				elapsedTime: {
-					type: String
-				},
-				total: {
 					type: String
 				},
 				metroidBid: {
@@ -55,10 +51,6 @@
 			this.updateTimeElapsed = this.updateTimeElapsed.bind(this);
 			this.updateTimeElapsed();
 			setInterval(this.updateTimeElapsed, 1000);
-
-			total.on('change', newVal => {
-				this.total = newVal.formatted;
-			});
 
 			allBids.on('change', newVal => {
 				const metroidBid = newVal.find(bid => bid.id === METROID_BID_ID);

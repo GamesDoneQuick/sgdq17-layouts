@@ -13,6 +13,7 @@
 <link rel="import" href="gdq-hostdash-bids.html">
 <link rel="import" href="gdq-hostdash-prizes.html">
 <link rel="import" href="gdq-hostdash-styles.html">
+<link rel="import" href="gdq-hostdash-totals.html">
 <link rel="import" href="gdq-hostdash-twitch-ads.html">
 
 <dom-module id="gdq-hostdash">
@@ -51,14 +52,9 @@
 				grid-gap: 10px;
 			}
 
-			#total {
+			#totals {
 				grid-column: 1;
 				grid-row: 1;
-				font-size: 72px;
-				font-weight: 700;
-				line-height: 43px;
-				@apply --layout-vertical;
-				@apply --layout-center-center;
 			}
 
 			#prizes {
@@ -224,7 +220,7 @@
 		</div>
 
 		<div id="gridWrapper">
-			<div id="total" class="material">[[total]]</div>
+			<gdq-hostdash-totals id="totals"></gdq-hostdash-totals>
 
 			<gdq-hostdash-prizes id="prizes" class="material"></gdq-hostdash-prizes>
 
