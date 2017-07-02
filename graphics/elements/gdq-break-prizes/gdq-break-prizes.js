@@ -242,22 +242,7 @@
 		}
 
 		_calcPrizesToDisplay(prizesArray) {
-			const currentGrandPrizes = prizesArray.filter(prize => prize.grand);
-			const currentNormalPrizes = prizesArray.filter(prize => !prize.grand);
-			const prizesToDisplay = currentNormalPrizes.slice(0);
-			if (currentGrandPrizes.length) {
-				// Figure out what grand prize to show in this batch.
-				const lastShownGrandPrizeIdx = currentGrandPrizes.indexOf(this.lastShownGrandPrize);
-				const nextGrandPrizeIdx = lastShownGrandPrizeIdx >= currentGrandPrizes.length - 1 ?
-					0 : lastShownGrandPrizeIdx + 1;
-				const nextGrandPrize = currentGrandPrizes[nextGrandPrizeIdx];
-
-				if (nextGrandPrize) {
-					prizesToDisplay.unshift(nextGrandPrize);
-				}
-			}
-
-			return prizesToDisplay;
+			return prizesArray.slice(0);
 		}
 
 		_typeAnim($el, {splitType = 'chars,words'} = {}) {
