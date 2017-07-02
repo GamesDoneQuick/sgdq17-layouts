@@ -23,7 +23,7 @@ const schemasPath = path.resolve(__dirname, '../schemas/');
 const adBreakSchema = JSON.parse(fs.readFileSync(path.join(schemasPath, 'types/adBreak.json')));
 const adSchema = JSON.parse(fs.readFileSync(path.join(schemasPath, 'types/ad.json')));
 const debouncedUpdateCurrentIntermissionContent = debounce(_updateCurrentIntermissionContent, 33);
-const debouncedUpdateCurrentIntermissionState = debounce(_updateCurrentIntermissionContent, 33);
+const debouncedUpdateCurrentIntermissionState = debounce(_updateCurrentIntermissionState, 33);
 
 currentRun.on('change', (newVal, oldVal) => {
 	if (!oldVal || newVal.order !== oldVal.order) {
