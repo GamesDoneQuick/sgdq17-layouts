@@ -181,7 +181,6 @@ function pulse(showingRep, pulseTimeRemainingRep, duration) {
 
 	// Count down lowerthirdPulseTimeRemaining
 	pulseIntervalMap.set(showingRep, setInterval(() => {
-		console.log('PULSE');
 		if (pulseTimeRemainingRep.value > 0) {
 			pulseTimeRemainingRep.value--;
 		} else {
@@ -192,7 +191,6 @@ function pulse(showingRep, pulseTimeRemainingRep, duration) {
 
 	// End pulse after "duration" seconds
 	pulseTimeoutMap.set(showingRep, setTimeout(() => {
-		console.log('TIMEOUT END!');
 		clearTimerFromMap(showingRep, pulseIntervalMap);
 		pulseTimeRemainingRep.value = 0;
 		showingRep.value = false;
