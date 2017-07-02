@@ -151,6 +151,7 @@ udpPort.on('close', () => {
 // Open the socket.
 udpPort.open();
 
+let isFirstFilesUpdate = true;
 /**
  * Updates the caspar:files replicant.
  * @returns {undefined}
@@ -210,6 +211,10 @@ function updateFiles() {
 					return;
 				}
 				files.value = remapped;
+				if (isFirstFilesUpdate) {
+					module.exports.osc.emit('initialized');
+					isFirstFilesUpdate = false;
+				}
 			}
 		}).catch(e => {
 			log.error('Error updating files:', e);

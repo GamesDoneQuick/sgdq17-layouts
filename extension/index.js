@@ -29,8 +29,11 @@ module.exports = function (nodecg) {
 	require('./total');
 	require('./nowplaying');
 	require('./countdown');
-	require('./intermissions');
-	require('./caspar');
+
+	// This is a hack.
+	require('./caspar').osc.once('initialized', () => {
+		require('./intermissions');
+	});
 
 	loginToTracker().then(() => {
 		const schedule = require('./schedule');
