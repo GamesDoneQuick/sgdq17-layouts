@@ -162,6 +162,9 @@ caspar.osc.on('foregroundChanged', filename => {
 		setTimeout(() => {
 			if (!currentlyPlayingAd) {
 				log.warn('Had no currentlyPlayingAd after the timeout, that\'s weird.');
+				caspar.clear().catch(err => {
+					log.error('Failed to clear Caspar:', err);
+				});
 				return;
 			}
 
@@ -203,7 +206,9 @@ function finishAdBreak(adBreak) {
 }
 
 function finishCurrentAdBreak() {
-	caspar.clear();
+	caspar.clear().catch(err => {
+		log.error('Failed to clear Caspar:', err);
+	});
 	finishAd(currentlyPlayingAd);
 	finishAdBreak(currentAdBreak);
 	currentAdBreak = null;
