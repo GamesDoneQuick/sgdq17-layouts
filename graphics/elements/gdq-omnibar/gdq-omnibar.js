@@ -123,7 +123,10 @@
 				});
 				Polymer.flush(); // Might not be necessary, but better safe than sorry.
 				Polymer.RenderStatus.afterNextRender(this, () => {
-					tl.resume(null, false);
+					Polymer.flush(); // Might not be necessary, but better safe than sorry.
+					requestAnimationFrame(() => {
+						tl.resume(null, false);
+					});
 				});
 			});
 		}
