@@ -65,10 +65,20 @@ module.exports = {
 		return connection.loadbgAuto(1, undefined, filename, false, CasparEnum.Transition.CUT);
 	},
 	clear() {
-		return connection.clear(1);
+		return connection.clear(1).then(() => {
+			foregroundFileName = '';
+			currentFrame = 0;
+			durationFrames = 0;
+			fileMayHaveRestarted = false;
+		});
 	},
 	stop() {
-		return connection.stop(1);
+		return connection.stop(1).then(() => {
+			foregroundFileName = '';
+			currentFrame = 0;
+			durationFrames = 0;
+			fileMayHaveRestarted = false;
+		});
 	},
 	replicants: {
 		files
