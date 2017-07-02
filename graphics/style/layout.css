@@ -24,5 +24,5 @@
 
 #container > #addon {
 	pointer-events: none;
-	z-index: 11;
+	z-index: -11;
 }
