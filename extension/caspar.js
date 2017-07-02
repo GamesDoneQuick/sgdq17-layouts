@@ -15,6 +15,11 @@ const debounce = require('lodash.debounce');
 // Ours
 const nodecg = require('./util/nodecg-api-context').get();
 
+let foregroundFileName = '';
+let currentFrame = 0;
+let durationFrames = 0;
+let fileMayHaveRestarted = false;
+
 const log = new nodecg.Logger(`${nodecg.bundleName}:caspar`);
 const currentRun = nodecg.Replicant('currentRun');
 const files = nodecg.Replicant('caspar:files', {persistent: false});
@@ -65,26 +70,23 @@ module.exports = {
 		return connection.loadbgAuto(1, undefined, filename, false, CasparEnum.Transition.CUT);
 	},
 	clear() {
-		return connection.clear(1).then(() => {
-			foregroundFileName = '';
-			currentFrame = 0;
-			durationFrames = 0;
-			fileMayHaveRestarted = false;
-		});
+		return connection.clear(1).then(resetState);
 	},
 	stop() {
-		return connection.stop(1).then(() => {
-			foregroundFileName = '';
-			currentFrame = 0;
-			durationFrames = 0;
-			fileMayHaveRestarted = false;
-		});
+		return connection.stop(1).then(resetState);
 	},
 	replicants: {
 		files
 	},
 	osc: new EventEmitter()
 };
+
+function resetState() {
+	foregroundFileName = '';
+	currentFrame = 0;
+	durationFrames = 0;
+	fileMayHaveRestarted = false;
+}
 
 nodecg.listenFor('caspar:play', module.exports.play);
 
@@ -93,11 +95,6 @@ const udpPort = new osc.UDPPort({
 	localPort: nodecg.bundleConfig.casparcg.localOscPort,
 	metadata: true
 });
-
-let foregroundFileName = '';
-let currentFrame = 0;
-let durationFrames = 0;
-let fileMayHaveRestarted = false;
 
 const emitForegroundChanged = debounce(() => {
 	const logStr = format('%s, %s, %s\n',
@@ -111,7 +108,7 @@ const emitForegroundChanged = debounce(() => {
 	});
 
 	module.exports.osc.emit('foregroundChanged', foregroundFileName);
-}, 1000 / 60);
+}, (1000 / 60) * 3);
 
 udpPort.on('message', message => {
 	if (message.address === '/channel/1/stage/layer/0/file/frame') {
