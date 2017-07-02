@@ -46,7 +46,14 @@ class GdqOmnibarBid extends Polymer.Element {
 	}
 
 	formatDescription(bid) {
-		return bid ? (bid.description || bid.name).replace('||', ' -- ') : 'Be the first to bid!';
+		if (bid && !(bid.description || bid.name)) {
+			nodecg.log.error('Got weird bid:', bid);
+			return 'Be the first to bid!';
+		}
+
+		return bid ?
+			(bid.description || bid.name).replace('||', ' -- ') :
+			'Be the first to bid!';
 	}
 
 	formatTotal(bid) {
