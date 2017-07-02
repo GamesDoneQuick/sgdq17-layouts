@@ -197,6 +197,9 @@
 			"required": ["host", "port", "lockSecret", "localOscPort"]
 		}
 	},
+	"adsPath": {
+		"type": "string"
+	},
 
-	"required": ["tracker"]
+	"required": ["tracker", "adsPath"]
 }

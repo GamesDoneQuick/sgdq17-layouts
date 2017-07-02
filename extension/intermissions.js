@@ -115,6 +115,7 @@ caspar.osc.on('foregroundChanged', filename => {
 		return;
 	}
 
+	// Images include the media folder name in the path, but videos don't... dumb.
 	if (filename.startsWith('media/')) {
 		filename = filename.replace('media/', '');
 	}
@@ -129,6 +130,12 @@ caspar.osc.on('foregroundChanged', filename => {
 	});
 	if (!adThatJustStarted) {
 		currentlyPlayingAd = null;
+		currentAdBreak = null;
+		caspar.clear().then(() => {
+			checkCanSeek();
+		}).catch(err => {
+			log.error('Failed to clear Caspar:', err);
+		});
 		log.error('A video started playing in CasparCG, but it did not correspond to any ad in the current adBreak:', filename);
 		return;
 	}
@@ -263,8 +270,7 @@ function _updateCurrentIntermissionState() {
 
 			item.ads.forEach(ad => {
 				const casparFile = caspar.replicants.files.value.find(file => {
-					const adFilenameNoExt = path.parse(ad.filename).name;
-					return file.name.toLowerCase() === adFilenameNoExt.toLowerCase();
+					return file.nameWithExt.toLowerCase() === ad.filename.toLowerCase();
 				});
 
 				if (!casparFile) {

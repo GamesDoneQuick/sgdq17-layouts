@@ -4,6 +4,7 @@
 const EventEmitter = require('events');
 const fs = require('fs');
 const format = require('util').format;
+const path = require('path');
 
 // Packages
 const equals = require('deep-equal');
@@ -16,7 +17,7 @@ const nodecg = require('./util/nodecg-api-context').get();
 
 const log = new nodecg.Logger(`${nodecg.bundleName}:caspar`);
 const currentRun = nodecg.Replicant('currentRun');
-const files = nodecg.Replicant('caspar:files');
+const files = nodecg.Replicant('caspar:files', {persistent: false});
 const connected = nodecg.Replicant('caspar:connected');
 const connection = new CasparCG({
 	host: nodecg.bundleConfig.casparcg.host,
@@ -45,6 +46,8 @@ const connection = new CasparCG({
 		log.error(error);
 	}
 });
+
+connection.clear(1);
 
 updateFiles();
 setInterval(updateFiles, 60000);
@@ -145,14 +148,64 @@ udpPort.open();
  * @returns {undefined}
  */
 function updateFiles() {
-	connection.cls().then(reply => {
-		if (equals(reply.response.data, files.value)) {
+	fs.readdir(nodecg.bundleConfig.adsPath, (err, items) => {
+		if (err) {
+			log.error('Error updating files:', err);
 			return;
 		}
 
-		files.value = reply.response.data;
-	}).catch(e => {
-		log.error('Error updating files:', e);
+		let hadError = false;
+		const foundFiles = [];
+		items.forEach(item => {
+			const fullPath = path.join(nodecg.bundleConfig.adsPath, item);
+			const stats = fs.lstatSync(fullPath);
+
+			// If this isn't a file, we don't care.
+			if (!stats.isFile()) {
+				return;
+			}
+
+			// If another file with the same name already exists, something is wrong.
+			const foundAnotherFileWithSameName = foundFiles.find(foundFile => {
+				return path.parse(foundFile).name === path.parse(item).name;
+			});
+			if (foundAnotherFileWithSameName) {
+				log.error('Found two files with the same name (%s) in the adsPath!', path.parse(item).name);
+				return;
+			}
+
+			foundFiles.push(item);
+		});
+
+		if (hadError) {
+			return;
+		}
+
+		connection.cls().then(reply => {
+			const remapped = reply.response.data.map(data => {
+				const nameWithExt = foundFiles.find(foundFile => {
+					return path.parse(foundFile).name.toLowerCase() === data.name.toLowerCase();
+				});
+
+				if (!nameWithExt) {
+					log.error('A file reported by Caspar was not found in adsPath:', data.name);
+					hadError = true;
+					return null;
+				}
+
+				data.nameWithExt = nameWithExt;
+				return data;
+			});
+
+			if (!hadError) {
+				if (equals(remapped, files.value)) {
+					return;
+				}
+				files.value = remapped;
+			}
+		}).catch(e => {
+			log.error('Error updating files:', e);
+		});
 	});
 }
 
