@@ -22,8 +22,8 @@ const stopwatch = nodecg.Replicant('stopwatch');
 const schemasPath = path.resolve(__dirname, '../schemas/');
 const adBreakSchema = JSON.parse(fs.readFileSync(path.join(schemasPath, 'types/adBreak.json')));
 const adSchema = JSON.parse(fs.readFileSync(path.join(schemasPath, 'types/ad.json')));
-const debouncedUpdateCurrentIntermissionContent = debounce(_updateCurrentIntermissionContent, 10);
-const debouncedUpdateCurrentIntermissionState = debounce(_updateCurrentIntermissionContent, 10);
+const debouncedUpdateCurrentIntermissionContent = debounce(_updateCurrentIntermissionContent, 33);
+const debouncedUpdateCurrentIntermissionState = debounce(_updateCurrentIntermissionContent, 33);
 
 currentRun.on('change', (newVal, oldVal) => {
 	if (!oldVal || newVal.order !== oldVal.order) {
@@ -160,6 +160,11 @@ caspar.osc.on('foregroundChanged', filename => {
 	} else {
 		const frameTime = 1000 / adThatJustStarted.state.fps;
 		setTimeout(() => {
+			if (!currentlyPlayingAd) {
+				log.warn('Had no currentlyPlayingAd after the timeout, that\'s weird.');
+				return;
+			}
+
 			if (currentlyPlayingAd.adType.toLowerCase() === 'video') {
 				finishCurrentAdBreak();
 			} else {
