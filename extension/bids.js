@@ -81,7 +81,6 @@ function processRawBids(bids) {
 	// options.
 	const parentBidsById = {};
 	const childBids = [];
-	let bitsIncentiveTotalOffset = 0;
 	bids.sort(sortBidsByEarliestEndTime).forEach(bid => {
 		// If this bid is an option for a donation war, add it to childBids array.
 		// Else, add it to the parentBidsById object.
@@ -116,11 +115,10 @@ function processRawBids(bids) {
 				if (formattedParentBid.isBitsChallenge) {
 					formattedParentBid.goal = numeral(goal * 100).format('0,0');
 					formattedParentBid.rawGoal = parseFloat(goal * 100);
-					formattedParentBid.rawTotal = Math.min(bitsTotal.value - bitsIncentiveTotalOffset, formattedParentBid.rawGoal);
+					formattedParentBid.rawTotal = Math.min(bitsTotal.value, formattedParentBid.rawGoal);
 					formattedParentBid.total = numeral(formattedParentBid.rawTotal).format('0,0');
 					formattedParentBid.goalMet = formattedParentBid.rawTotal >= formattedParentBid.rawGoal;
 					formattedParentBid.state = formattedParentBid.goalMet ? 'CLOSED' : 'OPENED';
-					bitsIncentiveTotalOffset += formattedParentBid.rawTotal;
 				} else {
 					formattedParentBid.goal = numeral(goal).format('$0,0[.]00');
 					formattedParentBid.rawGoal = goal;
