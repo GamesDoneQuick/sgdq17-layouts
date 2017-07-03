@@ -32,7 +32,7 @@ class GdqRundownItem extends Polymer.Element {
 				this.name = item.name.replace(/\\n/g, ' ');
 				this.$.topRight.innerHTML = item.category;
 
-				this.$.bottomRight.textContent = `${item.console} - ${item.releaseYear}`;
+				this.$.bottomRight.textContent = `${item.console} - ${item.estimate}`;
 
 				item.runners.forEach(runner => {
 					const span = document.createElement('span');
