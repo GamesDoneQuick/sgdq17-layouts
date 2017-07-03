@@ -141,8 +141,8 @@
 					this.$['tug-bar-center-label'].style.borderColor = 'white';
 					this.shadowRoot.querySelector('#tug-left .tug-option-total').innerHTML = bid.options[0].total;
 					this.shadowRoot.querySelector('#tug-right .tug-option-total').innerHTML = bid.options[1].total;
-					this.shadowRoot.querySelector('#tug-left .tug-option-desc').innerHTML = bid.options[0].description;
-					this.shadowRoot.querySelector('#tug-right .tug-option-desc').innerHTML = bid.options[1].description;
+					this.shadowRoot.querySelector('#tug-left .tug-option-desc').innerHTML = bid.options[0].description || bid.options[0].name;
+					this.shadowRoot.querySelector('#tug-right .tug-option-desc').innerHTML = bid.options[1].description || bid.options[1].name;
 					this.$['tug-bar-center-label-leftarrow'].style.display = 'none';
 					this.$['tug-bar-center-label-rightarrow'].style.display = 'none';
 					this.$['tug-bar-center-label-delta'].innerHTML = '$0';
