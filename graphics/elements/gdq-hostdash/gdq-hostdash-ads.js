@@ -24,7 +24,7 @@
 			super.ready();
 			this._checkCover = this._checkCover.bind(this);
 			currentIntermission.on('change', newVal => {
-				this.content = newVal.content;
+				this.content = newVal ? newVal.content : [];
 			});
 			casparConnected.on('change', this._checkCover);
 			streamingOBSWebsocket.on('change', this._checkCover);
