@@ -352,7 +352,7 @@
 
 					// Options that aren't the first option show their delta to the leader options.
 					if (index > 0 && bid.options[0].rawTotal > option.rawTotal) {
-						element.delta = '-' + (bid.options[0].rawTotal - option.rawTotal).toLocaleString('en-US');
+						element.delta = '-$' + (bid.options[0].rawTotal - option.rawTotal).toLocaleString('en-US');
 					}
 
 					return element;
