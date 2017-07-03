@@ -3,8 +3,8 @@
 // Packages
 const equal = require('deep-equal');
 const numeral = require('numeral');
-const Q = require('q');
-const request = require('request');
+const request = require('request-promise');
+const BB = require('bluebird');
 
 // Ours
 const nodecg = require('./util/nodecg-api-context').get();
@@ -16,8 +16,8 @@ const BIDS_URL = nodecg.bundleConfig.useMockData ?
 const CURRENT_BIDS_URL = nodecg.bundleConfig.useMockData ?
 	'https://dl.dropboxusercontent.com/u/6089084/gdq_mock/currentBids.json' :
 	'https://gamesdonequick.com/tracker/search/?type=allbids&feed=current&event=20';
-const currentBids = nodecg.Replicant('currentBids', {defaultValue: []});
-const allBids = nodecg.Replicant('allBids', {defaultValue: []});
+const currentBidsRep = nodecg.Replicant('currentBids', {defaultValue: []});
+const allBidsRep = nodecg.Replicant('allBids', {defaultValue: []});
 const bitsTotal = nodecg.Replicant('bits:total');
 
 // Get latest bid data every POLL_INTERVAL milliseconds
@@ -31,62 +31,51 @@ update();
 function update() {
 	nodecg.sendMessage('bids:updating');
 
-	const currentPromise = Q.defer();
-	request(CURRENT_BIDS_URL, (err, res, body) => {
-		handleResponse(err, res, body, currentPromise, {
-			label: 'current bids',
-			replicant: currentBids
-		});
+	const currentPromise = request({
+		uri: CURRENT_BIDS_URL,
+		json: true
 	});
 
-	const allPromise = Q.defer();
-	request(BIDS_URL, (err, res, body) => {
-		handleResponse(err, res, body, allPromise, {
-			label: 'all bids',
-			replicant: allBids
-		});
+	const allPromise = request({
+		uri: BIDS_URL,
+		json: true
 	});
 
-	return Q.all([
-		currentPromise.promise,
-		allPromise.promise
-	]).fin(() => {
+	return BB.all([
+		currentPromise, allPromise
+	]).then(([currentBidsJSON, allBidsJSON]) => {
+		const currentBids = processRawBids(currentBidsJSON);
+		const allBids = processRawBids(allBidsJSON);
+
+		// Bits incentives are always marked as "hidden", so they will never show in "current".
+		// We must manually add them to "current".
+		allBids.forEach(bid => {
+			if (!bid.isBitsChallenge) {
+				return;
+			}
+
+			const bidAlreadyExistsInCurrentBids = currentBids.find(currentBid => currentBid.id === bid.id);
+			if (!bidAlreadyExistsInCurrentBids) {
+				currentBids.unshift(bid);
+			}
+		});
+
+		if (!equal(allBidsRep.value, allBids)) {
+			allBidsRep.value = allBids;
+		}
+
+		if (!equal(currentBidsRep.value, currentBids)) {
+			currentBidsRep.value = currentBids;
+		}
+	}).catch(err => {
+		nodecg.log.error('Error updating bids:', err);
+	}).finally(() => {
 		nodecg.sendMessage('bids:updated');
 		setTimeout(update, POLL_INTERVAL);
 	});
 }
 
-/**
- * A kind of weird and slightly polymorphic function to handle the various responses from the tracker that we receive.
- * @param {Error} [error] - The error (if any) encountered during the request.
- * @param {Object} response - The request response.
- * @param {Object} body - The request body.
- * @param {Object} deferred - A deferred promise object.
- * @param {Object} opts - Options.
- * @returns {undefined}
- */
-function handleResponse(error, response, body, deferred, opts) {
-	if (error || response.statusCode !== 200) {
-		let msg = `Could not get ${opts.label}, unknown error`;
-		if (error) {
-			msg = `Could not get ${opts.label}:\n${error.message}`;
-		} else if (response) {
-			msg = `Could not get ${opts.label}, response code ${response.statusCode}`;
-		}
-		nodecg.log.error(msg);
-		deferred.reject(msg);
-		return;
-	}
-
-	let bids;
-	try {
-		bids = JSON.parse(body);
-	} catch (e) {
-		nodecg.log.error(e.stack);
-		deferred.reject(e);
-		return;
-	}
-
+function processRawBids(bids) {
 	// The response from the tracker is flat. This is okay for donation incentives, but it requires
 	// us to do some extra work to figure out what the options are for donation wars that have multiple
 	// options.
@@ -130,6 +119,7 @@ function handleResponse(error, response, body, deferred, opts) {
 					formattedParentBid.rawTotal = Math.min(bitsTotal.value - bitsIncentiveTotalOffset, formattedParentBid.rawGoal);
 					formattedParentBid.total = numeral(formattedParentBid.rawTotal).format('0,0');
 					formattedParentBid.goalMet = formattedParentBid.rawTotal >= formattedParentBid.rawGoal;
+					formattedParentBid.state = formattedParentBid.goalMet ? 'CLOSED' : 'OPENED';
 					bitsIncentiveTotalOffset += formattedParentBid.rawTotal;
 				} else {
 					formattedParentBid.goal = numeral(goal).format('$0,0[.]00');
@@ -205,15 +195,7 @@ function handleResponse(error, response, body, deferred, opts) {
 
 	// Yes, we need to now sort again.
 	bidsArray = bidsArray.sort(sortBidsByEarliestEndTime);
-
-	// After all that, deep-compare our newly-calculated parentBidsById object against the existing value.
-	// Only assign the replicant if it's actually different.
-	if (equal(bidsArray, opts.replicant.value)) {
-		deferred.resolve(false);
-	} else {
-		opts.replicant.value = bidsArray;
-		deferred.resolve(true);
-	}
+	return bidsArray;
 }
 
 function sortBidsByEarliestEndTime(a, b) {
