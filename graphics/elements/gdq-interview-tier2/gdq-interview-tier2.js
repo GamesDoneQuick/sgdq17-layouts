@@ -193,7 +193,15 @@
 		}
 
 		autoQuestion() {
-			nodecg.sendMessage('pulseInterviewQuestion', 10);
+			this._markingTopQuestionAsDone = true;
+			nodecg.sendMessage('pulseInterviewQuestion', questionSortMap.value[0], error => {
+				this._markingTopQuestionAsDone = false;
+				if (error) {
+					this.$.errorToast.text = 'Failed to load next interview question.';
+					this.$.errorToast.show();
+					nodecg.log.error(error);
+				}
+			});
 		}
 
 		showLowerthird() {
@@ -259,6 +267,12 @@
 
 		any(...args) {
 			return args.find(arg => arg);
+		}
+
+		calcShowNextDisabled(replies, _markingTopQuestionAsDone) {
+			if (replies.length <= 0 || _markingTopQuestionAsDone) {
+				return true;
+			}
 		}
 
 		_flashBgIfAppropriate(operations) {

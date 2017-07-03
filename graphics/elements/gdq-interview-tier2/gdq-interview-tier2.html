@@ -294,7 +294,7 @@
 					id="showNext"
 					raised
 					on-tap="showNextQuestion"
-					disabled="[[!any(replies.length, _markingTopQuestionAsDone)]]">
+					disabled="[[calcShowNextDisabled(replies, _markingTopQuestionAsDone)]]">
 					Load Next Approved Question
 				</paper-button>
 			</div>

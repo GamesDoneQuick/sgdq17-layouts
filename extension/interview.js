@@ -45,8 +45,12 @@ nodecg.listenFor('pulseInterviewLowerthird', duration => {
 	pulse(lowerthirdShowing, lowerthirdPulseTimeRemaining, duration);
 });
 
-nodecg.listenFor('pulseInterviewQuestion', duration => {
-	pulse(questionShowing, questionPulseTimeRemaining, duration);
+nodecg.listenFor('pulseInterviewQuestion', (id, cb) => {
+	pulse(questionShowing, questionPulseTimeRemaining, 10).then(() => {
+		markQuestionAsDone(id, cb);
+	}).catch(error => {
+		cb(error);
+	});
 });
 
 questionShowing.on('change', newVal => {
@@ -108,7 +112,7 @@ database.ref('/active_tweet_id').on('value', snapshot => {
 
 nodecg.listenFor('interview:updateQuestionSortMap', updateQuestionSortMap);
 
-nodecg.listenFor('interview:markQuestionAsDone', (id, cb = function () {}) => {
+function markQuestionAsDone(id, cb = function () {}) {
 	if (!_repliesRef) {
 		return cb(new Error('_repliesRef not ready!'));
 	}
@@ -134,7 +138,9 @@ nodecg.listenFor('interview:markQuestionAsDone', (id, cb = function () {}) => {
 		nodecg.log.error('[interview]', error);
 		cb(error);
 	});
-});
+}
+
+nodecg.listenFor('interview:markQuestionAsDone', markQuestionAsDone);
 
 nodecg.listenFor('interview:end', () => {
 	database.ref('/active_tweet_id').set(0);
@@ -169,32 +175,35 @@ function updateQuestionSortMap() {
  * @returns {undefined}
  */
 function pulse(showingRep, pulseTimeRemainingRep, duration) {
-	// Don't stack pulses
-	if (showingRep.value) {
-		return;
-	}
+	return new Promise(resolve => {
+		// Don't stack pulses
+		if (showingRep.value) {
+			return resolve();
+		}
 
-	showingRep.value = true;
-	pulseTimeRemainingRep.value = duration;
-	clearTimerFromMap(showingRep, pulseIntervalMap);
-	clearTimerFromMap(showingRep, pulseTimeoutMap);
+		showingRep.value = true;
+		pulseTimeRemainingRep.value = duration;
+		clearTimerFromMap(showingRep, pulseIntervalMap);
+		clearTimerFromMap(showingRep, pulseTimeoutMap);
 
-	// Count down lowerthirdPulseTimeRemaining
-	pulseIntervalMap.set(showingRep, setInterval(() => {
-		if (pulseTimeRemainingRep.value > 0) {
-			pulseTimeRemainingRep.value--;
-		} else {
+		// Count down lowerthirdPulseTimeRemaining
+		pulseIntervalMap.set(showingRep, setInterval(() => {
+			if (pulseTimeRemainingRep.value > 0) {
+				pulseTimeRemainingRep.value--;
+			} else {
+				clearTimerFromMap(showingRep, pulseIntervalMap);
+				pulseTimeRemainingRep.value = 0;
+			}
+		}, 1000));
+
+		// End pulse after "duration" seconds
+		pulseTimeoutMap.set(showingRep, setTimeout(() => {
 			clearTimerFromMap(showingRep, pulseIntervalMap);
 			pulseTimeRemainingRep.value = 0;
-		}
-	}, 1000));
-
-	// End pulse after "duration" seconds
-	pulseTimeoutMap.set(showingRep, setTimeout(() => {
-		clearTimerFromMap(showingRep, pulseIntervalMap);
-		pulseTimeRemainingRep.value = 0;
-		showingRep.value = false;
-	}, duration * 1000));
+			showingRep.value = false;
+			resolve();
+		}, duration * 1000));
+	});
 }
 
 function clearTimerFromMap(key, map) {
