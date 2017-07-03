@@ -84,7 +84,10 @@ function processRawBids(bids) {
 	bids.sort(sortBidsByEarliestEndTime).forEach(bid => {
 		// If this bid is an option for a donation war, add it to childBids array.
 		// Else, add it to the parentBidsById object.
-		if (bid.fields.parent && bid.fields.state.toLowerCase() !== 'denied') {
+		if (bid.fields.parent) {
+			if (bid.fields.state.toLowerCase() !== 'denied') {
+				return;
+			}
 			childBids.push(bid);
 		} else {
 			// Format the bid to clean up unneeded cruft.
