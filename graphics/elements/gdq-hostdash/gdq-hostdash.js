@@ -172,7 +172,7 @@
 		}
 
 		calcMetroidStateText(bidState) {
-			if (bidState && bidState.toLowerCase() === 'open') {
+			if (bidState && bidState.toLowerCase() === 'opened') {
 				this.$['metroid-state'].style.backgroundColor = '#CFFFD0';
 				return 'INCENTIVE OPEN';
 			}
