@@ -23,18 +23,32 @@ class GdqRundownItem extends Polymer.Element {
 
 	_itemChanged(item) {
 		this._setItemType(item ? item.type : '');
-		this.$.right.innerHTML = '';
+		this.$.topRight.innerHTML = '';
+		this.$.bottomLeft.innerHTML = '';
+		this.$.bottomRight.innerHTML = '';
+
 		switch (item.type) {
 			case 'run':
 				this.name = item.name.replace(/\\n/g, ' ');
-				this.$.right.innerHTML = item.category;
+				this.$.topRight.innerHTML = item.category;
+
+				this.$.bottomRight.textContent = `${item.console} - ${item.releaseYear}`;
+
+				item.runners.forEach(runner => {
+					const span = document.createElement('span');
+					span.textContent = `${runner.name}, `;
+					this.$.bottomLeft.appendChild(span);
+				});
+
+				this.$.bottomLeft.lastChild.textContent =
+					this.$.bottomLeft.lastChild.textContent.substr(0, this.$.bottomLeft.lastChild.textContent.length - 2);
 				break;
 			case 'adBreak':
 				this.name = 'Ad Break';
 				item.ads.forEach(ad => {
 					const span = document.createElement('span');
 					span.textContent = `${ad.adType} - ${ad.filename}`;
-					this.$.right.appendChild(span);
+					this.$.topRight.appendChild(span);
 				});
 				break;
 			case 'interview':
@@ -43,15 +57,15 @@ class GdqRundownItem extends Polymer.Element {
 					const span = document.createElement('span');
 					span.textContent = `${interviewer}, `;
 					span.classList.add('interviewer');
-					this.$.right.appendChild(span);
+					this.$.topRight.appendChild(span);
 				});
 				item.interviewees.forEach(interviewees => {
 					const span = document.createElement('span');
 					span.textContent = `${interviewees}, `;
-					this.$.right.appendChild(span);
+					this.$.topRight.appendChild(span);
 				});
-				this.$.right.lastChild.textContent =
-					this.$.right.lastChild.textContent.substr(0, this.$.right.lastChild.textContent.length - 2);
+				this.$.topRight.lastChild.textContent =
+					this.$.topRight.lastChild.textContent.substr(0, this.$.topRight.lastChild.textContent.length - 2);
 				break;
 			default:
 				throw new Error(`'Unexpected content type: ${item.type}`);

@@ -13,7 +13,6 @@
 				box-sizing: border-box;
 				font-weight: bold;
 				@apply --layout-horizontal;
-				@apply --layout-justified;
 				@apply --shadow-elevation-2dp;
 			}
 
@@ -55,19 +54,38 @@
 				display: none;
 			}
 
+			#body {
+				@apply --layout-vertical;
+				@apply --layout-flex;
+			}
+
+			.line {
+				@apply --layout-horizontal;
+				@apply --layout-justified;
+			}
+
 			#name {
 				font-size: 20px;
 				@apply --layout-flex;
 			}
 
-			#right {
+			#topRight,
+			#bottomRight,
+			#bottomLeft {
 				font-size: 14px;
 				font-style: italic;
+			}
+
+			#topRight,
+			#bottomRight {
 				margin-left: 36px;
 				text-align: right;
-				@apply --layout-flex-none;
-				@apply --layout-vertical;
 				@apply --layout-end;
+				@apply --layout-flex-none;
+			}
+
+			#topRight {
+				@apply --layout-vertical;
 			}
 
 			.interviewer {
@@ -75,15 +93,25 @@
 				color: #A90000;
 			}
 
-			:host([item-type="interview"]) #right {
+			:host([item-type="interview"]) #topRight {
 				display: block;
 				max-width: 190px;
 			}
 		</style>
 
 		<div id="green"></div>
-		<div id="name">[[name]]</div>
-		<div id="right"></div>
+		<div id="body">
+			<div id="top" class="line">
+				<div id="name">[[name]]</div>
+				<div id="topRight"></div>
+			</div>
+
+			<div id="bottom" class="line">
+				<div id="bottomLeft"></div>
+				<div id="bottomRight"></div>
+			</div>
+		</div>
+
 	</template>
 
 	<script src="gdq-rundown-item.js"></script>
