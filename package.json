@@ -20,6 +20,7 @@
     "lodash.assign": "^4.0.9",
     "lodash.debounce": "^4.0.6",
     "lodash.merge": "^4.4.0",
+    "nanotimer": "^0.3.14",
     "nodecg-utility-obs": "^3.0.2",
     "numeral": "^2.0.6",
     "object-path": "^0.11.3",

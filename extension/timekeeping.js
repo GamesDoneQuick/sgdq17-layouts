@@ -1,10 +1,13 @@
 'use strict';
 
+// Packages
+const NanoTimer = require('nanotimer');
+
 // Ours
 const nodecg = require('./util/nodecg-api-context').get();
 const TimeObject = require('../shared/classes/time-object');
 
-let interval;
+const timer = new NanoTimer();
 const checklistComplete = nodecg.Replicant('checklistComplete');
 const currentRun = nodecg.Replicant('currentRun');
 const stopwatch = nodecg.Replicant('stopwatch', {
@@ -120,9 +123,9 @@ function start(force) {
 		return;
 	}
 
-	clearInterval(tick);
+	timer.clearInterval();
 	stopwatch.value.state = 'running';
-	interval = setInterval(tick, 1000);
+	timer.setInterval(tick, '', '1s');
 }
 
 /**
@@ -138,7 +141,7 @@ function tick() {
  * @returns {undefined}
  */
 function stop() {
-	clearInterval(interval);
+	timer.clearInterval();
 	stopwatch.value.state = 'stopped';
 }
 
