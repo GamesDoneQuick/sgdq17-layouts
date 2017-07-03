@@ -47,7 +47,7 @@ class GdqOmnibarBid extends Polymer.Element {
 
 	formatDescription(bid) {
 		if (bid && !(bid.description || bid.name)) {
-			nodecg.log.error('Got weird bid:', bid);
+			nodecg.log.error('Got weird bid:', JSON.stringify(bid, null, 2));
 			return 'Be the first to bid!';
 		}
 
