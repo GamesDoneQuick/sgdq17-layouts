@@ -86,6 +86,22 @@
 				<div id="timeSince">[[timeSince]]</div>
 			</div>
 		</div>
+
+		<paper-dialog
+			id="confirmDialog"
+			on-iron-overlay-closed="_handleConfirmDialogClosed"
+			with-backdrop>
+			<h2>Confirm Twitch Ad Break</h2>
+
+			<div>
+				Are you sure you wish to <b>start</b> a Twitch ad break?
+			</div>
+
+			<div class="buttons">
+				<paper-button dialog-dismiss autofocus raised>No, Cancel</paper-button>
+				<paper-button dialog-confirm raised>Yes, Begin</paper-button>
+			</div>
+		</paper-dialog>
 	</template>
 
 	<script src="gdq-hostdash-twitch-ads.js"></script>

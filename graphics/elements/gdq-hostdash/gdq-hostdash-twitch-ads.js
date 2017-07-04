@@ -35,8 +35,7 @@
 		}
 
 		play() {
-			const duration = parseInt(this.$.listbox.selectedItem.getAttribute('data-value'), 10);
-			nodecg.sendMessage('twitch:playAd', duration);
+			this.$.confirmDialog.open();
 		}
 
 		updatePlayDisabled() {
@@ -49,6 +48,13 @@
 				this.$.play.setAttribute('disabled', 'true');
 			} else {
 				this.$.play.removeAttribute('disabled');
+			}
+		}
+
+		_handleConfirmDialogClosed(e) {
+			if (e.detail.confirmed === true) {
+				const duration = parseInt(this.$.listbox.selectedItem.getAttribute('data-value'), 10);
+				nodecg.sendMessage('twitch:playAd', duration);
 			}
 		}
 	}
