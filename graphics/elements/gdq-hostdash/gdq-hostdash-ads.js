@@ -44,6 +44,10 @@
 			nodecg.sendMessage('intermissions:startAdBreak', adBreakId);
 		}
 
+		cancelAdBreak(adBreakId) {
+			nodecg.sendMessage('intermissions:cancelAdBreak', adBreakId);
+		}
+
 		completeAdBreak(event) {
 			nodecg.sendMessage('intermissions:completeAdBreak', event.detail.adBreakId);
 		}
@@ -57,9 +61,20 @@
 			this.$.confirmStartDialog.open();
 		}
 
+		_confirmCancelAdBreak(e) {
+			this._adBreakIdBeingConfirmed = e.detail.adBreakId;
+			this.$.confirmCancelDialog.open();
+		}
+
 		_handleConfirmStartDialogClosed(e) {
 			if (e.detail.confirmed === true) {
 				this.startAdBreak(this._adBreakIdBeingConfirmed);
+			}
+		}
+
+		_handleConfirmCancelDialogClosed(e) {
+			if (e.detail.confirmed === true) {
+				this.cancelAdBreak(this._adBreakIdBeingConfirmed);
 			}
 		}
 

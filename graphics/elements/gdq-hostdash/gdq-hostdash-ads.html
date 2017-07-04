@@ -64,6 +64,7 @@
 
 			paper-dialog paper-button {
 				color: inherit;
+				margin: 0 8px;
 			}
 
 			[hidden] {
@@ -78,6 +79,7 @@
 				<template is="dom-if" if="[[equal(item.type, 'adBreak')]]">
 					<gdq-adbreak
 						on-start="_confirmStartAdBreak"
+						on-cancel="_confirmCancelAdBreak"
 						on-complete="completeAdBreak"
 						ad-break="[[item]]"></gdq-adbreak>
 				</template>
@@ -97,14 +99,31 @@
 			<h2>Confirm Ad Break</h2>
 
 			<div>
-				Are you sure you wish to start this ad break?
+				Are you sure you wish to <b>start</b> this ad break?
 				Have you gotten the go-ahead from the producer?
 				Is the audio engineer ready?
 			</div>
 
 			<div class="buttons">
-				<paper-button dialog-dismiss autofocus>No, Cancel</paper-button>
-				<paper-button dialog-confirm>Yes, Begin</paper-button>
+				<paper-button dialog-dismiss autofocus raised>No, Cancel</paper-button>
+				<paper-button dialog-confirm raised>Yes, Begin</paper-button>
+			</div>
+		</paper-dialog>
+
+		<paper-dialog
+			id="confirmCancelDialog"
+			on-iron-overlay-closed="_handleConfirmCancelDialogClosed"
+			with-backdrop>
+			<h2>Cancel Ad Break</h2>
+
+			<div>
+				Are you sure you wish to <b>cancel</b> this ad break?
+				Only do this if the producer has told you to!
+			</div>
+
+			<div class="buttons">
+				<paper-button dialog-dismiss autofocus raised>No, Do Not Cancel</paper-button>
+				<paper-button dialog-confirm raised>Yes, Cancel It</paper-button>
 			</div>
 		</paper-dialog>
 	</template>

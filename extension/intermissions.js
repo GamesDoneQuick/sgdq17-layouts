@@ -45,6 +45,7 @@ caspar.replicants.files.on('change', () => {
 let currentAdBreak = null;
 let currentlyPlayingAd = null;
 let nextAd = null;
+let cancelledAdBreak = false;
 nodecg.listenFor('intermissions:startAdBreak', adBreakId => {
 	const adBreak = currentIntermission.value.content.find(item => {
 		return item.type === 'adBreak' && item.id === adBreakId;
@@ -55,6 +56,7 @@ nodecg.listenFor('intermissions:startAdBreak', adBreakId => {
 		return;
 	}
 
+	cancelledAdBreak = false;
 	currentAdBreak = adBreak;
 	checkCanSeek();
 
@@ -65,6 +67,30 @@ nodecg.listenFor('intermissions:startAdBreak', adBreakId => {
 		});
 	}).catch(e => {
 		log.error('Failed to start ad break:', e);
+	});
+});
+
+nodecg.listenFor('intermissions:cancelAdBreak', adBreakId => {
+	const adBreak = currentIntermission.value.content.find(item => {
+		return item.type === 'adBreak' && item.id === adBreakId;
+	});
+
+	if (!adBreak) {
+		log.error(`Failed to cancel ad break: Could not find adBreak ID #${adBreakId} in currentIntermission.`);
+		return;
+	}
+
+	log.warn(`Cancelling adBreak ID #${adBreakId}!`);
+	cancelledAdBreak = true;
+	currentAdBreak = null;
+	currentlyPlayingAd = null;
+	caspar.clear().then(() => {
+		_updateCurrentIntermissionContent();
+	}).catch(err => {
+		log.error('Failed to clear Caspar:', err);
+	});
+	obs.setCurrentScene('Break').catch(e => {
+		log.error('Failed to set scene back to "Break" after cancelling ad break:', e);
 	});
 });
 
@@ -106,6 +132,10 @@ nodecg.listenFor('intermissions:completeImageAd', adId => {
 });
 
 caspar.osc.on('foregroundChanged', filename => {
+	if (cancelledAdBreak) {
+		return;
+	}
+
 	if (!currentAdBreak) {
 		// There will be some cases where this is *not* an error, such as
 		// if we play another outro video like the one Bestban made for AGDQ2017.

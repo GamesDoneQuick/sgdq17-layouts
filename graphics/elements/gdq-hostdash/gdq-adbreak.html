@@ -21,6 +21,13 @@
 				};
 			}
 
+			#cancel {
+				--paper-button: {
+					background-color: #C9513E;
+					color: white;
+				};
+			}
+
 			paper-button {
 				height: 64px;
 				width: 369px;
@@ -38,9 +45,16 @@
 
 		<paper-button
 			id="start"
-			disabled="[[!adBreak.state.canStart]]"
+			hidden="[[adBreak.state.started]]"
 			on-tap="start"
 			raised>Start Break</paper-button>
+
+		<paper-button
+			id="cancel"
+			hidden="[[!adBreak.state.started]]"
+			disabled="[[any(adBreak.state.canComplete, adBreak.state.completed)]]"
+			on-tap="cancel"
+			raised>Cancel Break</paper-button>
 
 		<template is="dom-repeat" items="[[adBreak.ads]]" as="ad" mutable-data>
 			<gdq-adbreak-ad ad-break="[[adBreak]]" ad="[[ad]]"></gdq-adbreak-ad>

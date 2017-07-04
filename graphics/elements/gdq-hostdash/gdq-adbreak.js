@@ -21,6 +21,16 @@ class GdqAdbreak extends Polymer.MutableData(Polymer.Element) {
 		}));
 	}
 
+	cancel() {
+		this.dispatchEvent(new CustomEvent('cancel', {
+			detail: {
+				adBreakId: this.adBreak.id
+			},
+			bubbles: true,
+			composed: true
+		}));
+	}
+
 	complete() {
 		this.dispatchEvent(new CustomEvent('complete', {
 			detail: {
@@ -34,6 +44,10 @@ class GdqAdbreak extends Polymer.MutableData(Polymer.Element) {
 	_calcCompleteButtonHidden(adBreak) {
 		const lastAd = adBreak.ads[adBreak.ads.length - 1];
 		return lastAd.adType.toLowerCase() !== 'image';
+	}
+
+	any(...args) {
+		return args.find(arg => Boolean(arg));
 	}
 }
 
