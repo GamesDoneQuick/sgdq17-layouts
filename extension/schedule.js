@@ -157,6 +157,8 @@ nodecg.listenFor('resetRun', (pk, cb) => {
  * @returns {Promise} - A a promise resolved with "true" if the schedule was updated, "false" if unchanged.
  */
 function update() {
+	adBreakIdCounter = 0;
+
 	const runnersPromise = request({
 		uri: nodecg.bundleConfig.useMockData ?
 			'https://dl.dropboxusercontent.com/u/6089084/gdq_mock/runners.json' :
