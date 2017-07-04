@@ -45,7 +45,7 @@
 		}
 
 		_checkCover() {
-			if (!casparConnected.value || !streamingOBSWebsocket.value) {
+			if (casparConnected.status !== 'declared' || streamingOBSWebsocket.status !== 'declared') {
 				return;
 			}
 
