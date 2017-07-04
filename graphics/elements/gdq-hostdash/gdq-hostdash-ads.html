@@ -1,5 +1,7 @@
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="gdq-adbreak.html">
 <link rel="import" href="gdq-hostdash-styles.html">
 
@@ -60,6 +62,10 @@
 				user-select: none;
 			}
 
+			paper-dialog paper-button {
+				color: inherit;
+			}
+
 			[hidden] {
 				display: none !important;
 			}
@@ -70,7 +76,10 @@
 		<div id="list">
 			<template is="dom-repeat" items="[[content]]" mutable-data>
 				<template is="dom-if" if="[[equal(item.type, 'adBreak')]]">
-					<gdq-adbreak ad-break="[[item]]"></gdq-adbreak>
+					<gdq-adbreak
+						on-start="_confirmStartAdBreak"
+						on-complete="completeAdBreak"
+						ad-break="[[item]]"></gdq-adbreak>
 				</template>
 
 				<template is="dom-if" if="[[equal(item.type, 'interview')]]">
@@ -80,6 +89,24 @@
 		</div>
 
 		<div id="cover"></div>
+
+		<paper-dialog
+			id="confirmStartDialog"
+			on-iron-overlay-closed="_handleConfirmStartDialogClosed"
+			with-backdrop>
+			<h2>Confirm Ad Break</h2>
+
+			<div>
+				Are you sure you wish to start this ad break?
+				Have you gotten the go-ahead from the producer?
+				Is the audio engineer ready?
+			</div>
+
+			<div class="buttons">
+				<paper-button dialog-dismiss autofocus>No, Cancel</paper-button>
+				<paper-button dialog-confirm>Yes, Begin</paper-button>
+			</div>
+		</paper-dialog>
 	</template>
 
 	<script src="gdq-hostdash-ads.js"></script>

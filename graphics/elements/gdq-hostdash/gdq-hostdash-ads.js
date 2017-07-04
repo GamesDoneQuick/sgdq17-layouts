@@ -40,8 +40,27 @@
 			});
 		}
 
+		startAdBreak(adBreakId) {
+			nodecg.sendMessage('intermissions:startAdBreak', adBreakId);
+		}
+
+		completeAdBreak(event) {
+			nodecg.sendMessage('intermissions:completeAdBreak', event.detail.adBreakId);
+		}
+
 		equal(a, b) {
 			return a === b;
+		}
+
+		_confirmStartAdBreak(e) {
+			this._adBreakIdBeingConfirmed = e.detail.adBreakId;
+			this.$.confirmStartDialog.open();
+		}
+
+		_handleConfirmStartDialogClosed(e) {
+			if (e.detail.confirmed === true) {
+				this.startAdBreak(this._adBreakIdBeingConfirmed);
+			}
 		}
 
 		_checkCover() {

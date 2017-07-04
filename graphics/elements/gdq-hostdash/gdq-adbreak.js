@@ -12,11 +12,23 @@ class GdqAdbreak extends Polymer.MutableData(Polymer.Element) {
 	}
 
 	start() {
-		nodecg.sendMessage('intermissions:startAdBreak', this.adBreak.id);
+		this.dispatchEvent(new CustomEvent('start', {
+			detail: {
+				adBreakId: this.adBreak.id
+			},
+			bubbles: true,
+			composed: true
+		}));
 	}
 
 	complete() {
-		nodecg.sendMessage('intermissions:completeAdBreak', this.adBreak.id);
+		this.dispatchEvent(new CustomEvent('complete', {
+			detail: {
+				adBreakId: this.adBreak.id
+			},
+			bubbles: true,
+			composed: true
+		}));
 	}
 
 	_calcCompleteButtonHidden(adBreak) {
