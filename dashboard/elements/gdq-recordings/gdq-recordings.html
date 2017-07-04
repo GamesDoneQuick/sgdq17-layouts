@@ -6,27 +6,32 @@
 	<template>
 		<style>
 			:host {
+				margin-right: 24px;
 				@apply --layout-vertical;
 				@apply --layout-center;
 				@apply --layout-flex-none;
-				margin-right: 24px;
 			}
 
-			#label {
+			label {
 				text-transform: uppercase;
 				font-size: 12px;
 				font-weight: bold;
-				margin-bottom: 4px;
+				margin-bottom: 0;
 				pointer-events: none;
 				user-select: none;
 				white-space: nowrap;
 			}
 		</style>
 
-		<div id="label">Auto Cycle Recordings</div>
+		<label for="cycleToggle">Auto Cycle Recordings</label>
 		<paper-toggle-button
-			id="toggle"
-		 	on-change="_handleToggleChange"></paper-toggle-button>
+			id="cycleToggle"
+		 	on-change="_handleCycleToggleChange"></paper-toggle-button>
+
+		<label for="cycleToggle" style="margin-top: 8px;">Auto Upload Recordings</label>
+		<paper-toggle-button
+			id="uploadToggle"
+			on-change="_handleUploadToggleChange"></paper-toggle-button>
 	</template>
 
 	<script src="gdq-recordings.js"></script>

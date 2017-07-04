@@ -15,6 +15,7 @@ const nodecg = require('./util/nodecg-api-context').get();
 // A given layout can be on multiple scenes.
 const currentLayout = nodecg.Replicant('gdq:currentLayout');
 const autoCycleRecordings = nodecg.Replicant('autoCycleRecordings');
+const autoUploadRecordings = nodecg.Replicant('autoUploadRecordings');
 const streamingOBS = new OBSUtility(nodecg, {namespace: 'streamingOBS'});
 const recordingOBS = new OBSUtility(nodecg, {namespace: 'recordingOBS'});
 
@@ -36,10 +37,19 @@ if (uploadScriptPath) {
 	}
 
 	nodecg.log.info('Automatic VOD uploading enabled.');
+} else {
+	autoCycleRecordings.value = false;
 }
 
 autoCycleRecordings.on('change', newVal => {
 	nodecg.log.info('Automatic cycling of recordings %s.', newVal ? 'ENABLED' : 'DISABLED');
+	if (!newVal) {
+		autoUploadRecordings.value = false;
+	}
+});
+
+autoUploadRecordings.on('change', newVal => {
+	nodecg.log.info('Automatic uploading of recordings %s.', newVal ? 'ENABLED' : 'DISABLED');
 });
 
 streamingOBS.replicants.programScene.on('change', newVal => {
@@ -130,7 +140,7 @@ module.exports = {
 
 		nodecg.log.info('Recordings successfully cycled.');
 
-		if (uploadScriptPath) {
+		if (uploadScriptPath && autoUploadRecordings.value) {
 			nodecg.log.info('Executing upload script...');
 			exec(`python "${uploadScriptPath}"`, {
 				cwd: path.parse(uploadScriptPath).dir
