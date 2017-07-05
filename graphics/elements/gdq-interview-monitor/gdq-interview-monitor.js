@@ -8,6 +8,7 @@
 	const questionTweets = nodecg.Replicant('interview:questionTweets');
 	const questionSortMap = nodecg.Replicant('interview:questionSortMap');
 	const throwIncoming = nodecg.Replicant('interview:throwIncoming');
+	const interviewStopwatch = nodecg.Replicant('interview:stopwatch');
 
 	class GdqInterviewMonitor extends Polymer.MutableData(Polymer.Element) {
 		static get is() {
@@ -33,6 +34,9 @@
 					type: Boolean,
 					value: false,
 					reflectToAttribute: true
+				},
+				timeElapsed: {
+					type: String
 				}
 			};
 		}
@@ -132,6 +136,10 @@
 
 			throwIncoming.on('change', newVal => {
 				this.throwIncoming = newVal;
+			});
+
+			interviewStopwatch.on('change', newVal => {
+				this.timeElapsed = newVal.formatted;
 			});
 		}
 

@@ -10,9 +10,9 @@
 class TimeObject {
 	/**
 	 * Constructs a new TimeObject with the provided number of seconds.
-	 * @param {Number} seconds - The value to instantiate this TimeObject with, in seconds.
+	 * @param {Number} [seconds = 0] - The value to instantiate this TimeObject with, in seconds.
 	 */
-	constructor(seconds) {
+	constructor(seconds = 0) {
 		TimeObject.setSeconds(this, seconds);
 	}
 

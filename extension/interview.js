@@ -2,9 +2,11 @@
 
 // Packages
 const firebase = require('firebase-admin');
+const NanoTimer = require('nanotimer');
 
 // Ours
 const nodecg = require('./util/nodecg-api-context').get();
+const TimeObject = require('../shared/classes/time-object');
 
 firebase.initializeApp({
 	credential: firebase.credential.cert(nodecg.bundleConfig.firebase),
@@ -19,7 +21,9 @@ const questionPulseTimeRemaining = nodecg.Replicant('interview:questionTimeRemai
 const questionShowing = nodecg.Replicant('interview:questionShowing', {defaultValue: false, persistent: false});
 const questionSortMap = nodecg.Replicant('interview:questionSortMap');
 const questionTweetsRep = nodecg.Replicant('interview:questionTweets');
+const interviewStopwatch = nodecg.Replicant('interview:stopwatch', {defaultValue: new TimeObject()});
 const currentLayout = nodecg.Replicant('gdq:currentLayout');
+const interviewTimer = new NanoTimer();
 const pulseIntervalMap = new Map();
 const pulseTimeoutMap = new Map();
 let _repliesListener;
@@ -38,6 +42,9 @@ lowerthirdShowing.on('change', newVal => {
 currentLayout.on('change', newVal => {
 	if (newVal === 'interview') {
 		throwIncoming.value = false;
+		startInterviewTimer();
+	} else {
+		stopInterviewTimer();
 	}
 });
 
@@ -210,6 +217,20 @@ function clearTimerFromMap(key, map) {
 	clearInterval(map.get(key));
 	clearTimeout(map.get(key));
 	map.delete(key);
+}
+
+function startInterviewTimer() {
+	TimeObject.setSeconds(interviewStopwatch.value, 0);
+	interviewTimer.clearInterval();
+	interviewTimer.setInterval(tickInterviewTimer, '', '1s');
+}
+
+function tickInterviewTimer() {
+	TimeObject.increment(interviewStopwatch.value);
+}
+
+function stopInterviewTimer() {
+	interviewTimer.clearInterval();
 }
 
 /* Disabled for now. Can't get drag sort and button sort to work simultaneously.
