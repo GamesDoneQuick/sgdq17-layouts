@@ -35,7 +35,7 @@
 					if (event.detail.value) {
 						resolve();
 					} else {
-						reject(new Error('Image failed to load.'));
+						reject(new Error(`Image failed to load: ${src}`));
 					}
 				};
 
@@ -43,7 +43,7 @@
 					if (event.detail.value) {
 						event.target.removeEventListener('error-changed', listeners.error);
 						event.target.removeEventListener('error-changed', listeners.loaded);
-						reject(new Error('Image failed to load.'));
+						reject(new Error(`Image failed to load: ${src}`));
 					}
 				};
 
