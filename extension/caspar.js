@@ -224,7 +224,7 @@ function updateFiles() {
 }
 
 function checkConnection() {
-	if (!connected.value) {
+	if (connected.value) {
 		return;
 	}
 
