@@ -18,8 +18,9 @@ const autoCycleRecordings = nodecg.Replicant('autoCycleRecordings');
 const autoUploadRecordings = nodecg.Replicant('autoUploadRecordings');
 const streamingOBS = new OBSUtility(nodecg, {namespace: 'streamingOBS'});
 const recordingOBS = new OBSUtility(nodecg, {namespace: 'recordingOBS'});
-
 const uploadScriptPath = nodecg.bundleConfig.youtubeUploadScriptPath;
+let uploadScriptRunning = false;
+
 if (uploadScriptPath) {
 	let stats;
 	try {
@@ -140,11 +141,14 @@ module.exports = {
 
 		nodecg.log.info('Recordings successfully cycled.');
 
-		if (uploadScriptPath && autoUploadRecordings.value) {
+		if (uploadScriptPath && autoUploadRecordings.value && !uploadScriptRunning) {
+			uploadScriptRunning = true;
 			nodecg.log.info('Executing upload script...');
 			exec(`python "${uploadScriptPath}"`, {
 				cwd: path.parse(uploadScriptPath).dir
 			}, (error, stdout, stderr) => {
+				uploadScriptRunning = false;
+
 				if (error) {
 					nodecg.log.error('Upload script failed:', error);
 					return;
