@@ -19,6 +19,7 @@ let foregroundFileName = '';
 let currentFrame = 0;
 let durationFrames = 0;
 let fileMayHaveRestarted = false;
+let updateFilesInterval;
 
 const log = new nodecg.Logger(`${nodecg.bundleName}:caspar`);
 const currentRun = nodecg.Replicant('currentRun');
@@ -30,6 +31,10 @@ const connection = new CasparCG({
 	onConnected() {
 		connected.value = true;
 		log.info('Connected.');
+		clearInterval(updateFilesInterval);
+		updateFiles();
+		updateFilesInterval = setInterval(updateFiles, 60000);
+
 		connection.lock(1, CasparEnum.Lock.ACQUIRE, nodecg.bundleConfig.casparcg.lockSecret).then(() => {
 			log.info('Lock acquired.');
 		}).catch(e => {
@@ -50,9 +55,6 @@ const connection = new CasparCG({
 });
 
 connection.clear(1);
-
-updateFiles();
-setInterval(updateFiles, 60000);
 setInterval(checkConnection, 1000);
 
 module.exports = {
