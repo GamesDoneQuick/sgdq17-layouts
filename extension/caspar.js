@@ -27,9 +27,6 @@ const connected = nodecg.Replicant('caspar:connected');
 const connection = new CasparCG({
 	host: nodecg.bundleConfig.casparcg.host,
 	port: nodecg.bundleConfig.casparcg.port,
-	autoReconnect: true,
-	autoReconnectInterval: true,
-	autoReconnectAttempts: Infinity,
 	onConnected() {
 		connected.value = true;
 		log.info('Connected.');
@@ -157,6 +154,10 @@ let isFirstFilesUpdate = true;
  * @returns {undefined}
  */
 function updateFiles() {
+	if (!connected.value) {
+		return;
+	}
+
 	fs.readdir(nodecg.bundleConfig.adsPath, (err, items) => {
 		if (err) {
 			log.error('Error updating files:', err);
@@ -223,6 +224,10 @@ function updateFiles() {
 }
 
 function checkConnection() {
+	if (!connected.value) {
+		return;
+	}
+
 	connection.info().catch(e => {
 		log.error('Error checking connection:', e);
 	});
