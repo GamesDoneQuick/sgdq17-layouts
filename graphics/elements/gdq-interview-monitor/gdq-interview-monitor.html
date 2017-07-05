@@ -91,8 +91,17 @@
 			#timeElapsed {
 				margin-top: auto;
 				align-self: center;
-				font-size: 95px;
+				font-size: 128px;
 				font-weight: 700;
+			}
+
+			#checklistStatus {
+				width: 100%;
+				font-size: 52px;
+				font-weight: 500;
+				text-transform: uppercase;
+				@apply --layout-vertical;
+				@apply --layout-center-center;
 			}
 
 			#tweetsColumn {
@@ -156,6 +165,7 @@
 			<div id="nextRunners"></div>
 
 			<div id="timeElapsed" class="tabular-nums">[[timeElapsed]]</div>
+			<div id="checklistStatus"></div>
 		</div>
 
 		<div id="tweetsColumn" class="bg-color-transition">

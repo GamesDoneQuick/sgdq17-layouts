@@ -9,6 +9,7 @@
 	const questionSortMap = nodecg.Replicant('interview:questionSortMap');
 	const throwIncoming = nodecg.Replicant('interview:throwIncoming');
 	const interviewStopwatch = nodecg.Replicant('interview:stopwatch');
+	const checklistComplete = nodecg.Replicant('checklistComplete');
 
 	class GdqInterviewMonitor extends Polymer.MutableData(Polymer.Element) {
 		static get is() {
@@ -140,6 +141,16 @@
 
 			interviewStopwatch.on('change', newVal => {
 				this.timeElapsed = newVal.formatted;
+			});
+
+			checklistComplete.on('change', newVal => {
+				if (newVal) {
+					this.$.checklistStatus.style.backgroundColor = '#cfffcf';
+					this.$.checklistStatus.innerText = 'DONE WITH SETUP';
+				} else {
+					this.$.checklistStatus.style.backgroundColor = '#ffe2e2';
+					this.$.checklistStatus.innerText = 'STILL DOING SETUP';
+				}
 			});
 		}
 
