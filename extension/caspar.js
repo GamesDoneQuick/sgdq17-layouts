@@ -108,7 +108,7 @@ const emitForegroundChanged = debounce(() => {
 	});
 
 	module.exports.osc.emit('foregroundChanged', foregroundFileName);
-}, 100);
+}, 250);
 
 udpPort.on('message', message => {
 	if (message.address === '/channel/1/stage/layer/0/file/frame') {

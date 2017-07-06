@@ -128,6 +128,8 @@ nodecg.listenFor('intermissions:completeImageAd', adId => {
 		playAd(nextAd).catch(e => {
 			log.error('Failed to play ad:', e);
 		});
+	} else {
+		log.error(`Marked image ad ID #${adId} as complete, but there was no nextAd!`);
 	}
 });
 
