@@ -66,7 +66,7 @@
 					cheerDiv.innerHTML = '<video src="' + this.importPath + 'vid/chRed.webm" autoplay>';
 					break;
 				default:
-					nodecg.log.error('Unexpected value for bits_used:', cheer);
+					nodecg.log.error('Unexpected value for bits_used:', JSON.stringify(cheer, null, 2));
 			}
 
 			cheerDiv.style.left = this.randomIntFromInterval(0, 450) + 'px';
