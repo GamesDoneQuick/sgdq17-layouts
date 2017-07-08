@@ -1,13 +1,18 @@
 (function () {
 	'use strict';
 
+	const AGDQ17_TOTAL = 2222790.52;
+	window.AGDQ17_TOTAL = AGDQ17_TOTAL;
+
 	const currentBids = nodecg.Replicant('currentBids');
 	const currentLayout = nodecg.Replicant('gdq:currentLayout');
 	const currentPrizes = nodecg.Replicant('currentPrizes');
 	const currentRun = nodecg.Replicant('currentRun');
 	const displayDuration = nodecg.bundleConfig.displayDuration;
 	const nextRun = nodecg.Replicant('nextRun');
+	const recordTrackerEnabled = nodecg.Replicant('recordTrackerEnabled');
 	const schedule = nodecg.Replicant('schedule');
+	const total = nodecg.Replicant('total');
 	let contentEnterCounter = 0;
 	let contentExitCounter = 0;
 
@@ -25,7 +30,9 @@
 				currentPrizes,
 				currentRun,
 				nextRun,
-				schedule
+				recordTrackerEnabled,
+				schedule,
+				total
 			];
 
 			let numDeclared = 0;
@@ -36,6 +43,11 @@
 					// Start the loop once all replicants are declared;
 					if (numDeclared >= replicants.length) {
 						Polymer.RenderStatus.beforeNextRender(this, this.run);
+						total.on('change', (newVal, oldVal) => {
+							if (oldVal && newVal.raw >= AGDQ17_TOTAL && oldVal.raw < AGDQ17_TOTAL) {
+								this.alertNewRecord();
+							}
+						});
 					}
 				});
 			});
@@ -44,6 +56,7 @@
 		run() {
 			const self = this;
 			const parts = [
+				this.showRecordTracker,
 				this.showCTA,
 				this.showUpNext,
 				this.showChallenges,
@@ -73,27 +86,33 @@
 			processNextPart();
 		}
 
-		showCTA() {
+		alertNewRecord() {
 			const tl = new TimelineLite();
 
-			tl.set(this.$.cta, {y: '100%'});
-
-			tl.to(this.$.cta, 0.55, {
+			// Enter
+			tl.set(this.$['newRecord-text'], {y: '-100%'});
+			tl.set(this.$.newRecord, {visibility: 'visible'});
+			tl.to([this.$.main, this.$.label], 0.25, {
+				opacity: 0,
+				ease: Power1.easeIn
+			});
+			tl.add(this.$['newRecord-bg'].enter('above'), 0.1);
+			tl.to(this.$['newRecord-text'], 0.334, {
 				y: '0%',
-				ease: Power2.easeOut
-			}, '+=1');
+				ease: Power1.easeInOut
+			}, 0.2);
 
-			tl.to(this.$.cta, 0.8, {
-				y: '-100%',
-				ease: Power2.easeInOut
-			}, `+=${displayDuration}`);
-
-			tl.to(this.$.cta, 0.55, {
-				y: '-200%',
-				ease: Power2.easeIn
-			}, `+=${displayDuration}`);
-
-			return tl;
+			// Exit
+			tl.addLabel('exit', '+=20');
+			tl.add(this.$['newRecord-bg'].exit('below'), 'exit');
+			tl.to(this.$['newRecord-text'], 0.334, {
+				y: '100%',
+				ease: Power1.easeInOut
+			}, 'exit+=0.2');
+			tl.to([this.$.main, this.$.label], 0.25, {
+				opacity: 1,
+				ease: Power1.easeOut
+			}, 'exit+=0.2');
 		}
 
 		showLabel(...args) {
@@ -200,6 +219,58 @@
 			}, null, null, contentExitLabel);
 			tl.add(afterContentExitLabel, '+=0.03');
 			tl.set(this.$['main-content'], {x: 0}, afterContentExitLabel);
+		}
+
+		showRecordTracker() {
+			const tl = new TimelineLite();
+
+			// If we have manually disabled this feature, return.
+			if (!recordTrackerEnabled.value) {
+				return tl;
+			}
+
+			// If we have passed the previous event's donation total, return.
+			if (total.value.raw > AGDQ17_TOTAL) {
+				return tl;
+			}
+
+			const elements = [document.createElement('gdq-omnibar-record')];
+
+			this.setMainContent(tl, elements);
+
+			tl.add(this.showLabel('RECORD TRACKER', '20px', {
+				startColor: '#76ca7c',
+				endColor: '#26952d'
+			}), '+=0.03');
+
+			this.showMainContent(tl, elements);
+			this.hideMainContent(tl, elements);
+			tl.add(this.hideLabel(), 'afterContentExit');
+
+			return tl;
+		}
+
+		showCTA() {
+			const tl = new TimelineLite();
+
+			tl.set(this.$.cta, {y: '100%'});
+
+			tl.to(this.$.cta, 0.55, {
+				y: '0%',
+				ease: Power2.easeOut
+			}, '+=1');
+
+			tl.to(this.$.cta, 0.8, {
+				y: '-100%',
+				ease: Power2.easeInOut
+			}, `+=${displayDuration}`);
+
+			tl.to(this.$.cta, 0.55, {
+				y: '-200%',
+				ease: Power2.easeIn
+			}, `+=${displayDuration}`);
+
+			return tl;
 		}
 
 		showUpNext() {

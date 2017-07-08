@@ -61,6 +61,14 @@
         "file": "obs.html",
         "headerColor": "#2d4e8a",
         "workspace": "Setup"
+      },
+      {
+        "name": "record-tracker",
+        "title": "Record Tracker",
+        "width": 2,
+        "file": "record-tracker.html",
+        "headerColor": "#2d4e8a",
+        "workspace": "Setup"
       }
     ],
     "graphics": [
