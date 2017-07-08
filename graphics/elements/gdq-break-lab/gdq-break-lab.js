@@ -51,19 +51,19 @@
 			cheerDiv.classList.add('cheer');
 			switch (true) {
 				case (cheer.bits_used < 100):
-					cheerDiv.innerHTML = '<video src="' + this.importPath + 'vid/chGrey.webm" autoplay>';
+					cheerDiv.innerHTML = '<video src="vid/chGrey.webm" autoplay>';
 					break;
 				case (cheer.bits_used < 1000):
-					cheerDiv.innerHTML = '<video src="' + this.importPath + 'vid/chPurple.webm" autoplay>';
+					cheerDiv.innerHTML = '<video src="vid/chPurple.webm" autoplay>';
 					break;
 				case (cheer.bits_used < 5000):
-					cheerDiv.innerHTML = '<video src="' + this.importPath + 'vid/chGreen.webm" autoplay>';
+					cheerDiv.innerHTML = '<video src="vid/chGreen.webm" autoplay>';
 					break;
 				case (cheer.bits_used < 10000):
-					cheerDiv.innerHTML = '<video src="' + this.importPath + 'vid/chBlue.webm" autoplay>';
+					cheerDiv.innerHTML = '<video src="vid/chBlue.webm" autoplay>';
 					break;
 				case (cheer.bits_used < 100000):
-					cheerDiv.innerHTML = '<video src="' + this.importPath + 'vid/chRed.webm" autoplay>';
+					cheerDiv.innerHTML = '<video src="vid/chRed.webm" autoplay>';
 					break;
 				default:
 					nodecg.log.error('Unexpected value for bits_used:', JSON.stringify(cheer, null, 2));
