@@ -174,7 +174,7 @@
 				const mainWidth = this.$.main.clientWidth;
 				const mainContentWidth = this.$['main-content'].clientWidth;
 				const diff = mainContentWidth - mainWidth;
-				if (diff > 0) {
+				if (diff > 3) {
 					let holdTime = 0;
 					const timePerPixel = 0.024;
 					const totalScrollTime = timePerPixel * diff;
