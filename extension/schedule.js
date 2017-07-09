@@ -275,12 +275,16 @@ function update() {
 		}
 
 		return true;
-	}).catch(({error, response} = {}) => {
+	}).catch(error => {
+		const response = error.response;
+		const actualError = error.error || error;
 		if (response && response.statusCode === 403) {
 			nodecg.log.warn('[schedule] Permission denied, refreshing session and trying again...');
 			emitter.emit('permissionDenied');
+		} else if (response) {
+			nodecg.log.error('[schedule] Failed to update, got status code', response.statusCode);
 		} else {
-			nodecg.log.error('[schedule] Failed to update:', error);
+			nodecg.log.error('[schedule] Failed to update:', actualError);
 		}
 	});
 }
