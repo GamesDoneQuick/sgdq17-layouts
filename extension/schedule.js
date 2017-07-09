@@ -427,7 +427,7 @@ function calcFormattedSchedule({rawRuns, formattedRunners, formattedAds, formatt
 			adBreak.ads.push(item);
 
 			const nextItem = flatSchedule[index + 1];
-			if (nextItem.type === 'ad') {
+			if (nextItem && nextItem.type === 'ad') {
 				return;
 			}
 
