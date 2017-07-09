@@ -32,15 +32,47 @@
 				z-index: 4;
 			}
 
-			#totalText {
-				position: relative;
-				top: -3px;
+			#totals {
+				@apply --layout-vertical;
+			}
+
+			#totalText,
+			#bitsTotal {
 				color: white;
 				font-family: gdqpixel, 'sans-serif';
-				font-size: 20px;
 				font-weight: 400;
 				z-index: 4;
 				@apply --layout-horizontal;
+				@apply --layout-center;
+			}
+
+			#totalText {
+				position: relative;
+				top: -2px;
+				font-size: 20px;
+			}
+
+			#bitsTotal {
+				position: relative;
+				top: 1px;
+				align-self: flex-end;
+			}
+
+			#bitsTotalIcon-container {
+				width: 6px;
+				height: 0;
+				margin-right: 5px;
+				@apply --layout-horizontal;
+				@apply --layout-center-center;
+			}
+
+			#bitsTotalIcon {
+				position: relative;
+				top: 1px;
+			}
+
+			#bitsTotalAmount {
+				font-size: 10px;
 			}
 		</style>
 
@@ -53,9 +85,18 @@
 
 		<img id="leftCap" src="[[importPath]]img/total-leftcap.png">
 
-		<div id="totalText" class="shadow">
-			<div id="totalTextDollars">$</div>
-			<div id="totalTextAmount"></div>
+		<div id="totals">
+			<div id="totalText" class="shadow">
+				<div id="totalTextDollars">$</div>
+				<div id="totalTextAmount"></div>
+			</div>
+
+			<div id="bitsTotal">
+				<div id="bitsTotalIcon-container">
+					<img id="bitsTotalIcon" width="16" src="img/bitsicon.png">
+				</div>
+				<div id="bitsTotalAmount" class="shadow"></div>
+			</div>
 		</div>
 	</template>
 
