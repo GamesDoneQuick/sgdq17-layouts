@@ -57,8 +57,10 @@ module.exports = function (nodecg) {
 		}
 	}
 
-	if (nodecg.bundleConfig.twitter && nodecg.bundleConfig.twitter.enabled && nodecg.bundleConfig.twitter.userId) {
-		require('./twitter');
+	if (nodecg.bundleConfig.twitter && nodecg.bundleConfig.twitter.userId) {
+		if (nodecg.bundleConfig.twitter.enabled) {
+			require('./twitter');
+		}
 	} else {
 		nodecg.log.warn('"twitter" is not defined in cfg/sgdq17-layouts.json! ' +
 			'Twitter integration will be disabled.');
