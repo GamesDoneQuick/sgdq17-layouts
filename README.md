@@ -13,9 +13,9 @@ However, [we did make one for the last event](https://www.youtube.com/watch?v=vB
 3. Install a compiler toolchain:
 	- **WINDOWS**: Install [`windows-build-tools`](https://www.npmjs.com/package/windows-build-tools) to install the tools necessary to compile `sgdq17-layouts`' dependencies.
 	- **LINUX**: Install `build-essential` and Python 2.7, which are needed to compile `sgdq17-layouts`' dependencies.
-5.`cd nodecg/bundles/sgdq17-layouts` and run `npm install --production`, then `bower install`
-6. Create the configuration file (see the [configuration][id] section below for more details)
-7. Run the nodecg server: `nodecg start` (or `node index.js` if you don't have nodecg-cli) from the `nodecg` root directory.
+4. `cd nodecg/bundles/sgdq17-layouts` and run `npm install --production`, then `bower install`
+5. Create the configuration file (see the [configuration][id] section below for more details)
+6. Run the nodecg server: `nodecg start` (or `node index.js` if you don't have nodecg-cli) from the `nodecg` root directory.
 
 Please note that you **must manually run `npm install` for this bundle**. NodeCG currently cannot reliably compile this bundle's npm dependencies. This is an issue we hope to address in the future.
 
