@@ -97,10 +97,6 @@ Example config:
 		"enabled": false,
 		"buttonId": 31
 	},
-	"obsWebsocket": {
-		"address": "localhost",
-		"password": "your_password"
-	},
 	"firebase": {
 		"paste": "your",
 		"firebase": "credentials",
