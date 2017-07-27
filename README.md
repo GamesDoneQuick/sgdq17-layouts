@@ -1,5 +1,5 @@
 # sgdq17-layouts [![CircleCI](https://circleci.com/gh/GamesDoneQuick/sgdq17-layouts.svg?style=svg&circle-token=f69384637611ff362b50e9023c57a6728ee20900)](https://circleci.com/gh/GamesDoneQuick/sgdq17-layouts)
-The on-stream graphics used during Awesome Games Done Quick 2017.
+The on-stream graphics used during Summer Games Done Quick 2017.
 
 This is a [NodeCG](http://github.com/nodecg/nodecg) v0.9 bundle. You will need to have NodeCG v0.9 installed to run it.
 
