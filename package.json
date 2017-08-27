@@ -45,7 +45,7 @@
   "homepage": "https://gamesdonequick.com/",
   "license": "Apache-2.0",
   "nodecg": {
-    "compatibleRange": "0.9.0-beta",
+    "compatibleRange": "~0.9.0",
     "dashboardPanels": [
       {
         "name": "Stream Tech Dashboard",
