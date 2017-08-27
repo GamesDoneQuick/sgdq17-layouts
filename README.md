@@ -8,7 +8,7 @@ We unfortunately do not have time to make a video breakdown for this event's bun
 However, [we did make one for the last event](https://www.youtube.com/watch?v=vBAZXchbI3U&list=PLTEhlYdONYxv1wk2FsIpEz92X3x2E7bSx), which still has a lot of similarities with this one,
 
 ## Requirements
-- NodeCG v0.9 (currently in beta, checkout the latest commit from the [0.9-dev branch](https://github.com/nodecg/nodecg/tree/0.9-dev))
+- [NodeCG v0.9.x](https://github.com/nodecg/nodecg/releases)
 - [Node.js v7 or greater](https://nodejs.org/)
 
 ## Installation
