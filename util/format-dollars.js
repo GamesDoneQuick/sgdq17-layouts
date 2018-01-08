@@ -10,6 +10,7 @@ module.exports = function formatDollars(amount, {cents = true} = {}) {
 	return parseFloat(amount).toLocaleString('en-US', {
 		style: 'currency',
 		currency: 'USD',
+		minimumFractionDigits: 0,
 		maximumFractionDigits: cents ? 2 : 0
 	});
 };
